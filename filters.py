@@ -26,3 +26,20 @@ def in_time_window(entry: Dict[str, Any], start_utc: datetime, end_utc: datetime
 def is_cs(entry: Dict[str, Any]) -> bool:
     cat = entry.get("primary_category") or ""
     return any(cat.startswith(p) for p in ARXIV_CATEGORIES)
+
+import re
+from config import TOPIC_INCLUDE_PATTERNS, TOPIC_EXCLUDE_PATTERNS
+
+_INC = [re.compile(p, re.IGNORECASE) for p in TOPIC_INCLUDE_PATTERNS]
+_EXC = [re.compile(p, re.IGNORECASE) for p in (TOPIC_EXCLUDE_PATTERNS or [])]
+
+def is_target_topic(entry: Dict[str, Any]) -> bool:
+    hay = "\n".join([
+        entry.get("title",""),
+        entry.get("summary",""),
+        entry.get("comment",""),
+        entry.get("journal_ref",""),
+    ])
+    if any(p.search(hay) for p in _EXC):
+        return False
+    return any(p.search(hay) for p in _INC)

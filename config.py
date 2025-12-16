@@ -19,8 +19,11 @@ LOCAL_TZ = get_beijing_tz()
 # 调试 / 行为
 # -------------------------------
 DEBUG = True
-DRY_RUN = False                 # 先干跑
-LIMIT_PER_ORG = 0
+# DRY_RUN = False                 # 先干跑
+# LIMIT_PER_ORG = 0
+DRY_RUN = True
+LIMIT_PER_ORG = 2
+
 DOWNLOAD_CONCURRENCY = 4
 CONNECT_TIMEOUT_SEC = 30
 READ_TIMEOUT_SEC = 120
@@ -157,5 +160,33 @@ ORG_SEARCH_TERMS = {
 }
 
 # 只看计算机领域（兜底）
-ARXIV_CATEGORIES = ["cs."]
+# ARXIV_CATEGORIES = ["cs."]
+ARXIV_CATEGORIES = ["cs.", "stat.ML"]
 
+
+# ===============================
+# Topic filter (LLM / Training / Agents)
+# ===============================
+TOPIC_INCLUDE_PATTERNS = [
+    # LLM / foundation models
+    r"\blarge language model(s)?\b", r"\bLLM(s)?\b", r"\bfoundation model(s)?\b",
+    r"\btransformer(s)?\b", r"\bmixture of experts\b|\bMoE\b",
+
+    # training / post-training
+    r"\bpre-?train(ing)?\b", r"\bpost-?train(ing)?\b",
+    r"\binstruction tuning\b|\bSFT\b",
+    r"\bRLHF\b|\bRLAIF\b|\balignment\b",
+    r"\bscaling law(s)?\b", r"\bdistill(ation)?\b",
+    r"\bquantiz(ation|e|ing)\b", r"\bLoRA\b|\bPEFT\b",
+
+    # agents
+    r"\bagent(s)?\b", r"\bagentic\b",
+    r"\btool use\b|\bfunction calling\b",
+    r"\bplanning\b", r"\bmulti-?agent\b",
+    r"\bReAct\b", r"\bworkflow\b",
+    r"\bRAG\b|retrieval augmented generation",
+]
+
+TOPIC_EXCLUDE_PATTERNS = []
+
+ENABLE_TOPIC_FILTER = True

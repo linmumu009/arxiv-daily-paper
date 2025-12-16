@@ -20,11 +20,14 @@ except Exception:
     USE_SHARDED_BASELINE = True
 
 # 常见计算机科学子类分片
-CS_SHARDS = [
-    "cs.AI", "cs.CL", "cs.CV", "cs.LG", "cs.RO", "cs.CR", "cs.DS",
-    "cs.IR", "cs.MA", "cs.SE", "cs.NI", "cs.DC", "cs.SD", "cs.HC",
-    "cs.MM", "cs.IT", "cs.CY", "cs.SY", "cs.LO", "cs.LI", "cs.SI",
-]
+# CS_SHARDS = [
+#     "cs.AI", "cs.CL", "cs.CV", "cs.LG", "cs.RO", "cs.CR", "cs.DS",
+#     "cs.IR", "cs.MA", "cs.SE", "cs.NI", "cs.DC", "cs.SD", "cs.HC",
+#     "cs.MM", "cs.IT", "cs.CY", "cs.SY", "cs.LO", "cs.LI", "cs.SI",
+# ]
+
+CS_SHARDS = ["cs.AI", "cs.CL", "cs.LG", "cs.IR", "cs.RO", "cs.DC"]
+
 
 # ---- HTTP session ----
 def _build_session() -> requests.Session:
@@ -183,7 +186,8 @@ def search_by_terms(terms, limit_pages=5, page_size=200):
     if not terms:
         return
     or_block = " OR ".join([f'all:{t}' for t in terms])
-    query = f"(cat:cs.*) AND ({or_block})"
+    query = f"((cat:cs.*) OR (cat:stat.ML)) AND ({or_block})"
+
     start = 0
     for page in range(limit_pages):
         feed = _query_any(query, start, page_size)

@@ -5,12 +5,12 @@ from datetime import timedelta
 from pathlib import Path
 
 from config import (
-    DRY_RUN, DEBUG, CLASSIFY_FROM_PDF,
+    DRY_RUN, DEBUG, CLASSIFY_FROM_PDF, ENABLE_TOPIC_FILTER,
     ORG_SEARCH_TERMS,
     PER_ORG_SEARCH_LIMIT_PAGES, PER_ORG_SEARCH_PAGE_SIZE,  # ← 新增：来自 config.py 的直搜深度
 )
 from fetch_arxiv import iter_recent_cs, search_by_terms, get_arxiv_id
-from filters import beijing_previous_day_window, in_time_window, is_cs
+from filters import beijing_previous_day_window, in_time_window, is_cs, is_target_topic
 from classify import group_by_org                   # 备用：摘要/标题粗分
 from prefetch import cache_pdfs
 from affil_classify import classify_from_pdf, place_pdf_into_org_dir
@@ -105,13 +105,20 @@ def main():
     # 2) 候选集 = 基线 +（按需）per-org 直搜补齐
     baseline_entries = _collect_baseline_entries(start_utc, end_utc)
     candidates = build_candidates_with_fallback(baseline_entries, start_utc, end_utc)
+    
+
+    if ENABLE_TOPIC_FILTER:
+        before = len(candidates)
+        candidates = [e for e in candidates if is_target_topic(e)]
+        if DEBUG:
+            print(f"[DEBUG] topic filter: {before} -> {len(candidates)}")
+
     if DEBUG:
         print(f"[DEBUG] candidates after fallback merge: {len(candidates)}")
 
     if not candidates:
         print("昨天窗口内没有候选论文（基线 + 直搜均为空）。")
         return
-
     # 3) 统一缓存 PDF（避免分类前就分散下载）
     id2pdf = cache_pdfs(candidates)
 
