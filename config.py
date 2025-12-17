@@ -19,11 +19,8 @@ LOCAL_TZ = get_beijing_tz()
 # 调试 / 行为
 # -------------------------------
 DEBUG = True
-# DRY_RUN = False                 # 先干跑
-# LIMIT_PER_ORG = 0
-DRY_RUN = True
+DRY_RUN = False                 # 先干跑
 LIMIT_PER_ORG = 2
-
 DOWNLOAD_CONCURRENCY = 4
 CONNECT_TIMEOUT_SEC = 30
 READ_TIMEOUT_SEC = 120
@@ -118,11 +115,11 @@ INSTITUTIONS_PATTERNS = {
 
     # ---- 高校扩展 ----
     "CMU":          [r"\bCMU\b", r"\bCarnegie\s*Mellon\b", r"\bCarnegie\s*Mellon\s*University\b"],
-    "Berkeley":     [r"\bUC\s*Berkeley\b", r"\bUCB\b", r"\bBerkeley\b", r"\bUniversity\s*of\s*California,\s*Berkeley\b"],
+    "Berkeley":     [r"\bUC\s*Berkeley\b", r"\bUniversity\s*of\s*California,\s*Berkeley\b"],
     "Tsinghua":     [r"\bTsinghua\b", r"清华", r"\bTsinghua\s*University\b"],
     "PekingU":      [r"\bPeking\s*University\b", r"\bPKU\b", r"北京大学"],
-    "Oxford":       [r"\bOxford\b", r"\bUniversity\s*of\s*Oxford\b"],
-    "Cambridge":    [r"\bCambridge\b", r"\bUniversity\s*of\s*Cambridge\b"],
+    "Oxford":       [r"\bUniversity\s*of\s*Oxford\b"],
+    "Cambridge":    [r"\bUniversity\s*of\s*Cambridge\b"],
     "ETH":          [r"\bETH\b", r"\bETH\s*Z(?:u|ü)rich\b", r"\bETH\s*Zurich\b", r"\bETH\s*Zürich\b"],
 }
 
