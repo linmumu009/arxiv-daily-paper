@@ -1,0 +1,1116 @@
+[
+  {
+    "type": "text",
+    "text": "What Affects the Effective Depth of Large Language Models?",
+    "text_level": 1,
+    "bbox": [
+      181,
+      122,
+      816,
+      170
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "Yi Hu $^{1}$  Cai Zhou $^{2}$  Muhan Zhang $^{1,\\dagger}$",
+    "bbox": [
+      357,
+      220,
+      638,
+      236
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "$^{1}$ Institute for Artificial Intelligence, Peking University",
+    "bbox": [
+      321,
+      236,
+      674,
+      250
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "$^{2}$ Department of Computer Science, Massachusetts Institute of Technology",
+    "bbox": [
+      254,
+      250,
+      741,
+      266
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "Abstract",
+    "text_level": 1,
+    "bbox": [
+      459,
+      301,
+      537,
+      316
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "The scaling of large language models (LLMs) emphasizes increasing depth, yet performance gains diminish with added layers. Prior work introduces the concept of \"effective depth\", arguing that deeper models fail to fully utilize their layers for meaningful computation. Building on this, we systematically study how effective depth varies with model scale, training type, and task difficulty. First, we analyze the model behavior of Qwen-2.5 family (1.5B-32B) and find that while the number of effective layers grows with model size, the effective depth ratio remains stable. Besides, comparisons between base and corresponding long-CoT models show no increase in effective depth, suggesting that improved reasoning stems from longer context rather than deeper per-token computation. Furthermore, evaluations across tasks of varying difficulty indicate that models do not dynamically use more layers for harder problems. Our results suggest that current LLMs underuse available depth across scales, training paradigms and tasks of varying difficulties, pointing out research opportunities on increasing the layer utilization rate of LLMs, model pruning, and early exiting. Our code is released at https://github.com/AheadOFpotato/what_affects-effective_depth.",
+    "bbox": [
+      228,
+      333,
+      767,
+      555
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "1 Introduction",
+    "text_level": 1,
+    "bbox": [
+      171,
+      580,
+      313,
+      595
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "The scaling of large language models (LLMs) [1, 2, 3, 4, 5] has consistently emphasized increased depth, with empirical evidence suggesting that model performance improves with additional layers—despite diminishing returns. As pointed out by Csordás et al. [6], this trend raises a fundamental question: are these models truly leveraging their depth to perform more complex, hierarchical computations, or are they merely distributing similar computational operations over a greater number of layers?",
+    "bbox": [
+      169,
+      612,
+      826,
+      696
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "Csordás et al. [6] reveals a striking under-utilization of depth: layers in the second half are simply refining existing representations rather than contributing to novel feature composition or conducting deeper reasoning. The study introduces the concept of \"effective depth\" and suggests that inefficient depth utilization may be a fundamental cause of diminishing scaling returns. Building directly upon this foundation, our work seeks to systematically investigate the factors that influence this effective depth. We aim to achieve a more comprehensive understanding of how depth utilization behaves across model scale, specialized training, and task difficulty. Our findings are as follows:",
+    "bbox": [
+      169,
+      700,
+      823,
+      799
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "1. Regarding model size. Following the methodologies established in prior work, we first analyze the Qwen-2.5 model family (from 1.5B to 32B) [2] using a suite of techniques including residual cosine similarity, logit lens, layer effects on future computations, residual erasure and integrated gradients [6, 7]. Our results confirm the core phenomenon: there exists a phase transition where early layers drive feature composition and later layers engage in minor refinements. Furthermore, while the absolute number of these \"effective\" layers increases with model size, the ratio of",
+    "bbox": [
+      171,
+      805,
+      826,
+      888
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "Mechanistic Interpretability Workshop at 39th Conference on Neural Information Processing Systems (NeurIPS 2025).",
+    "bbox": [
+      169,
+      910,
+      823,
+      936
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "aside_text",
+    "text": "arXiv:2512.14064v1 [cs.CL] 16 Dec 2025",
+    "bbox": [
+      22,
+      276,
+      57,
+      720
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "effective depth to total depth remains stable. This aligns with the conclusions of Csordás et al. [6] that larger models do not fundamentally alter their computational strategy; they simply replicate the same utilization pattern over a larger number of layers, rather than using the extra depth to invent new types of computation. This finding provides a nuanced explanation for diminishing returns—wider models gain new capabilities, while deeper models primarily gain precision.",
+    "bbox": [
+      189,
+      90,
+      823,
+      160
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "list",
+    "sub_type": "text",
+    "list_items": [
+      "2. Regarding long-CoT models. Given that long-CoT models have demonstrated exceptional performance in complex reasoning tasks [8, 9], a natural hypothesis is that they might achieve this by more effectively exploiting their depth for \"deeper\" reasoning in each forward pass. To test this, we compare the effective depth of base and instruct models in the Qwen-2.5 model family [2] against their corresponding DeepSeek-R1-distill counterparts [8]. Surprisingly, our analysis reveals no significant increase in effective depth. The enhanced reasoning performance appears not to be driven by a fundamental change in how the model utilizes its layers during each forward pass. Instead, the gains are likely attributable to the model's optimized ability to reason over longer sequences, not to deeper computation within a single token's forward process.",
+      "3. Regarding task difficulty. We further probe whether models dynamically allocate their depth based on computational demand. One might expect harder problems to require and therefore activate deeper layers. We evaluate models on a difficulty spectrum from HellaSwag (natural language understanding) [10] to GSM8K (grade school math) [11] to AIME24 (high school math contests) [12]. Counter to intuition, the effective depth remains largely consistent across all tasks. The model does not appear to leverage significantly more of its depth for harder problems."
+    ],
+    "bbox": [
+      171,
+      160,
+      826,
+      368
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "In summary, modern LLMs, across scales, specialized training regimes and task difficulties, fail to fully exploit their available depth for composing novel, high-level features.",
+    "bbox": [
+      169,
+      373,
+      823,
+      402
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "2 Preliminary",
+    "text_level": 1,
+    "bbox": [
+      171,
+      421,
+      307,
+      438
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "We mainly focus on the Qwen-2.5 model family [2] (including base models and instruct models), and their corresponding DeepSeek-R1-Distill versions [8]. They are all pre-norm Transformers [13, 14] and the forward process of a layer  $l$  is as follows:",
+    "bbox": [
+      169,
+      452,
+      823,
+      494
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\n\\boldsymbol {a} _ {l} = \\operatorname {S e l f A t t e n t i o n} _ {l} (\\operatorname {R M S N o r m} \\left(\\boldsymbol {h} _ {l}\\right)) \\tag {1}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      375,
+      501,
+      825,
+      517
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\n\\hat {\\boldsymbol {h}} _ {l} = \\boldsymbol {h} _ {l} + \\boldsymbol {a} _ {l} \\tag {2}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      375,
+      521,
+      825,
+      537
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\n\\boldsymbol {m} _ {l} = \\operatorname {M L P} _ {l} \\left(\\operatorname {R M S N o r m} \\left(\\hat {\\boldsymbol {h}} _ {l}\\right)\\right) \\tag {3}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      370,
+      542,
+      825,
+      559
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\n\\boldsymbol {h} _ {l + 1} = \\hat {\\boldsymbol {h}} _ {l} + \\boldsymbol {m} _ {l} \\tag {4}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      359,
+      564,
+      825,
+      580
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "Here,  $\\pmb{h}_l \\in \\mathbb{R}^{n_{\\mathrm{context}} \\times d_{\\mathrm{model}}}$  is the residual stream [15],  $\\pmb{a}_l, \\pmb{m}_l$  are the outputs of the SelfAttention layers and MLP layers, which are directly added back to the residual stream.  $n_{\\mathrm{context}}$  is the length of the input sequence, and  $d_{\\mathrm{model}}$  is the dimension of the hidden states of the model. RM-SNorm [16] is adopted in the Qwen-2.5 model family to replace traditional layer normalization [13]. Following Csordás et al. [6], we denote SelfAttention $l(\\cdot)$  and  $\\mathrm{MLP}_l(\\cdot)$  as \"sublayers\".",
+    "bbox": [
+      169,
+      595,
+      826,
+      666
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "The residual stream starts with  $\\pmb{h}_0 = \\mathrm{Embedding}(x)$ , where  $x \\in \\mathbb{N}^{n_{\\mathrm{context}}}$  is the sequence of token_ids. Then the final results of residual stream goes through the output layer and results in the output probability distribution over vocabulary:  $\\pmb{y} = \\mathrm{softmax}(\\mathrm{RMSNorm}(\\pmb{h}_L)\\pmb{W}^{out})$ , where  $\\pmb{y} \\in \\mathbb{R}^{n_{\\mathrm{context}} \\times |V|}$ ,  $\\pmb{W}^{out} \\in \\mathbb{R}^{d_{\\mathrm{model}} \\times |V|}$ ,  $L$  is the number of layers in the model,  $V$  is the vocabulary.",
+    "bbox": [
+      169,
+      671,
+      828,
+      731
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "3 Methods",
+    "text_level": 1,
+    "bbox": [
+      171,
+      748,
+      279,
+      763
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "Csordás et al. [6] proposes a suite of methods to qualitatively probe the effective depth. We introduce and extend the methods to qualitatively assess effective depth across different models and datasets:",
+    "bbox": [
+      169,
+      779,
+      823,
+      809
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "Residual cosine similarity. Residual cosine similarity measures how each layer or sublayer interacts with the residual stream. For a given layer  $l$ , we compute the cosine similarity between its contribution (the output of either SelfAttention  $\\mathbf{a}_l$ , MLP  $\\mathbf{m}_l$ , or their sum) and the resulting residual state  $\\mathbf{h}_l$ . Formally, the similarities are defined as  $\\mathrm{cosim}(\\mathbf{a}_l + \\mathbf{m}_l, \\mathbf{h}_l)$  for the full layer,  $\\mathrm{cosim}(\\mathbf{a}_l, \\mathbf{h}_l)$  for self-attention, and  $\\mathrm{cosim}(\\mathbf{m}_l, \\mathbf{h}_l + \\mathbf{a}_l)$  for the MLP. The intuition is that a cosine similarity near zero suggests the module writes a new, orthogonal feature into the residual stream; negative values indicate feature erasure; and positive values signify the amplification of an existing feature.",
+    "bbox": [
+      169,
+      814,
+      826,
+      912
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "page_number",
+    "text": "2",
+    "bbox": [
+      493,
+      935,
+      504,
+      946
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "table",
+    "img_path": "images/5d82ba19606dddb9b2f309c3d4d14662c0c3a6a271932f32e6469eeff9a412a7.jpg",
+    "table_caption": [
+      "Table 1: Effective depth (ED) and effective depth ratio (ratio  $= \\frac{\\mathrm{{ED}} + 1}{\\mathrm{L}}$  ) across base, instruct, and long-CoT models of different sizes (1.5B to 32B parameters) and on datasets with varying difficulty."
+    ],
+    "table_footnote": [],
+    "table_body": "<table><tr><td rowspan=\"3\"></td><td colspan=\"5\">Cosine Similarity</td><td colspan=\"5\">Logit Lens KL</td><td colspan=\"5\">Logit Lens Overlap</td><td></td><td></td><td></td></tr><tr><td colspan=\"2\">HellaSwag</td><td colspan=\"2\">GSM8K</td><td>AIME24</td><td colspan=\"2\">HellaSwag</td><td colspan=\"2\">GSM8K</td><td>AIME24</td><td colspan=\"2\">HellaSwag</td><td colspan=\"2\">GSM8K</td><td>AIME24</td><td></td><td></td><td></td></tr><tr><td>ED</td><td>ratio</td><td>ED</td><td>ratio</td><td>ED</td><td>ratio</td><td>ED</td><td>ratio</td><td>ED</td><td>ratio</td><td>ED</td><td>ratio</td><td>ED</td><td>ratio</td><td>ED</td><td></td><td></td><td></td></tr><tr><td>DS-R1-Qwen-1.5B</td><td>17</td><td>0.64</td><td>16</td><td>0.61</td><td>17</td><td>0.64</td><td>20</td><td>0.75</td><td>1</td><td>0.07</td><td>24</td><td>0.89</td><td>23</td><td>0.86</td><td>23</td><td>0.86</td><td>24</td><td>0.89</td></tr><tr><td>Qwen2.5-1.5B-Instruct</td><td>16</td><td>0.61</td><td>20</td><td>0.75</td><td>19</td><td>0.71</td><td>21</td><td>0.79</td><td>22</td><td>0.82</td><td>23</td><td>0.86</td><td>23</td><td>0.86</td><td>23</td><td>0.86</td><td>23</td><td>0.86</td></tr><tr><td>Qwen2.5-Math-1.5B</td><td>16</td><td>0.61</td><td>16</td><td>0.61</td><td>16</td><td>0.61</td><td>20</td><td>0.75</td><td>22</td><td>0.82</td><td>23</td><td>0.86</td><td>23</td><td>0.86</td><td>23</td><td>0.86</td><td>23</td><td>0.86</td></tr><tr><td>DS-R1-Qwen-7B</td><td>16</td><td>0.61</td><td>16</td><td>0.61</td><td>16</td><td>0.61</td><td>24</td><td>0.89</td><td>24</td><td>0.89</td><td>24</td><td>0.89</td><td>25</td><td>0.93</td><td>25</td><td>0.93</td><td>24</td><td>0.89</td></tr><tr><td>Qwen2.5-7B-Instruct</td><td>17</td><td>0.64</td><td>20</td><td>0.75</td><td>18</td><td>0.68</td><td>25</td><td>0.93</td><td>25</td><td>0.93</td><td>25</td><td>0.93</td><td>26</td><td>0.96</td><td>26</td><td>0.96</td><td>26</td><td>0.96</td></tr><tr><td>Qwen2.5-Math-7B</td><td>16</td><td>0.61</td><td>11</td><td>0.43</td><td>16</td><td>0.61</td><td>23</td><td>0.86</td><td>23</td><td>0.86</td><td>23</td><td>0.86</td><td>24</td><td>0.89</td><td>24</td><td>0.89</td><td>24</td><td>0.89</td></tr><tr><td>DS-R1-Qwen-14B</td><td>26</td><td>0.56</td><td>30</td><td>0.65</td><td>30</td><td>0.65</td><td>40</td><td>0.85</td><td>39</td><td>0.83</td><td>41</td><td>0.88</td><td>44</td><td>0.94</td><td>44</td><td>0.94</td><td>44</td><td>0.94</td></tr><tr><td>Qwen2.5-14B-Instruct</td><td>27</td><td>0.58</td><td>32</td><td>0.69</td><td>30</td><td>0.65</td><td>40</td><td>0.85</td><td>41</td><td>0.88</td><td>42</td><td>0.90</td><td>45</td><td>0.96</td><td>45</td><td>0.96</td><td>45</td><td>0.96</td></tr><tr><td>Qwen2.5-14B</td><td>27</td><td>0.58</td><td>30</td><td>0.65</td><td>30</td><td>0.65</td><td>40</td><td>0.85</td><td>40</td><td>0.85</td><td>42</td><td>0.90</td><td>45</td><td>0.96</td><td>45</td><td>0.96</td><td>45</td><td>0.96</td></tr><tr><td>DS-R1-Qwen-32B</td><td>42</td><td>0.67</td><td>42</td><td>0.67</td><td>46</td><td>0.73</td><td>58</td><td>0.92</td><td>55</td><td>0.88</td><td>57</td><td>0.91</td><td>61</td><td>0.97</td><td>58</td><td>0.92</td><td>58</td><td>0.92</td></tr><tr><td>Qwen2.5-32B-Instruct</td><td>43</td><td>0.69</td><td>46</td><td>0.73</td><td>43</td><td>0.69</td><td>60</td><td>0.95</td><td>58</td><td>0.92</td><td>58</td><td>0.92</td><td>61</td><td>0.97</td><td>60</td><td>0.95</td><td>60</td><td>0.95</td></tr><tr><td>Qwen2.5-32B</td><td>43</td><td>0.69</td><td>46</td><td>0.73</td><td>46</td><td>0.73</td><td>60</td><td>0.95</td><td>57</td><td>0.91</td><td>59</td><td>0.94</td><td>61</td><td>0.97</td><td>59</td><td>0.94</td><td>60</td><td>0.95</td></tr></table>",
+    "bbox": [
+      174,
+      128,
+      823,
+      286
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "image",
+    "img_path": "images/5a75054de3b4b172809e8a301ea7a1bde39d5232a94b5f7c169703e8da2e7037.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      174,
+      300,
+      343,
+      366
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "image",
+    "img_path": "images/19be4104205c37da0d12a68fb2bb1471cd8e1b51e6ed6af62ce0bfd800070087.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      344,
+      301,
+      501,
+      366
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "image",
+    "img_path": "images/8edbcdf595b6f110f1abf164970bd5d395c9ea30e6582ad8f65b1f490ca6189e.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      501,
+      301,
+      661,
+      366
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "image",
+    "img_path": "images/bfd417b1ee2d48729e671dbb085fb4fd2d72ab2f3927faad9c5aa8a868c5b3c9.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      663,
+      301,
+      823,
+      366
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "image",
+    "img_path": "images/7564a45bfa52716f44dfbe5d706f2e75522445c020a4a211edc226eb12e6d40e.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      174,
+      366,
+      341,
+      425
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "image",
+    "img_path": "images/7eff7e58518d5f188dd9ae575a1b3550a712cf995819cc6dc8b5ca9de719562c.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      344,
+      366,
+      501,
+      425
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "image",
+    "img_path": "images/273bd91087861acfb4de4a4d20c4c32bdb071afd2306dccaef60feb9c952bb03.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      501,
+      366,
+      661,
+      425
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "image",
+    "img_path": "images/d6d61792f9e6dffaa40f9962b6006b0db42c7e75426de528567e0de9f1a63cdd.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      663,
+      366,
+      823,
+      425
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "image",
+    "img_path": "images/3e729a65f75e4752cb8f5b8b2d51252c55587bd85f004aa4c676b95ed254b585.jpg",
+    "image_caption": [
+      "Figure 1: Cosine similarity of (sub)layer contributions and the residual evaluated on GSM8K."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      176,
+      425,
+      341,
+      484
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "image",
+    "img_path": "images/0b5ea4580c877653f9048eec1f6e2e94e15de70d9a040d1617201c8f1f18fd4a.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      344,
+      425,
+      501,
+      484
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "image",
+    "img_path": "images/2b3b49e644408384c2ac8f2c207f271bd329a5b0651ef3127a90d7add161054e.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      503,
+      425,
+      661,
+      484
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "image",
+    "img_path": "images/df6dda8567eb4b2ed3180895db4b0b71cae23467bfc80a62e28b5a126edd68e8.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      663,
+      425,
+      823,
+      484
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "text",
+    "text": "Logit Lens. Logit lens evaluates how early the model's output distribution begins to stabilize. We decode the hidden state  $\\pmb{h}_l$  using the model's output projection and compute the KL divergence between this early distribution and the model's final distribution. Additionally, we measure the overlap between the top-5 tokens from this intermediate distribution and from the final distribution.",
+    "bbox": [
+      169,
+      511,
+      823,
+      568
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "text",
+    "text": "Layer effects on future computation. Here we probe the influence of skipping a layer on subsequent computations. For a given prompt, we first run a forward pass to record the residual states  $h_l$ . We then intervene by skipping a specific layer  $s$  for all token positions  $t \\leq t_s$  (where  $t_s$  is a sampled position within the sequence), effectively setting  $\\bar{h}_{s+1} := \\bar{h}_s$  for those tokens. The effect of this intervention is measured on the subsequent tokens  $(t > t_s)$  by computing the relative change in the contribution of a later layer  $l > s$ :  $\\| (h_{l+1} - h_l) - (\\bar{h}_{l+1} - \\bar{h}_l) \\|_2 / \\| h_{l+1} - h_l \\|_2$ . The maximum value of this metric across multiple prompts and sequence positions is taken. We also compare the final output probabilities directly via  $\\| y - \\bar{y} \\|_2$ .",
+    "bbox": [
+      169,
+      573,
+      823,
+      686
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "text",
+    "text": "Residual erasure. Residual erasure identifies until which layer information from a specific token remains relevant for the final prediction. For a token at position  $t$  and layer  $l$ , we intervene by replacing its residual vector  $h_{l+1}[t]$  with an uninformative baseline—the average residual vector at layer  $l$  computed over a dataset (GSM8K here), while leaving all other tokens unchanged. The effect is quantified as the maximum change in prediction norm  $(\\|y - \\bar{y}\\|_2)$  among all answer tokens.",
+    "bbox": [
+      169,
+      690,
+      823,
+      762
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "text",
+    "text": "Integrated gradients. The metric attributes the model's prediction on the answer tokens to contributions from each layer. We compute the gradients of the output logits for all answer tokens with respect to the activation at each layer and each token position.",
+    "bbox": [
+      169,
+      766,
+      826,
+      809
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "text",
+    "text": "Beyond these qualitative probes, we introduce two quantitative measures to compare effective depth across models and datasets. For residual cosine similarity, we average the similarity scores across layers, MLPs, and SelfAttention modules, and identify the effective depth as the point where the averaged similarity transitions from negative to positive. For the logit lens, we use two metrics: we define the effective depth as the layer where the KL divergence from the final output drops below half of its maximum observed value, and alternatively, as the layer where the top-5 token overlap with the final output first exceeds 0.3.",
+    "bbox": [
+      169,
+      814,
+      825,
+      912
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "page_number",
+    "text": "3",
+    "bbox": [
+      493,
+      935,
+      503,
+      946
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "text",
+    "text": "4 Experiments",
+    "text_level": 1,
+    "bbox": [
+      171,
+      89,
+      313,
+      107
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "4.1 Does Model Size Affect Effective Depth?",
+    "text_level": 1,
+    "bbox": [
+      171,
+      119,
+      495,
+      137
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "The residual cosine similarity, shown in Figure 1, exhibits a consistent pattern across models: an initial positive phase, followed by a decline into negative values, and a final return to positive. The initial near-zero similarity in shallow layers suggests context integration, while the subsequent positive phase corresponds to feature refinement. The first half of the network is predominantly characterized by feature erasure (negative similarity), until a sharp phase transition occurs near the middle layers, after which the model begins strengthening existing features.",
+    "bbox": [
+      169,
+      147,
+      826,
+      231
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "We quantify the corresponding depth of this transition in Table 1 (Cosine Similarity). The results show that the effective depth ratio remains remarkably stable. This indicates that larger models contain a growing number of \"ineffective\" layers that do not contribute to feature composition.",
+    "bbox": [
+      169,
+      237,
+      823,
+      280
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "The logit lens analysis, as shown in Figure 2, further supports this conclusion. The KL divergence between intermediate and final predictions shows a sharp drop in the second half of the network, while the top-5 token overlap exhibits a concurrent sharp rise. Together, these indicate a transition from computation to refinement. As quantified in Table 1, the depth of this transition, measured both by KL divergence (half-max point) and overlap (exceeding 0.3), is slightly less consistent across scales than the cosine similarity metric, with a mild increasing trend in ratio for larger models.",
+    "bbox": [
+      169,
+      285,
+      823,
+      369
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "Furthermore, the effect of skipping layers on downstream computations, illustrated in Figure 3, reveals that layers in the second half have substantially less influence on both later layers and final output predictions. This pattern is consistent across all model sizes, with similar decay profiles.",
+    "bbox": [
+      169,
+      375,
+      826,
+      417
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "Finally, results from integrated gradients (Figure 4(a)) and residual erasure (Figure 4(b)) show that the dependence of answer token predictions on earlier layers declines markedly in the second half of the network. The position of this decline remains stable relative to network depth across model sizes.",
+    "bbox": [
+      169,
+      422,
+      826,
+      465
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "4.2 Do Long-CoT Models Think Deeper?",
+    "text_level": 1,
+    "bbox": [
+      171,
+      483,
+      472,
+      498
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "Given that long-CoT models demonstrate superior performance on complex reasoning [8, 9], one might hypothesize that they achieve this by utilizing deeper computations within each forward pass. To test this, we compare the effective depth of DeepSeek-R1-Distill models [8] against their corresponding base models [2]. As summarized in Table 1, we find no significant difference in effective depth ratio between long-CoT and base models. This consistency is further illustrated across all probing methods: residual cosine similarity (Figure 1), logit lens (Figure 2), layer-skipping effects (Figure 3), integrated gradients (Figure 4(a)), and residual erasure (Figure 4(b)). The results are consistent that long-CoT models do not exhibit a deeper utilization of the network.",
+    "bbox": [
+      169,
+      508,
+      823,
+      619
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "4.3 Does Task Difficulty Affect Effective Depth?",
+    "text_level": 1,
+    "bbox": [
+      171,
+      637,
+      519,
+      652
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "We next investigate whether models dynamically adjust their effective depth in response to computational demand, expecting that harder tasks might engage deeper layers. We evaluate models on three tasks of increasing difficulty: HellaSwag (natural language understanding) [10], GSM8K (grade school math) [11], and AIME24 (high school math contests) [12]. Results in Table 1 show that effective depth remains largely consistent across all tasks, indicating that model depth utilization is not adaptive to problem difficulty. Additional results are provided in Appendix D, including residual cosine similarity (Figure 5), effects of skipping layers on future computations (Figure 6) and output distributions (Figure 7), as well as logit lens KL divergence (Figure 8) and token overlap (Figure 9).",
+    "bbox": [
+      169,
+      662,
+      826,
+      776
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "5 Conclusion",
+    "text_level": 1,
+    "bbox": [
+      171,
+      796,
+      302,
+      811
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "In this work, we provide a comprehensive study of the factors that may affect effective depth in LLMs, including model scales, training strategies, and task difficulties. First, the effective depth ratio remains roughly constant with the increase of model size. Second, long-CoT models show no increase in effective depth despite their enhanced reasoning capabilities. Third, effective depth remains consistent across task difficulty, indicating no dynamic depth allocation based on computational demand. These results demonstrate that LLMs fail to fully exploit their architectural depth.",
+    "bbox": [
+      169,
+      828,
+      823,
+      912
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "page_number",
+    "text": "4",
+    "bbox": [
+      493,
+      935,
+      504,
+      946
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "References",
+    "text_level": 1,
+    "bbox": [
+      173,
+      89,
+      269,
+      106
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "list",
+    "sub_type": "ref_text",
+    "list_items": [
+      "[1] An Yang, Anfeng Li, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng, Bowen Yu, Chang Gao, Chengen Huang, Chenxu Lv, et al. Qwen3 technical report. arXiv preprint arXiv:2505.09388, 2025.",
+      "[2] Qwen Team. Qwen2.5 technical report, 2025. URL https://arxiv.org/abs/2412.15115.",
+      "[3] Aaron Grattafori, Abhimanyu Dubey, Abhinav Jauhri, Abhinav Pandey, Abhishek Kadian, Ahmad Al-Dahle, Aiesha Letman, Akhil Mathur, Alan Schelten, Alex Vaughan, et al. The llama 3 herd of models, 2024. URL https://arxiv.org/abs/2407.21783.",
+      "[4] DeepSeek-AI. Deepseek-v3 technical report, 2024. URL https://arxiv.org/abs/2412.19437.",
+      "[5] Josh Achiam, Steven Adler, Sandhini Agarwal, Lama Ahmad, Ilge Akkaya, Florencia Leoni Aleman, Diogo Almeida, Janko Altenschmidt, Sam Altman, Shyamal Anadkat, et al. Gpt-4 technical report. arXiv preprint arXiv:2303.08774, 2023.",
+      "[6] Róbert Csordás, Christopher D Manning, and Christopher Potts. Do language models use their depth efficiently? arXiv preprint arXiv:2505.13898, 2025.",
+      "[7] Nostalgebraist. Interpreting gpt: The logit lens, 2020. URL https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/Interpreting-gpt-the-logit-lens.",
+      "[8] DeepSeek-AI. Deepseek-r1: Incentivizing reasoning capability in llms via reinforcement learning, 2025. URL https://arxiv.org/abs/2501.12948.",
+      "[9] OpenAI. Learning to reason with llms, 2024. URL https://openai.com/index/learning-to-reason-with-llms/.",
+      "[10] Rowan Zellers, Ari Holtzman, Yonatan Bisk, Ali Farhadi, and Yejin Choi. Hellaswag: Can a machine really finish your sentence? arXiv preprint arXiv:1905.07830, 2019.",
+      "[11] Karl Cobbe, Vineet Kosaraju, Mohammad Bavarian, Mark Chen, Heewoo Jun, Lukasz Kaiser, Matthias Plappert, Jerry Tworek, Jacob Hilton, Reiichiro Nakano, et al. Training verifiers to solve math word problems. arXiv preprint arXiv:2110.14168, 2021.",
+      "[12] MAA. American invitational mathematics examination-aime 2024, 2024. URL https://maa.org/math-competitions/american-invitational-mathematics-examination-aime.",
+      "[13] Ruibin Xiong, Yunchang Yang, Di He, Kai Zheng, Shuxin Zheng, Chen Xing, Huishuai Zhang, Yanyan Lan, Liwei Wang, and Tieyan Liu. On layer normalization in the transformer architecture. In International conference on machine learning, pages 10524-10533. PMLR, 2020.",
+      "[14] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. Advances in neural information processing systems, 30, 2017.",
+      "[15] Nelson Elhage, Neel Nanda, Catherine Olsson, Tom Henighan, Nicholas Joseph, Ben Mann, Amanda Askell, Yuntao Bai, Anna Chen, Tom Conerly, et al. A mathematical framework for transformer circuits. Transformer Circuits Thread, 1(1):12, 2021.",
+      "[16] Biao Zhang and Rico Sennrich. Root mean square layer normalization. Advances in neural information processing systems, 32, 2019."
+    ],
+    "bbox": [
+      173,
+      113,
+      826,
+      801
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "page_number",
+    "text": "5",
+    "bbox": [
+      493,
+      935,
+      504,
+      946
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "text",
+    "text": "Appendices",
+    "text_level": 1,
+    "bbox": [
+      169,
+      88,
+      341,
+      114
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "A Limitations",
+    "text_level": 1,
+    "bbox": [
+      171,
+      136,
+      307,
+      152
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "This work follows the methodology of Csordás et al. [6] to comprehensively analyze factors influencing effective depth. We introduce quantitative metrics based on residual cosine similarity and logit lens to compare effective depth across models and datasets. However, the proposed metrics—particularly the two variants of logit lens—remain relatively straightforward and exhibit some instability. Developing more robust and well-validated measures of effective depth is an important direction for future research.",
+    "bbox": [
+      169,
+      167,
+      826,
+      252
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "Furthermore, while we confirm and extensively analyze the phenomenon of depth under-utilization across model scales, training strategies, and task demands, this study does not propose solutions to improve layer utilization. Our findings highlight the need for future work to explore architectural or training approaches that enable models to leverage their full depth more effectively.",
+    "bbox": [
+      169,
+      257,
+      823,
+      314
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "B Model Details",
+    "text_level": 1,
+    "bbox": [
+      171,
+      334,
+      325,
+      349
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "Our analysis focuses on the Qwen-2.5 model family [2]. For base models, we use the same versions selected by DeepSeek-AI [8]: Qwen2.5-Math-1.5B, Qwen2.5-Math-7B, Qwen2.5-14B, and Qwen2.5-32B. For instruction-tuned models, we use the standard instruct variants from the Qwen-2.5 family: Qwen2.5-1.5B-Instruct, Qwen2.5-7B-Instruct, Qwen2.5-14B-Instruct, and Qwen2.5-32B-Instruct. Additionally, we include the corresponding DeepSeek-R1-Distill versions derived from these base models: DeepSeek-R1-Distill-Qwen-1.5B, DeepSeek-R1-Distill-Qwen-7B, DeepSeek-R1-Distill-Qwen-14B, and DeepSeek-R1-Distill-Qwen-32B.",
+    "bbox": [
+      169,
+      367,
+      826,
+      465
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "Models of the same size share identical architectures. The architectural details are provided in Table 2.",
+    "bbox": [
+      169,
+      470,
+      826,
+      484
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "table",
+    "img_path": "images/e2a08265623b7f3b99920578e42739e689cd62275ee7ff663075d561b0e35c5a.jpg",
+    "table_caption": [
+      "Table 2: Model details."
+    ],
+    "table_footnote": [],
+    "table_body": "<table><tr><td>Models</td><td>Layers</td><td>Heads (Q/KV)</td></tr><tr><td>1.5B</td><td>28</td><td>12 / 2</td></tr><tr><td>7B</td><td>28</td><td>28 / 4</td></tr><tr><td>14B</td><td>48</td><td>40 / 8</td></tr><tr><td>32B</td><td>64</td><td>40 / 8</td></tr></table>",
+    "bbox": [
+      370,
+      523,
+      624,
+      609
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "C Additional Effective Depth Results on GSM8K",
+    "text_level": 1,
+    "bbox": [
+      169,
+      636,
+      599,
+      652
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "We show the results of logit lens in Figure 2, the effects of skipping a layer on future computations in Figure 3(a) and on output distributions in Figure 3(b). Besides, the results of integrated gradients residual erasure are shown in Figure 4(a) and Figure 4(b) respectively.",
+    "bbox": [
+      169,
+      667,
+      823,
+      712
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "image",
+    "img_path": "images/b047aad8b19bdf2256b9e7f169214e3ae2b461f5786791e26f547174a864913d.jpg",
+    "image_caption": [
+      "(a) Logit lens KL Divergence.",
+      "Figure 2: Logit lens Results on GSM8K."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      183,
+      733,
+      488,
+      863
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "image",
+    "img_path": "images/f0fc15691f7f28e7536833118f680af009b8b41a115c1e2688dc11bea67545ee.jpg",
+    "image_caption": [
+      "(b) Logit lens Overlap."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      503,
+      733,
+      810,
+      863
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "page_number",
+    "text": "6",
+    "bbox": [
+      493,
+      936,
+      504,
+      946
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "image",
+    "img_path": "images/d70dfbcead6e8e9d6221d8ee4e7018b3fbfd4a260e71f976cfd346968a72bbee.jpg",
+    "image_caption": [
+      "(a) Effects of skipping a layer on later layers' contribution."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      186,
+      97,
+      444,
+      239
+    ],
+    "page_idx": 6
+  },
+  {
+    "type": "image",
+    "img_path": "images/bd29f84a9629fc059d3c7e92fc999b8e6808103fb0f40cc9256c934894c34842.jpg",
+    "image_caption": [
+      "(b) Effects of skipping a layer on output norm.",
+      "Figure 3: Effect of skipping a layer on future computation evaluated on GSM8K."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      470,
+      95,
+      807,
+      239
+    ],
+    "page_idx": 6
+  },
+  {
+    "type": "image",
+    "img_path": "images/5293f63df16a580caded1e9c9c31de213055f11616c255227c91725de274ceb1.jpg",
+    "image_caption": [
+      "Figure 4: The Effects of individual computation steps evaluated on GSM8K."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      183,
+      400,
+      488,
+      705
+    ],
+    "page_idx": 6
+  },
+  {
+    "type": "image",
+    "img_path": "images/bc890bf4edf6c3d7ad60e7208b024e3775bb8c51595e0d15c856bb90b1a92f01.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      503,
+      405,
+      810,
+      705
+    ],
+    "page_idx": 6
+  },
+  {
+    "type": "text",
+    "text": "D Effective Depth of All Models Evaluated on GSM8K and HellaSwag",
+    "text_level": 1,
+    "bbox": [
+      169,
+      799,
+      774,
+      816
+    ],
+    "page_idx": 6
+  },
+  {
+    "type": "text",
+    "text": "We show the results of effective depth of Qwen-2.5 family (base and instruct models) and their long-CoT variants tested on GSM8K and HellaSwag, including residual cosine similarity results in Figure 5; the effects of skipping a layer on future computations in Figure 6 and on output distributions in Figure 7; logit lens KL divergence in Figure 8; logit lens overlap in Figure 9.",
+    "bbox": [
+      169,
+      854,
+      823,
+      912
+    ],
+    "page_idx": 6
+  },
+  {
+    "type": "page_number",
+    "text": "7",
+    "bbox": [
+      493,
+      935,
+      503,
+      946
+    ],
+    "page_idx": 6
+  },
+  {
+    "type": "image",
+    "img_path": "images/9732c0a6592d0cc57d6132089e4c5c3e201076756bce204e47046a41dd185b82.jpg",
+    "image_caption": [
+      "Cosine Similarity of Different Models & Datasets",
+      "Figure 5: Residual cosine similarity of all models on GSM8K and HellaSwag."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      176,
+      95,
+      823,
+      220
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "image",
+    "img_path": "images/6acf8ae6d399bd3ec4482c5dddcd202334fafe3395dbed7293a448de0e122538.jpg",
+    "image_caption": [
+      "Figure 6: The effects of skipping a layer on future computations, the results include all models on GSM8K and HellaSwag."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      174,
+      367,
+      821,
+      551
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "image",
+    "img_path": "images/800f71e32a49e70e6aaa7f32ec8ec7524016241aa82c46ef84d6ec777528c302.jpg",
+    "image_caption": [
+      "Figure 7: The effects of skipping a layer on output distributions, the results include all models on GSM8K and HellaSwag."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      174,
+      710,
+      823,
+      873
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "page_number",
+    "text": "8",
+    "bbox": [
+      493,
+      935,
+      503,
+      946
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "image",
+    "img_path": "images/9e48ad57ee6455b48709e9fb015b778c7a13b0b2146389769d80fbae974086bd.jpg",
+    "image_caption": [
+      "Figure 8: Logit lens KL divergence between early layer distributions and the final distributions. The results include all models on GSM8K and HellaSwag."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      173,
+      88,
+      823,
+      250
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "image",
+    "img_path": "images/e496b28e94b9563caca908138638c025b89daa455ccb306ee5d7325da734557a.jpg",
+    "image_caption": [
+      "Logit Lens Overlap of Different Models & Datasets",
+      "Figure 9: Logit lens top-5 overlap between early layer distributions and the final distributions. The results include all models on GSM8K and HellaSwag."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      173,
+      315,
+      823,
+      468
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "page_number",
+    "text": "9",
+    "bbox": [
+      493,
+      935,
+      504,
+      946
+    ],
+    "page_idx": 8
+  }
+]

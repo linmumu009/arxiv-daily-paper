@@ -52,6 +52,7 @@ output_org_pdfs/
 cache_pdfs/
 downloads/
 cache/
+config/
 
 # -------------------------
 # Environment Configs / Secrets

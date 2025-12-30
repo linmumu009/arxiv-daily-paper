@@ -6,6 +6,7 @@ from pathlib import Path
 from requests.exceptions import HTTPError
 from config import PDF_CACHE_DIR, CONNECT_TIMEOUT_SEC, READ_TIMEOUT_SEC
 from fetch_arxiv import get_arxiv_id  # 你之前已添加的工具函数
+from datetime import datetime
 
 SAFE_NAME = re.compile(r"[^a-zA-Z0-9._/-]+")
 
@@ -20,12 +21,14 @@ def canonical_pdf_urls(arxiv_id: str) -> List[str]:
             urls.append(f"https://arxiv.org/pdf/{base}.pdf")
     return urls
 
-def cache_pdfs(entries: List[Dict[str, Any]]) -> Dict[str, str]:
+def cache_pdfs(entries: List[Dict[str, Any]], subdir: str | None = None) -> Dict[str, str]:
     """
     预下载所有候选 entry 到 PDF_CACHE_DIR，返回 {arxiv_id: local_path}
     已存在则跳过。
     """
-    ensure_dir(PDF_CACHE_DIR)
+    date_dir = subdir or datetime.now().date().isoformat()
+    root = Path(PDF_CACHE_DIR) / date_dir
+    ensure_dir(root)
     out: Dict[str, str] = {}
     sess = requests.Session()
     sess.headers.update({"User-Agent": "DailyPaper/1.0 (+cache)"})
@@ -33,7 +36,7 @@ def cache_pdfs(entries: List[Dict[str, Any]]) -> Dict[str, str]:
     for e in entries:
         aid = get_arxiv_id(e)  # e.g. 2506.16012v2
         rel = SAFE_NAME.sub("_", aid) + ".pdf"
-        fpath = Path(PDF_CACHE_DIR) / rel
+        fpath = root / rel
         if fpath.exists():
             out[aid] = str(fpath)
             continue

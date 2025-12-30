@@ -1,0 +1,2052 @@
+[
+  {
+    "type": "text",
+    "text": "SE-MLP Model for Predicting Prior Acceleration Features in Penetration Signals",
+    "text_level": 1,
+    "bbox": [
+      194,
+      156,
+      759,
+      206
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "Yankang Li $^{1}$  and Changsheng Li $^{1*}$",
+    "bbox": [
+      327,
+      228,
+      628,
+      247
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "$^{1}$ School of Mechanical Engineering, Nanjing University of Science and Technology, Nanjing, 210094, Jiangsu, China.",
+    "bbox": [
+      189,
+      253,
+      766,
+      288
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "*Corresponding author(s). E-mail(s): lichangsheng1984@163.com; Contributing authors: lyk1520791162@njust.edu.cn;",
+    "bbox": [
+      210,
+      315,
+      742,
+      347
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "Abstract",
+    "text_level": 1,
+    "bbox": [
+      440,
+      375,
+      514,
+      387
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "Accurate identification of the penetration process relies heavily on prior feature values of penetration acceleration. However, these feature values are typically obtained through long simulation cycles and expensive computations. To overcome this limitation, this paper proposes a multi-layer Perceptron architecture, termed squeeze and excitation multi-layer perceptron (SE-MLP), which integrates a channel attention mechanism with residual connections to enable rapid prediction of acceleration feature values. Using physical parameters under different working conditions as inputs, the model outputs layer-wise acceleration features, thereby establishing a nonlinear mapping between physical parameters and penetration characteristics. Comparative experiments against conventional MLP, XGBoost, and Transformer models demonstrate that SE-MLP achieves superior prediction accuracy, generalization, and stability. Ablation studies further confirm that both the channel attention module and residual structure contribute significantly to performance gains. Numerical simulations and range recovery tests show that the discrepancies between predicted and measured acceleration peaks and pulse widths remain within acceptable engineering tolerances. These results validate the feasibility and engineering applicability of the proposed method and provide a practical basis for rapidly generating prior feature values for penetration fuses.",
+    "bbox": [
+      203,
+      391,
+      749,
+      640
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "Keywords: Penetration acceleration, Squeeze and excitation multi-layer perceptron model, Prior feature prediction, Deep Learning",
+    "bbox": [
+      203,
+      650,
+      737,
+      674
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "aside_text",
+    "text": "arXiv:2512.23131v1 [cs.LG] 29 Dec 2025",
+    "bbox": [
+      21,
+      288,
+      60,
+      706
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "page_number",
+    "text": "1",
+    "bbox": [
+      473,
+      764,
+      482,
+      775
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "1 Introduction",
+    "text_level": 1,
+    "bbox": [
+      206,
+      84,
+      381,
+      99
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "Modern high-value targets, including critical military facilities and command centers, are frequently concealed underground or protected by multilayer protective systems composed of concrete, rock, and other high-strength media. Defeating such targets requires hard-penetrator warheads to withstand extreme impact and complex transient loads while acquiring target-related state information in real time. Reliable state awareness during penetration enables accurate identification of structural layers and penetration position, which is essential for precise fuze detonation control.",
+    "bbox": [
+      201,
+      112,
+      833,
+      211
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "Most existing burst point control strategies for penetration fuses [13, 15, 22] fundamentally depend on prior feature values. These values are typical dynamic-response characteristics that can be estimated before deployment from known physical conditions, such as warhead configuration, target parameters, and impact velocity. Across widely used decision logics, including threshold-based methods, envelope-based methods, and time-window shielding methods, the control rules are driven by comparisons between real-time sensor measurements and these pre-estimated priors. Representative priors include the acceleration peak, pulse width, interlayer time interval, penetration-energy-related characteristics, and dominant frequency components. In engineering practice, the threshold method remains the most common for penetration state identification. The onboard system continuously measures acceleration and triggers state transitions (entry, exit, or interlayer flight) when extracted features exceed or fall below preset thresholds. Accordingly, signal-processing modules primarily serve to make real-time features more comparable to the priors. This implies a critical dependency: even with sophisticated signal processing, inaccurate or unreliable prior feature values can still lead to layer miscounting, missed layers, and degraded burst point precision [15, 26]. Therefore, prior feature values are not only auxiliary parameters but a central determinant of recognition robustness and control accuracy.",
+    "bbox": [
+      206,
+      212,
+      831,
+      468
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "In current practice, prior feature values of penetration acceleration are mainly obtained via empirical formulas, range recovery tests, and numerical simulations. These approaches, however, often entail long development cycles and high costs, and their outputs can exhibit notable dispersion and limited credibility, which in turn forces repeated tests or repeated simulation campaigns. Moreover, empirical methods [18, 19] tend to generalize poorly across diverse targets and operating conditions, while numerical simulations are sensitive to constitutive relations, contact settings, and model parameters. As a result, conventional prior acquisition pipelines struggle to support diversified missions, large-scale deployment, and rapid response. This motivates a practical alternative: a prediction method that directly maps physical condition parameters to critical acceleration prior features. Such a method can enable targeted offline computation prior to fuze-warhead deployment, and then embed the predicted priors into control software, improving engineering feasibility. In addition, if the predictor generalizes across working conditions, it can provide tunable and batch-generated prior features, establishing more reliable inputs for layer counting, state identification, and burst point control.",
+    "bbox": [
+      206,
+      469,
+      831,
+      696
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "To reduce the burden of traditional physical modeling and improve efficiency, recent studies have introduced deep learning for penetration-dynamics prediction. A TCN-LSTM multisource fusion framework integrates acceleration and magnetic-anomaly",
+    "bbox": [
+      203,
+      697,
+      833,
+      740
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "page_number",
+    "text": "2",
+    "bbox": [
+      512,
+      764,
+      524,
+      775
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "signals for high-accuracy layer counting, and its outputs can be directly used for fuze-control decisions [20]. A POD-RBF model combines dimensionality reduction with radial basis regression to accelerate magnetic-response feature prediction under multiple conditions [21]. For incorporating structural parameters, PF-Informer modifies the Transformer to fuse structural parameters with measured acceleration for real-time prediction of penetration acceleration histories [16]. TransUNet further combines Transformer and U-Net architectures to generate acceleration distributions across penetration depths and support data augmentation in multilayer scenarios [14]. While these methods advance prediction accuracy and information fusion, their relatively high model complexity, parameter scale, and computational cost hinder deployment on embedded platforms with strict resource constraints. Consequently, there remains a clear need for a predictor that is structurally simple, computationally efficient, and simultaneously accurate and deployable.",
+    "bbox": [
+      159,
+      87,
+      793,
+      272
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "text",
+    "text": "In this paper, we propose a lightweight predictor for penetration acceleration prior features, termed the squeeze and excitation multi-layer perceptron (SE-MLP). The SE-MLP takes physical parameters describing penetration conditions as inputs and outputs layer-specific acceleration feature values. The design enhances a standard MLP with squeeze-and-excitation channel reweighting and residual fusion to strengthen physical-parameter representation and stabilize optimization, enabling an efficient mapping from operating conditions to acceleration priors. To ensure objective evaluation and mitigate dataset bias, we adopt four-fold cross-validation  $(K = 4)$  with strict separation between training and testing samples.",
+    "bbox": [
+      159,
+      273,
+      794,
+      401
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "text",
+    "text": "The main contributions are summarized as follows:",
+    "bbox": [
+      186,
+      401,
+      566,
+      414
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "list",
+    "sub_type": "text",
+    "list_items": [
+      "- We formalize prior feature value prediction for penetration acceleration as a physics-parameter-to-feature mapping problem that directly supports burst point control and layer-state recognition.",
+      "- We propose SE-MLP, a lightweight MLP enhanced with squeeze-and-excitation attention and residual fusion, achieving an improved trade-off among accuracy, stability, and embedded deployability.",
+      "- We conduct rigorous evaluation using four-fold cross-validation with strict train-test separation to provide an objective assessment of generalization across penetration conditions."
+    ],
+    "bbox": [
+      161,
+      422,
+      789,
+      550
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "text",
+    "text": "2 Model Architecture",
+    "text_level": 1,
+    "bbox": [
+      161,
+      565,
+      423,
+      583
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "text",
+    "text": "In this section, a SE-MLP model integrating a multilayer perceptron structure, a channel attention mechanism, and residual connections is constructed to achieve a nonlinear mapping between physical characteristic parameters and the prior acceleration features. Considering that prediction models based on a single network structure generally suffer from insufficient generalization capability and limited robustness under complex penetration conditions, a channel attention mechanism is introduced to enable adaptive weighting of input features, while residual connections are incorporated to enhance feature preservation and gradient propagation. The overall model consists of three components: a multi-layer perceptron (MLP) for building the fundamental mapping structure, a squeeze and excitation (SE) module for strengthening the adaptive",
+    "bbox": [
+      159,
+      594,
+      793,
+      739
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "page_number",
+    "text": "3",
+    "bbox": [
+      472,
+      764,
+      482,
+      775
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "text",
+    "text": "weighting capability across feature channels, and residual connections for transmitting cross-layer information and optimizing gradient flow. The model takes as input the physical parameters under different penetration conditions from projectile penetration simulations (including projectile mass, impact velocity, target-layer number, and material parameters), and outputs the characteristic acceleration features. Through network learning, a mapping is established between the high-dimensional physical inputs and the nonlinear acceleration-response features. In this study, the acceleration peak and pulse width corresponding to each penetrated layer are selected as the prediction outputs to verify the feasibility of the proposed approach. Through training and validation under multiple operating conditions, the model can accurately predict the acceleration-response features corresponding to different target configurations, enabling efficient modeling of energy transfer and dynamic-response patterns during the penetration process. This method, to some extent, overcomes the limitations of traditional empirical formulas and shallow neural-network models, and provides a high-accuracy and robust machine-learning framework for penetration-dynamics feature prediction.",
+    "bbox": [
+      206,
+      84,
+      838,
+      313
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "2.1 Multi-layer Perceptron (MLP)",
+    "text_level": 1,
+    "bbox": [
+      203,
+      330,
+      552,
+      348
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "A multi-layer perceptron (MLP) is a feed-forward neural network that establishes complex nonlinear relationships between inputs and outputs through a combination of multiple linear transformations and nonlinear activation functions. An MLP typically consists of an input layer, several hidden layers, and an output layer. As shown in Fig. 1, the output of each layer can be expressed as follows [3, 7, 9, 25]:",
+    "bbox": [
+      203,
+      353,
+      833,
+      426
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\n\\mathbf {h} ^ {(1)} = \\mathrm {f} \\left(\\mathbf {W} ^ {(1)} \\mathbf {h} ^ {(1 - 1)} + \\mathbf {b} ^ {(1)}\\right), \\quad l = 1, 2, \\dots , L. \\tag {1}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      349,
+      435,
+      831,
+      458
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "Where  $\\mathbf{h}^{(1)}$  denotes the output feature vector of the  $l$ -th layer, while  $\\mathbf{W}^{(1)}$  and  $\\mathbf{b}^{(1)}$  represent the weight matrix and bias vector, respectively. The term  $\\mathrm{f}(\\cdot)$  denotes the nonlinear activation function (e.g., GELU, ReLU). Through the stacking of multiple layers and nonlinear transformations, the MLP progressively abstracts features from the input data, thereby facilitating the learning of complex mappings in high-dimensional space.",
+    "bbox": [
+      201,
+      460,
+      831,
+      546
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "However, with the increase of network depth, the MLP model is prone to gradient vanishing or gradient exploding problems during the training process, making the model convergence speed decrease and affecting the final performance. To alleviate this problem, the Residual Connection structure is introduced to mitigate the degradation problem of deep networks. Its core idea is to establish a cross-layer channel (Shortcut Path) for the network, enabling the input to be directly transmitted to the output end of subsequent layers, thereby guaranteeing the effective backpropagation of gradients. The residual structure can be expressed as [10]:",
+    "bbox": [
+      203,
+      548,
+      833,
+      663
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\n\\mathrm {H} (x) = \\mathrm {F} (x) + x. \\tag {2}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      455,
+      676,
+      830,
+      690
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "Wherein,  $\\mathrm{H}(x)$  represents the final output of the residual block,  $x$  is the input feature, and  $\\mathrm{F}(x)$  represents the mapping function processed through several linear layers and",
+    "bbox": [
+      203,
+      703,
+      831,
+      733
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "page_number",
+    "text": "4",
+    "bbox": [
+      514,
+      765,
+      524,
+      775
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "image",
+    "img_path": "images/3e6323e636c308ee40e9a7e422684e4f5dc5670db255ec25e0ea182bac3618f9.jpg",
+    "image_caption": [
+      "Fig. 1: Schematic diagram of the MLP module."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      176,
+      87,
+      497,
+      269
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "image",
+    "img_path": "images/b2c4b58ccc37d10926a9fbbcbdebf7fc37cc279e009627097cdb61f659789090.jpg",
+    "image_caption": [
+      "Fig. 2: Schematic diagram of the residual module."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      576,
+      87,
+      707,
+      266
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "text",
+    "text": "nonlinear activation functions. Through this cross-layer stacking manner, the network can, while maintaining the integrity of the original information, learn the residual mapping between the input and the target, avoid feature loss during multi-layer transformations, and effectively improve the convergence speed and prediction accuracy of the model.",
+    "bbox": [
+      161,
+      329,
+      793,
+      398
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "text",
+    "text": "As shown in Fig. 2, the residual connection structure, through performing elementwise addition of the input  $x$  and the output of the mapping function  $\\mathrm{F}(x)$ , realizes the cross-layer transmission of features, can effectively alleviate the gradient vanishing problem, promote the training stability of the deep model, and enhance the fusion ability of low-level and high-level features.",
+    "bbox": [
+      161,
+      400,
+      793,
+      470
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "text",
+    "text": "2.2 Squeeze and Excitation Mechanism (SE)",
+    "text_level": 1,
+    "bbox": [
+      161,
+      486,
+      714,
+      502
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "text",
+    "text": "The core idea of the squeeze and excitation (SE) attention mechanism is to, by explicitly modeling the dependencies between feature channels, realize the dynamic re-calibration of channel-level features, which can enhance the sensitivity of the model to key features. The SE module mainly includes two phases: Squeeze (compression) and Excitation (excitation), and its structural schematic is shown in Fig. 3 [11].",
+    "bbox": [
+      161,
+      508,
+      789,
+      581
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "text",
+    "text": "2.2.1 Squeeze phase (global information compression)",
+    "text_level": 1,
+    "bbox": [
+      161,
+      595,
+      668,
+      611
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "text",
+    "text": "In the Squeeze phase, by performing global average pooling on the input feature in the spatial dimension, the feature map  $\\mathbf{X} \\in \\mathbb{R}^{H \\times W \\times C}$  is compressed into the channel descriptor vector  $\\mathbf{z} \\in \\mathbb{R}^C$ , and its calculation formula is:",
+    "bbox": [
+      161,
+      617,
+      791,
+      659
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\nz _ {c} = \\frac {1}{H \\times W} \\sum_ {i = 1} ^ {H} \\sum_ {j = 1} ^ {W} X _ {c} (i, j). \\tag {3}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      366,
+      670,
+      789,
+      709
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "text",
+    "text": "Wherein,  $z_{c}$  represents the global feature response of the  $c$ -th channel,  $H$  is the height,  $W$  is the width,  $c$  is the number of channels, and  $X_{c}(i,j)$  represents the value of the  $c$ -th",
+    "bbox": [
+      161,
+      712,
+      791,
+      741
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "page_number",
+    "text": "5",
+    "bbox": [
+      472,
+      764,
+      482,
+      775
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "image",
+    "img_path": "images/69ce32774d4e917f6726a679f71038a5125df01f2a0be2a92601aa6302a782aa.jpg",
+    "image_caption": [
+      "Fig. 3: Structure diagram of the SE attention mechanism."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      243,
+      87,
+      794,
+      219
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "channel at position  $(i,j)$ . This process realizes the aggregation of global information, enabling the model to perceive the importance of each channel in the overall feature expression.",
+    "bbox": [
+      201,
+      266,
+      833,
+      309
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "2.2.2 Excitation phase (channel weight learning)",
+    "text_level": 1,
+    "bbox": [
+      203,
+      323,
+      662,
+      338
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "In the Excitation phase, dependencies between channels are constructed through two fully connected layers and nonlinear activation functions, generating the channel weight vector  $\\mathbf{s}$ :",
+    "bbox": [
+      201,
+      346,
+      831,
+      388
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\n\\mathbf {s} = \\sigma \\left(\\mathbf {W} _ {\\mathbf {2}} \\cdot \\delta \\left(\\mathbf {W} _ {\\mathbf {1}} \\cdot \\mathbf {z}\\right)\\right). \\tag {4}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      426,
+      401,
+      831,
+      417
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "Wherein,  $\\delta (\\cdot)$  represents the channel weight vector obtained through the GELU activation function,  $\\sigma (\\cdot)$  denotes the Sigmoid function, and the weight matrices of the two fully connected layers  $\\mathbf{W_1}$  and  $\\mathbf{W_2}$ , reflecting the importance degree of each channel; finally, feature enhancement is completed through the channel re-calibration  $\\mathrm{F}_{scale}(\\cdot)$  operation:",
+    "bbox": [
+      203,
+      420,
+      831,
+      491
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\n\\tilde {X} _ {c} = \\mathrm {F} _ {\\text {s c a l e}} \\left(X _ {c}, s _ {c}\\right) = s _ {c} \\cdot X _ {c}. \\tag {5}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      406,
+      504,
+      831,
+      520
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "Wherein,  $\\tilde{X}_c$  is the feature of the  $c$ -th channel, and  $s_c$  is the corresponding attention weight. The weighted feature  $\\tilde{X}_c$  will significantly enhance the response of key channels and suppress irrelevant information, thereby improving the representation ability and generalization performance of the model.",
+    "bbox": [
+      201,
+      523,
+      833,
+      580
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "2.3 Construction of the SE-MLP Model",
+    "text_level": 1,
+    "bbox": [
+      203,
+      595,
+      608,
+      609
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "Building upon the aforementioned multi-layer Perceptron (MLP) and the squeeze and excitation (SE) attention mechanism, this paper integrates the strengths of both to construct a three-layer SE-MLP model based on channel attention and residual fusion. Taking the physical characteristic parameters from penetration numerical simulations as input, the model extracts feature representations hierarchically through the three-layer MLP structure, and introduces an SE module after each layer to adaptively adjust the weights of feature channels, thereby highlighting key feature dimensions and suppressing irrelevant or redundant information. Compared with traditional MLPs, the",
+    "bbox": [
+      201,
+      618,
+      833,
+      733
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "page_number",
+    "text": "6",
+    "bbox": [
+      512,
+      764,
+      524,
+      775
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "image",
+    "img_path": "images/dd76074f1f23ef1b14dc2bca11a15dd58730efd17eef8ca16724ba3490b181d7.jpg",
+    "image_caption": [
+      "Fig. 4: Structure diagram of the squeeze and excitation multi-layer perceptron (SE-MLP)."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      203,
+      90,
+      751,
+      326
+    ],
+    "page_idx": 6
+  },
+  {
+    "type": "text",
+    "text": "SE-MLP significantly improves the network's capability to automatically identify the importance of input features while maintaining a compact structure, thereby enhancing its nonlinear modeling capability and generalization performance. Furthermore, residual connection modules are incorporated into the model structure to mitigate the problems of gradient vanishing and feature degradation commonly found in deep networks through cross-layer feature fusion, enabling the network to maintain stable gradient flow and effective feature transmission when processing high-dimensional physical parameters. Finally, the network outputs the predicted penetration acceleration characteristic values through a linear mapping layer and employs the Weighted Mean Squared Error (WMSE) as the loss function to emphasize the learning of key target features, achieving high-precision prediction of penetration characteristic values under multiple working conditions. The overall structure of the model is shown in Fig. 4.",
+    "bbox": [
+      161,
+      387,
+      793,
+      571
+    ],
+    "page_idx": 6
+  },
+  {
+    "type": "text",
+    "text": "The physical feature parameters of the warhead are taken as model inputs and fed into the network after unified scale processing. The main body of the model is composed of three-layer fully connected structures, where each layer contains a Linear fully connected layer, a Batch Normalization (BN) layer, a GELU activation function, and a Dropout layer to enhance training stability and reduce the risk of overfitting. An SE attention module is introduced after the output of each fully connected layer to learn the global importance weights of each channel through \"squeeze\" and \"excitation\" operations, achieving dynamic re-calibration of inter-channel features. This mechanism enables the model to automatically focus on key feature dimensions that contribute significantly to the prediction results, thereby significantly enhancing the feature representation capability and improving prediction accuracy.",
+    "bbox": [
+      161,
+      571,
+      794,
+      731
+    ],
+    "page_idx": 6
+  },
+  {
+    "type": "page_number",
+    "text": "7",
+    "bbox": [
+      473,
+      764,
+      482,
+      775
+    ],
+    "page_idx": 6
+  },
+  {
+    "type": "text",
+    "text": "After three layers of MLP feature extraction with attention, the model fuses the extracted features with the input signals through a residual connection module to realize cross-layer information transmission, effectively alleviating the gradient vanishing problem and further enhancing the training stability and generalization performance of the model. Finally, the acceleration signal feature values are output through a linear mapping layer, and this paper selects the acceleration peak and pulse width of each penetration layer as the target feature values for prediction. To ensure consistency between numerical scale and physical meaning, the acceleration peak adopts natural logarithm transformation for amplitude compression to alleviate the instability caused by its cross-scale variation to network training; the pulse width, as a low-amplitude time feature, adopts max normalization to maintain scale consistency among different samples.",
+    "bbox": [
+      206,
+      83,
+      836,
+      255
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "text",
+    "text": "3 Data Acquisition of Penetration Fuze Acceleration Signals",
+    "text_level": 1,
+    "bbox": [
+      203,
+      274,
+      821,
+      312
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "text",
+    "text": "The input of the model in this study consists of key physical feature parameters of the projectile-target system, primarily including the warhead type, impact velocity, target layer count, and material parameters, as well as the acceleration signal feature values for each layer obtained from numerical simulations. All input data are derived from numerical simulation results based on experimentally validated models, integrated with partial range test data. Through systematic modeling and parameter control, the coupling effects and complementary characteristics among physical parameters under various penetration conditions are fully considered. This approach effectively overcomes the limitations associated with using single-parameter inputs to characterize the penetration process.",
+    "bbox": [
+      206,
+      321,
+      833,
+      463
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "text",
+    "text": "In the process of dataset establishment, to ensure that the model possesses good generalization ability and data representativeness, typical penetration working conditions are selected for parameter combination to conduct numerical simulations, covering different warhead types, initial velocities, target materials, and penetration layers. Due to the complexity of the simulation calculation process, an increase in data volume will significantly escalate the computational cost; therefore, under the premise of guaranteeing a balance between accuracy and efficiency, this paper selects an appropriate sampling rate and dataset scale for simulation. Through multiple verifications, the sampling rate of the acceleration response signal is set to  $40\\mathrm{kHz}$  (i.e., the interval between adjacent sampling points is  $0.025\\mathrm{ms}$ ) to ensure the capture of high-frequency impact features while accounting for computational resource efficiency. The multi-condition dataset obtained through the aforementioned methods is used as the model input after feature scale unification processing, providing high-quality sample support for the feature learning and generalization of the SE-MLP model. The simulation dataset is not publicly available due to confidentiality restrictions.",
+    "bbox": [
+      206,
+      464,
+      831,
+      677
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "text",
+    "text": "This paper selects different warheads penetrating multi-layer concrete targets of different materials as the research object and establishes a full-scale numerical simulation model to simulate a total of 108 working conditions; the specific simulation working condition parameters are shown in Table 1.",
+    "bbox": [
+      203,
+      681,
+      831,
+      737
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "page_number",
+    "text": "8",
+    "bbox": [
+      512,
+      764,
+      524,
+      775
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "table",
+    "img_path": "images/b04fcee766c04af62aa7ffafb822b73147d8037da1b228923efe50038bb66593.jpg",
+    "table_caption": [
+      "Table 1: Parameters of simulation working conditions."
+    ],
+    "table_footnote": [],
+    "table_body": "<table><tr><td>Physical feature parameters</td><td>Penetration working conditions</td></tr><tr><td>Warhead type</td><td>60 kg-class, 150 kg-class, 300 kg-class, 600 kg-class</td></tr><tr><td>Penetration velocity</td><td>900 m/s-1700 m/s (step size is 100 m/s)</td></tr><tr><td>Target material type</td><td>C40, C60, C80</td></tr><tr><td>Number of penetration layers</td><td>6-10</td></tr></table>",
+    "bbox": [
+      164,
+      109,
+      793,
+      191
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "image",
+    "img_path": "images/f9e17b3ffbbe3575db5354920dba675ded09cfbd54e40db7393f10831c9abad9.jpg",
+    "image_caption": [
+      "Fig. 5: 1/4 symmetry model of the typical structure of the projectile-fuze system."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      329,
+      231,
+      630,
+      359
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "image",
+    "img_path": "images/6244d5796b88844670eb70eeeecd34b177d9eaeea27769f67290b9d096d04966.jpg",
+    "image_caption": [
+      "Fig. 6: Numerical simulation model of projectile-target penetration."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      228,
+      410,
+      727,
+      473
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "text",
+    "text": "The warhead as a whole is composed of the projectile body, warhead main charge, fuze, base screw, and other parts, wherein the fuze is simplified into a shell, potting material, and a PCB, and a gasket is placed at the connection interface between the fuze and the projectile body to play the role of acceleration buffering. The projectile body and base screw both adopt high-strength alloy steel material, while the fuze shell adopts aluminum alloy material; based on this, four different projectile-fuze systems are established respectively according to the warhead parameters, and the  $1/4$  symmetry model of the typical structure of the projectile-fuze system is shown in Fig. 5 [17].",
+    "bbox": [
+      159,
+      516,
+      791,
+      644
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "text",
+    "text": "The target is set as 6-10 layers of concrete targets, wherein the thickness of the first layer target is  $0.3\\mathrm{m}$ , and the thickness of each remaining layer target is  $0.18\\mathrm{m}$ , the material strength grade covers C40-C80, and the target spacing is  $3\\mathrm{m}$ . Fig. 6 shows the schematic of the projectile-target penetration simulation model.",
+    "bbox": [
+      161,
+      645,
+      793,
+      701
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "text",
+    "text": "The material parameters of the warhead and fuze are shown in the table 2 [23].",
+    "bbox": [
+      186,
+      701,
+      776,
+      715
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "page_number",
+    "text": "9",
+    "bbox": [
+      472,
+      764,
+      482,
+      775
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "table",
+    "img_path": "images/de2d6e9673872ac4ded57514e610819b32b24661b8997d23e37bc882a911e536.jpg",
+    "table_caption": [
+      "Table 2: Simulation material parameters."
+    ],
+    "table_footnote": [],
+    "table_body": "<table><tr><td>Material</td><td>Material density ρ/(kg/m3)</td><td>Elastic modulus E/GPa</td><td>Yield stress σ/MPa</td><td>Tangent modulus Etan/GPa</td><td>Poisson&#x27;s ratio μ</td></tr><tr><td>Projectile body</td><td>7800</td><td>207</td><td>1720</td><td>2.1</td><td>0.3</td></tr><tr><td>Charge</td><td>1760</td><td>20.1</td><td>200</td><td>0</td><td>0.35</td></tr><tr><td>Base screw</td><td>7800</td><td>207</td><td>1720</td><td>2.1</td><td>0.3</td></tr><tr><td>Potting material</td><td>580</td><td>24.1</td><td>350</td><td>0</td><td>0.3897</td></tr><tr><td>PCB</td><td>1500</td><td>11</td><td>100</td><td>0</td><td>0.35</td></tr><tr><td>Fuze body</td><td>2780</td><td>72.4</td><td>345</td><td>0.777</td><td>0.33</td></tr></table>",
+    "bbox": [
+      203,
+      109,
+      853,
+      216
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "text",
+    "text": "4 Performance Verification of the Network Model",
+    "text_level": 1,
+    "bbox": [
+      203,
+      243,
+      789,
+      259
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "text",
+    "text": "4.1 Data preprocessing",
+    "text_level": 1,
+    "bbox": [
+      203,
+      272,
+      440,
+      288
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "text",
+    "text": "The input  $X$  feature of the model in this paper is a four-dimensional matrix, respectively derived from physical feature parameters under different penetration working conditions, including warhead type (unit is  $kg$ ), penetration velocity (unit is  $m / s$ ), target material type, and number of penetration layers; the output target  $Y$  is the penetration acceleration response feature value under the corresponding working condition, namely the acceleration peak (unit is  $g$ ) and pulse width (unit is  $ms$ ) of each layer. Since there are significant differences in dimensions, numerical ranges, and variation scales between input features and output features, if they are directly used for network training, it is easy to induce problems such as gradient scale imbalance, convergence instability, and a decrease in training efficiency. Therefore, before model training, scale normalization processing is performed on the two types of data, input and output, respectively, to reduce the impact of dimensional differences on the model optimization process and improve the numerical stability of training [6].",
+    "bbox": [
+      201,
+      294,
+      833,
+      482
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "text",
+    "text": "4.1.1 Normalization of input feature X",
+    "text_level": 1,
+    "bbox": [
+      203,
+      495,
+      571,
+      510
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "text",
+    "text": "For the input feature  $\\mathbf{X} = [x_{1}, x_{2}, x_{3}, x_{4}]$ , this paper performs linear normalization on each feature individually, compressing features of different dimensions into the  $[0, 1]$  interval to eliminate the influence of numerical scale on model training. The formula for linear normalization is shown as follows:",
+    "bbox": [
+      203,
+      518,
+      831,
+      574
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\nx _ {i} ^ {\\prime} = \\frac {x _ {i} - x _ {\\operatorname* {m i n}}}{x _ {\\operatorname* {m a x}} - x _ {\\operatorname* {m i n}}}. \\tag {6}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      450,
+      586,
+      831,
+      612
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "text",
+    "text": "Wherein,  $x_{i}$  is the original feature value,  $x_{\\mathrm{min}}$  and  $x_{\\mathrm{max}}$  are the maximum and minimum values of this feature value in the overall sample of this feature, respectively, and the normalized  $x_{i}^{\\prime}\\in [0,1]$ .",
+    "bbox": [
+      203,
+      613,
+      831,
+      657
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "text",
+    "text": "4.1.2 Normalization of output target Y",
+    "text_level": 1,
+    "bbox": [
+      203,
+      671,
+      576,
+      686
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "text",
+    "text": "The output targets  $\\mathbf{Y} = [y_{acc}, y_{width}]$  represent the acceleration peak and pulse width, respectively. Since the acceleration peak has a large span under different working conditions, reaching a magnitude of tens of thousands, which easily leads to gradient",
+    "bbox": [
+      203,
+      693,
+      833,
+      736
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "page_number",
+    "text": "10",
+    "bbox": [
+      510,
+      764,
+      529,
+      775
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "text",
+    "text": "explosion or numerical oscillation during model training, this paper adopts logarithmic normalization for compression, and its formula is shown as follows:",
+    "bbox": [
+      161,
+      87,
+      794,
+      118
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\ny _ {a c c} ^ {\\prime} = \\frac {\\ln \\left(1 + y _ {a c c}\\right)}{\\operatorname* {m a x} \\left(\\ln \\left(1 + y _ {a c c}\\right)\\right)}. \\tag {7}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      383,
+      127,
+      791,
+      156
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "This processing method can effectively suppress the influence of extreme value samples on model training and stabilize gradient changes. For the pulse width feature, its value range is small and non-negative, with the minimum value approaching 0; therefore, the max normalization commonly used for time is adopted, and its formula is:",
+    "bbox": [
+      161,
+      156,
+      794,
+      228
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\ny _ {w i d t h} ^ {\\prime} = \\frac {y _ {w i d t h}}{\\operatorname* {m a x} \\left(y _ {w i d t h}\\right)}. \\tag {8}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      396,
+      239,
+      789,
+      266
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "This normalization method simplifies the calculation process while maintaining the proportional consistency between time scales, allowing time features under different working conditions to be modeled under a unified scale.",
+    "bbox": [
+      161,
+      266,
+      793,
+      310
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "4.1.3 Preservation of normalization parameters and denormalization",
+    "text_level": 1,
+    "bbox": [
+      163,
+      322,
+      653,
+      353
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "To ensure that the output of the model in the inference phase can be accurately mapped back to the real physical quantity scale, all scale parameters involved in the normalization links (including the minimum and maximum values of each input feature and the logarithmic transformation reference values of the acceleration peak feature) are recorded during the training process and saved in the parameter file in the same directory as the model. The inference phase strictly performs reverse scale mapping based on these recorded scale parameters, thereby guaranteeing the consistency of the normalization and denormalization processes and avoiding prediction bias caused by scale mismatch. The input of the final model is  $\\mathbf{X}^{\\prime}$  and the output is  $\\mathbf{Y}^{\\prime}$ ; the model fits the nonlinear function mapping between input physical features and acceleration responses through the deep learning mechanism:",
+    "bbox": [
+      161,
+      359,
+      794,
+      517
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\n\\mathrm {f} _ {\\theta}: \\mathbf {X} ^ {\\prime} \\rightarrow \\mathbf {Y} ^ {\\prime}. \\tag {9}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      428,
+      531,
+      789,
+      546
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "That is, by inputting the physical feature parameters of the warhead and the target, the fast prediction of key features such as the acceleration peak and pulse width of each penetration layer under the corresponding working condition is realized.",
+    "bbox": [
+      161,
+      548,
+      794,
+      590
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "4.2 Performance Evaluation Metrics",
+    "text_level": 1,
+    "bbox": [
+      163,
+      605,
+      532,
+      620
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "To comprehensively evaluate the performance of the proposed model in the acceleration feature prediction task, this paper quantitatively analyzes the model prediction results from the three dimensions of error amplitude, relative error, and goodness of fit. Comprehensively considering the physical meanings and applicable scenarios of different metrics, the mainly adopted performance evaluation metrics include the Mean Absolute Percentage Error (MAPE), Root Mean Squared Error (RMSE), and the coefficient of determination  $R^2$ . MAPE is used to reflect the average relative deviation of prediction results relative to real values, and is applicable to the error comparison",
+    "bbox": [
+      161,
+      627,
+      793,
+      743
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "page_number",
+    "text": "11",
+    "bbox": [
+      468,
+      764,
+      487,
+      775
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "between data of different dimensions;  $RMSE$  reflects the root mean squared amplitude of the overall prediction error, and is more sensitive to outliers; while  $R^2$  is used to measure the explanatory ability of the model for the total variance, serving as an important indicator for comprehensively evaluating the prediction fitting degree, and its calculation formula is shown as follows [5]:",
+    "bbox": [
+      203,
+      87,
+      830,
+      160
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\nM A P E = \\frac {1}{N} \\sum_ {i = 1} ^ {N} \\left| \\frac {\\hat {y} _ {i} - y _ {i}}{y _ {i}} \\right| \\times 100 \\% \\tag{10}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      391,
+      171,
+      830,
+      208
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\nR M S E = \\sqrt {\\frac {1}{N} \\sum_ {i = 1} ^ {N} \\left(\\hat {y} _ {i} - y _ {i}\\right) ^ {2}}. \\tag {11}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      411,
+      211,
+      830,
+      256
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\nR ^ {2} = 1 - \\frac {\\sum_ {i = 1} ^ {N} \\left(\\hat {y} _ {i} - y _ {i}\\right) ^ {2}}{\\sum_ {i = 1} ^ {N} \\left(y _ {i} - \\bar {y}\\right) ^ {2}}. \\tag {12}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      425,
+      259,
+      830,
+      294
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "Wherein,  $\\hat{y}_i$  and  $y_i$  are the predicted value and actual value of the  $i$ -th sample respectively,  $\\bar{y}$  is the mean of the sample true values, and  $N$  is the total number of test samples. The smaller the values of MAPE and RMSE, the lower the deviation between the predicted value and the true value, and the higher the model accuracy; while the closer  $R^2$  is to 1, the better the fitting degree of the model to the actual data.",
+    "bbox": [
+      203,
+      294,
+      831,
+      365
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "Furthermore, to eliminate the influence caused by the inconsistency of error scales between different dimensions and different physical quantities, this paper further calculates the Normalized Root Mean Squared Error (NRMSE), and its calculation formula is as follows:",
+    "bbox": [
+      203,
+      366,
+      831,
+      420
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\nN R M S E = \\frac {R M S E}{y _ {\\max} - y _ {\\min}}. \\tag {13}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      426,
+      432,
+      830,
+      463
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "Wherein,  $y_{\\mathrm{max}}$  and  $y_{\\mathrm{min}}$  are the maximum and minimum values of the target values in the real samples, respectively. NRMSE reflects the error level of the model under a unified scale, which helps to conduct performance comparisons between different prediction objects.",
+    "bbox": [
+      203,
+      462,
+      831,
+      518
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "Integrating the above metrics, this paper systematically evaluates the performance of the model from three aspects: error precision, result stability, and model fitting ability, and ensures the reliability and generalization of the results through multi-fold cross-validation.",
+    "bbox": [
+      203,
+      519,
+      831,
+      575
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "4.3 Model Training",
+    "text_level": 1,
+    "bbox": [
+      203,
+      589,
+      403,
+      606
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "Based on the PyTorch deep learning framework, this paper constructs a three-layer SE-MLP model, which is used for the nonlinear mapping learning between physical parameters under different working conditions and acceleration features. The model input is the physical feature matrix after unified scale processing, and the output is the acceleration peak and pulse width corresponding to each penetration layer, realizing the nonlinear mapping relationship from working condition physical parameters to acceleration feature values.",
+    "bbox": [
+      201,
+      612,
+      831,
+      709
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "In the training phase, all samples are subjected to fold processing, and a four-fold cross-validation ( $K = 4$ ) strategy is adopted to ensure the generalization performance",
+    "bbox": [
+      203,
+      712,
+      830,
+      741
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "page_number",
+    "text": "12",
+    "bbox": [
+      510,
+      764,
+      527,
+      775
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "and stability of the model. In each fold verification,  $75\\%$  of the samples are randomly partitioned as the training set, and  $25\\%$  of the samples act as the validation set, ensuring that the model can achieve robust learning under multi-working condition and multi-layer target conditions.",
+    "bbox": [
+      159,
+      87,
+      789,
+      143
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "text",
+    "text": "The data Batch Size is set to 32, and the maximum training epochs are 200. The model adopts the AdamW optimizer for parameter updating, the initial learning rate is set to  $1 \\times 10^{-3}$ , the weight decay coefficient is  $1 \\times 10^{-4}$ , and the ReduceLROnPlateau learning rate scheduling strategy is introduced; the learning rate decay coefficient is 0.5, and the number of tolerance stagnation epochs is 15, that is, when the validation set loss does not decrease within 15 consecutive epochs, the learning rate is automatically halved to improve the convergence speed and stability of training. To avoid parameter update stagnation caused by excessive decay of the learning rate, the learning rate lower limit threshold is set to  $1 \\times 10^{-6}$ .",
+    "bbox": [
+      161,
+      145,
+      793,
+      272
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "text",
+    "text": "The loss function adopts Weighted Mean Squared Error (WMMSE) to simultaneously account for the precision requirements of the two types of prediction targets: acceleration peak and pulse width. Considering that the acceleration peak has higher importance in penetration layer counting, interlayer identification, and burst point control strategies, and its magnitude is obviously larger than the pulse width feature, loss weights of 0.7 and 0.3 are assigned to the acceleration peak and pulse width respectively, thereby enhancing the model's sensitivity to the acceleration peak. The final loss function can be expressed as:",
+    "bbox": [
+      161,
+      273,
+      794,
+      387
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\nL = 0. 7 \\times M S E _ {\\mathrm {a c c}} + 0. 3 \\times M S E _ {\\mathrm {w i d t h}}. \\tag {14}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      337,
+      401,
+      789,
+      416
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "text",
+    "text": "To further enhance training stability and reduce the risk of overfitting, Batch Normalization and Dropout (dropout rate is set to 0.1) are added to each fully connected layer of the model, effectively promoting gradient flow and suppressing feature overfitting. GELU is selected as the activation function, possessing both the sparsity of ReLU and the smoothness of Sigmoid, which can improve the nonlinear expression ability of the model while maintaining gradient stability. During the training process, the variation trends of training loss and validation loss are monitored in real time to prevent overfitting, and the best model weights are recorded for final testing and performance evaluation.",
+    "bbox": [
+      161,
+      419,
+      793,
+      546
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "text",
+    "text": "To quantitatively evaluate the prediction ability of the constructed SE-MLP model under different working conditions, Fig. 7 and Table 3 respectively present the performance metric results of the 4-fold cross-validation and their visual representations. The table summarizes key evaluation metrics such as the Mean Absolute Percentage Error (MAPE), Root Mean Squared Error (RMSE), coefficient of determination  $(R^2)$ , and Normalized Root Mean Squared Error (NRMSE) of the model in each fold of verification.",
+    "bbox": [
+      161,
+      546,
+      793,
+      645
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "text",
+    "text": "It can be seen from the results in the table that the prediction performance of the model in the four-fold cross-validation is stable, and the fluctuations of various metrics are small, reflecting good generalization. Wherein, the average  $R^2$  of acceleration peak prediction reaches 0.9383, indicating that the model can accurately fit the nonlinear mapping relationship between physical parameters and acceleration features; its average MAPE is 8.46%, and NRMSE is 0.0543, demonstrating that the overall",
+    "bbox": [
+      161,
+      646,
+      793,
+      733
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "page_number",
+    "text": "13",
+    "bbox": [
+      468,
+      764,
+      487,
+      775
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "image",
+    "img_path": "images/cf976be4eb93c4211e0fd60afa4a59aad8acd68aacca8e0fbd3a83146fd3ef34.jpg",
+    "image_caption": [
+      "(a) Comparison of evaluation metrics for acceleration peak."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      208,
+      89,
+      505,
+      239
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "image",
+    "img_path": "images/76001c1dd7388798f40f0c42f470107aa2ff90a0637a6b70789b7cb9fdd10f8e.jpg",
+    "image_caption": [
+      "(b) Comparison of evaluation metrics for pulse width.",
+      "Fig. 7: Comparison of key evaluation metrics for penetration features."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      534,
+      87,
+      830,
+      239
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "table",
+    "img_path": "images/c4bb345e092c54125d2fe22ed779145503ad262a99128e2160c87e723c82818f.jpg",
+    "table_caption": [
+      "Table 3: Comparison of K-Fold evaluation metrics."
+    ],
+    "table_footnote": [],
+    "table_body": "<table><tr><td rowspan=\"2\">Fold</td><td colspan=\"4\">Acceleration peak</td><td colspan=\"4\">Pulse width</td></tr><tr><td>MAPE</td><td>RMSE</td><td>R2</td><td>NRMSE</td><td>MAPE</td><td>RMSE</td><td>R2</td><td>NRMSE</td></tr><tr><td>1-Fold</td><td>8.26%</td><td>3342.82</td><td>0.9425</td><td>0.0506</td><td>6.94%</td><td>0.0699</td><td>0.9803</td><td>0.0325</td></tr><tr><td>2-Fold</td><td>8.94%</td><td>3621.65</td><td>0.9208</td><td>0.0645</td><td>4.18%</td><td>0.0604</td><td>0.9845</td><td>0.0307</td></tr><tr><td>3-Fold</td><td>8.70%</td><td>3369.99</td><td>0.9384</td><td>0.0524</td><td>2.66%</td><td>0.0419</td><td>0.9924</td><td>0.0212</td></tr><tr><td>4-Fold</td><td>7.95%</td><td>3022.41</td><td>0.9515</td><td>0.0496</td><td>4.06%</td><td>0.0543</td><td>0.9875</td><td>0.0260</td></tr><tr><td>Average</td><td>8.46%</td><td>3339.22</td><td>0.9383</td><td>0.0543</td><td>4.46%</td><td>0.0566</td><td>0.9862</td><td>0.0276</td></tr></table>",
+    "bbox": [
+      203,
+      346,
+      838,
+      448
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "text",
+    "text": "error of the model is controlled within a reasonable range. In contrast, the prediction performance of pulse width is more excellent, with an average  $R^2$  as high as 0.9862 and a MAPE of only  $4.46\\%$ , indicating that the model possesses higher sensitivity and robustness in time-domain feature modeling.",
+    "bbox": [
+      201,
+      478,
+      833,
+      535
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "text",
+    "text": "Furthermore, it can be seen from the comparison of the four-fold results that the model can maintain stable convergence under different working conditions, and the prediction error does not show obvious abnormal fluctuations, indicating that the constructed three-layer SE-MLP model possesses good robustness and adaptability. In summary, the model exhibits excellent accuracy and stability in the prediction of the two penetration features, acceleration peak and pulse width, providing reliable theoretical and methodological support for the prediction of penetration acceleration feature values based on physical parameters.",
+    "bbox": [
+      201,
+      536,
+      835,
+      650
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "text",
+    "text": "4.4 Model Performance Comparison and Ablation Experiments",
+    "text_level": 1,
+    "bbox": [
+      203,
+      664,
+      831,
+      681
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "text",
+    "text": "To verify the robustness and adaptability of the proposed SE-MLP model in the penetration acceleration feature prediction task, this paper systematically analyzes and compares from two dimensions: horizontal model comparison and longitudinal ablation",
+    "bbox": [
+      201,
+      687,
+      833,
+      731
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "page_number",
+    "text": "14",
+    "bbox": [
+      510,
+      764,
+      529,
+      775
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "text",
+    "text": "experiments. The former aims to evaluate the comprehensive performance of SE-MLP compared with other mainstream neural network models in terms of prediction accuracy and stability; the latter is used to investigate the contribution degree of the SE channel attention module and residual structure to the overall prediction performance.",
+    "bbox": [
+      161,
+      87,
+      791,
+      146
+    ],
+    "page_idx": 14
+  },
+  {
+    "type": "text",
+    "text": "4.4.1 Model performance comparison",
+    "text_level": 1,
+    "bbox": [
+      163,
+      159,
+      517,
+      175
+    ],
+    "page_idx": 14
+  },
+  {
+    "type": "text",
+    "text": "To comprehensively evaluate the predictive performance and generalization capability of the proposed model, Transformer, XGBoost, Random Forest (RF), and Support Vector Regression (SVR) were selected as benchmarking baselines. The Transformer model possesses powerful global dependency modeling ability and can capture long-range correlations between input features through the self-attention mechanism, but its parameter scale is large, it relies significantly on data volume and computational resources, and it is prone to overfitting in the case of limited sample size [2, 24]. In contrast, the XG-Boost model has better stability and interpretability under small sample conditions, but its tree-based piecewise regression characteristics limit the deep nonlinear characterization ability for continuous feature spaces [4, 12]. RF effectively mitigates the risk of overfitting inherent in single models by integrating multiple decision trees, generally demonstrating robustness on small-to-medium datasets. However, its ability to model complex feature couplings relies heavily on tree depth, making it difficult to fully capture high-dimensional continuous nonlinear mappings. SVR, based on the principle of structural risk minimization, exhibits stability in high-dimensional, small-sample regression tasks. Yet, its performance is highly sensitive to the choice of kernel functions and hyperparameters. In scenarios involving high feature dimensionality and strong nonlinearity, parameter tuning becomes arduous, often leading to performance bottlenecks [1, 8]. Existing methods for acquiring penetration overload characteristics predominantly rely on numerical simulations or empirical modeling, with relatively few systematic studies based on deep learning. Consequently, building upon a review and reproduction of traditional machine learning methods, this study implements representative models—including Transformer, XGBoost, RF, and SVR—as benchmarks. This comparative framework aims to systematically evaluate the adaptability, generalization capability, and comprehensive performance advantages of the proposed SE-MLP model in penetration overload prediction tasks.",
+    "bbox": [
+      161,
+      181,
+      793,
+      551
+    ],
+    "page_idx": 14
+  },
+  {
+    "type": "text",
+    "text": "Under the same dataset, training parameters, and evaluation metrics, comparative experiments were conducted on Transformer, XG-Boost, and the proposed SE-MLP model. The experimental conditions remain consistent: the batch size is 32, the maximum training epochs are 200, the optimizer is AdamW, the initial learning rate is set to  $1 \\times 10^{-3}$ , and four-fold cross-validation is adopted to obtain robust average results. All evaluation metrics are calculated based on the prediction results after denormalization. The comparison results of model evaluation metrics are shown in Fig. 8 and Table 4, respectively.",
+    "bbox": [
+      161,
+      552,
+      791,
+      665
+    ],
+    "page_idx": 14
+  },
+  {
+    "type": "text",
+    "text": "As shown in Table 4, all five models achieved relatively high accuracy in the prediction tasks for both acceleration peak and pulse width; however, significant differences in overall performance exist. A comprehensive comparison reveals that the SE-MLP model exhibits optimal performance in both prediction tasks, demonstrating its distinct advantages in predicting acceleration signal feature values.",
+    "bbox": [
+      161,
+      665,
+      791,
+      737
+    ],
+    "page_idx": 14
+  },
+  {
+    "type": "page_number",
+    "text": "15",
+    "bbox": [
+      468,
+      764,
+      487,
+      776
+    ],
+    "page_idx": 14
+  },
+  {
+    "type": "image",
+    "img_path": "images/2946b8f677c2c68ea5a9e1fad05205e08406fa42474db6a9a5281ec86113a485.jpg",
+    "image_caption": [
+      "(a) Comparison of evaluation metrics for acceleration peak."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      211,
+      90,
+      505,
+      239
+    ],
+    "page_idx": 15
+  },
+  {
+    "type": "image",
+    "img_path": "images/797a3670668b3447cbf7209377ade1f3c0ae70fa1acb51a0538abafa806e4dde.jpg",
+    "image_caption": [
+      "(b) Comparison of evaluation metrics for pulse width.",
+      "Fig. 8: Comparison of key evaluation metrics for penetration features of different models."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      534,
+      90,
+      830,
+      239
+    ],
+    "page_idx": 15
+  },
+  {
+    "type": "table",
+    "img_path": "images/0bd3b8e3b66a531df86e3a0efcb4b9c9787bf75d47f995d73f74b81f3973be7b.jpg",
+    "table_caption": [
+      "Table 4: Comparison of evaluation metrics of different models."
+    ],
+    "table_footnote": [],
+    "table_body": "<table><tr><td rowspan=\"2\">Model Type</td><td colspan=\"4\">Acceleration peak</td><td colspan=\"4\">Pulse width</td></tr><tr><td>MAPE</td><td>RMSE</td><td>R2</td><td>NRMSE</td><td>MAPE</td><td>RMSE</td><td>R2</td><td>NRMSE</td></tr><tr><td>Transformer [2, 24]</td><td>13.19%</td><td>4977.29</td><td>0.8641</td><td>0.0807</td><td>2.88%</td><td>0.0358</td><td>0.9946</td><td>0.0175</td></tr><tr><td>XG-Boost [4, 12]</td><td>10.67%</td><td>3922.57</td><td>0.9071</td><td>0.0698</td><td>5.71%</td><td>0.0596</td><td>0.9849</td><td>0.0302</td></tr><tr><td>Random Forest [8]</td><td>10.38%</td><td>3844.72</td><td>0.9189</td><td>0.0623</td><td>3.58%</td><td>0.0625</td><td>0.9788</td><td>0.0303</td></tr><tr><td>SVR [1]</td><td>9.28%</td><td>3590.81</td><td>0.9289</td><td>0.0584</td><td>3.51%</td><td>0.0619</td><td>0.9838</td><td>0.0303</td></tr><tr><td>SE-MLP</td><td>8.46%</td><td>3339.22</td><td>0.9383</td><td>0.0543</td><td>4.46%</td><td>0.0566</td><td>0.9862</td><td>0.0276</td></tr></table>",
+    "bbox": [
+      203,
+      361,
+      835,
+      475
+    ],
+    "page_idx": 15
+  },
+  {
+    "type": "text",
+    "text": "In terms of acceleration peak prediction, the SE-MLP model achieved an  $RMSE$  of 3339.22, a  $MAPE$  of  $8.46\\%$ , and an  $R^2$  of 0.9383, outperforming all comparative models. This indicates that the SE-MLP can more accurately fit high-amplitude impact features under different working conditions. Its normalized error,  $NRMSE$ , is merely 0.0543, further indicating a minimal relative deviation between the predicted results and the ground truth, ensuring high numerical consistency. These results reflect that the SE-MLP model possesses stronger feature extraction and robust fitting capabilities when processing complex nonlinear inputs and multi-scale feature variations.",
+    "bbox": [
+      201,
+      506,
+      833,
+      620
+    ],
+    "page_idx": 15
+  },
+  {
+    "type": "text",
+    "text": "Regarding pulse width prediction, the SE-MLP model also exhibited excellent performance, with an  $R^2$  reaching 0.9862 and MAPE controlled at  $4.46\\%$ . The overall prediction accuracy improved by approximately  $11.7\\%$  compared with the standard MLP, and although marginally lower than the Transformer by  $1.6\\%$ , the fluctuation range is smaller, offering superior stability. Specifically, regarding the RMSE metric, the SE-MLP (0.0566) is slightly higher than the Transformer (0.0358); however, considering the Transformer's instability and pronounced tendency to overfit in peak prediction, the SE-MLP offers greater advantages in comprehensive performance and",
+    "bbox": [
+      203,
+      620,
+      833,
+      734
+    ],
+    "page_idx": 15
+  },
+  {
+    "type": "page_number",
+    "text": "16",
+    "bbox": [
+      510,
+      764,
+      529,
+      775
+    ],
+    "page_idx": 15
+  },
+  {
+    "type": "text",
+    "text": "robustness. The Transformer achieves an  $R^2$  as high as 0.9946 in pulse width prediction, benefitting largely from the adaptability of its powerful self-attention mechanism to time-domain features. Yet, in modeling amplitude responses such as acceleration peak, limited input samples and sensitivity to learning rates cause its global feature modeling to introduce overfitting, resulting in substantial performance volatility.",
+    "bbox": [
+      159,
+      87,
+      789,
+      158
+    ],
+    "page_idx": 16
+  },
+  {
+    "type": "text",
+    "text": "Further analysis indicates that the core reason for the performance improvement of the SE-MLP model lies in the feature selection and gradient propagation optimization brought by structural improvements. The SE module weights input features through the channel attention mechanism, which can adaptively adjust the response amplitudes of different feature channels, making the model focus more on physical parameters highly correlated with output features, such as penetration velocity and layer number, thereby enhancing the contribution of key features and suppressing the interference of redundant information. Furthermore, the introduction of the residual structure effectively mitigates the gradient vanishing problem in deep networks, enabling low-level features to directly participate in high-level decision-making, improving the stability of the training process and model convergence speed. In contrast, traditional MLP is prone to feature degradation phenomena in multi-layer mapping, while Transformer, although capable of capturing global dependencies, easily leads to parameter oscillation and training instability under small sample and high noise conditions.",
+    "bbox": [
+      166,
+      159,
+      793,
+      357
+    ],
+    "page_idx": 16
+  },
+  {
+    "type": "text",
+    "text": "In summary, the SE-MLP model achieves a comprehensive improvement in prediction accuracy, training stability, and generalization ability under the premise of controllable computational complexity. Its precise prediction of acceleration peak and pulse width features verifies the effectiveness of the channel attention and residual fusion structure in the problem of acceleration signal feature value prediction, providing a high-precision and lightweight solution for penetration acceleration feature value prediction based on working condition parameters.",
+    "bbox": [
+      161,
+      359,
+      793,
+      458
+    ],
+    "page_idx": 16
+  },
+  {
+    "type": "text",
+    "text": "4.4.2 Ablation experiments",
+    "text_level": 1,
+    "bbox": [
+      163,
+      472,
+      423,
+      488
+    ],
+    "page_idx": 16
+  },
+  {
+    "type": "text",
+    "text": "To further investigate the influence of key structures in the SE-MLP model on the overall prediction performance, this paper designs three groups of ablation experiments to quantitatively analyze the roles of the SE channel attention module and the residual connection structure, respectively. All experiments are based on the same dataset, training parameters, and evaluation metric settings to guarantee the comparability of results and the reliability of conclusions. Specifically, the experiment includes the following three network structures: Three-layer MLP: Only retains the basic fully connected structure without any improvement modules; Three-layer MLP + SE: Introduces the SE channel attention module after each fully connected layer network, but does not use residual connections; SE-MLP: Further adds residual connections on the basis of the previous structure, which is the complete model proposed in this paper. Fig. 9 and Table 5 present the average performance metrics of the three structures in acceleration peak and pulse width prediction. The results show that as the network structure is gradually enhanced, the prediction accuracy and robustness of the model are significantly improved.",
+    "bbox": [
+      166,
+      494,
+      793,
+      708
+    ],
+    "page_idx": 16
+  },
+  {
+    "type": "text",
+    "text": "It can be seen from the results in the table that with the gradual improvement of the network structure, the overall performance of the model in the acceleration",
+    "bbox": [
+      161,
+      709,
+      791,
+      738
+    ],
+    "page_idx": 16
+  },
+  {
+    "type": "page_number",
+    "text": "17",
+    "bbox": [
+      468,
+      764,
+      487,
+      775
+    ],
+    "page_idx": 16
+  },
+  {
+    "type": "image",
+    "img_path": "images/815398ef81abcacd7be8ca2c89954a159a43f9a776d2abaafe4452e9ac5560f5.jpg",
+    "image_caption": [
+      "(a) Comparison of evaluation metrics for acceleration peak."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      208,
+      87,
+      509,
+      239
+    ],
+    "page_idx": 17
+  },
+  {
+    "type": "image",
+    "img_path": "images/820506b6adce6b85cf6510c6a3af7f824c498eb38692961966370e2d93879376.jpg",
+    "image_caption": [
+      "(b) Comparison of evaluation metrics for pulse width.",
+      "Fig. 9: Comparison of key evaluation metrics for penetration features in ablation experiments."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      532,
+      87,
+      833,
+      239
+    ],
+    "page_idx": 17
+  },
+  {
+    "type": "table",
+    "img_path": "images/768944b23a2285cc54f5a9f682f202538aad93b616167985025b5871b79924bb.jpg",
+    "table_caption": [
+      "Table 5: Comparison of evaluation metrics in ablation experiments."
+    ],
+    "table_footnote": [],
+    "table_body": "<table><tr><td rowspan=\"2\">Model Type</td><td colspan=\"4\">Acceleration peak</td><td colspan=\"4\">Pulse width</td></tr><tr><td>MAPE</td><td>RMSE</td><td>R2</td><td>NRMSE</td><td>MAPE</td><td>RMSE</td><td>R2</td><td>NRMSE</td></tr><tr><td>Three-layer MLP</td><td>10.47%</td><td>4160.98</td><td>0.9043</td><td>0.0676</td><td>4.97%</td><td>0.0689</td><td>0.9798</td><td>0.0338</td></tr><tr><td>Three-layer MLP + SE</td><td>9.60%</td><td>3835.33</td><td>0.9192</td><td>0.0623</td><td>4.29%</td><td>0.0594</td><td>0.9849</td><td>0.0291</td></tr><tr><td>SE-MLP</td><td>8.46%</td><td>3339.22</td><td>0.9383</td><td>0.0543</td><td>4.46%</td><td>0.0566</td><td>0.9862</td><td>0.0276</td></tr></table>",
+    "bbox": [
+      203,
+      361,
+      865,
+      449
+    ],
+    "page_idx": 17
+  },
+  {
+    "type": "text",
+    "text": "peak and pulse width prediction tasks presents a significant increasing trend. The basic three-layer MLP model has an  $RMSE$  of 4160.98 and an  $R^2$  of 0.9043 in peak prediction, indicating that although it possesses certain nonlinear mapping ability, the fitting is insufficient; in pulse width prediction,  $R^2$  reaches 0.9798, showing certain stability, but there is still large room for improvement in overall accuracy.",
+    "bbox": [
+      201,
+      480,
+      833,
+      551
+    ],
+    "page_idx": 17
+  },
+  {
+    "type": "text",
+    "text": "After introducing the SE module, the model performance improves obviously. The SE module adaptively adjusts the weight distribution of each input feature through the channel attention mechanism, enabling the model to focus on key features highly correlated with output variables (such as penetration velocity, target material, etc.), thereby effectively suppressing the interference of redundant features on training. Experimental results indicate that the peak prediction  $RMSE$  of the MLP+SE model decreases to 3835.33 (reduced by about  $7.8\\%$  compared with basic MLP), and  $R^2$  increases to 0.9192; the MAPE of pulse width prediction drops to  $4.29\\%$ , indicating that the introduction of the SE module significantly enhances the feature selection ability and nonlinear fitting accuracy of the model.",
+    "bbox": [
+      201,
+      552,
+      833,
+      694
+    ],
+    "page_idx": 17
+  },
+  {
+    "type": "text",
+    "text": "After further adding the residual connection structure on this basis, the model performance obtains continuous improvement. The residual path effectively mitigates the",
+    "bbox": [
+      203,
+      694,
+      833,
+      722
+    ],
+    "page_idx": 17
+  },
+  {
+    "type": "page_number",
+    "text": "18",
+    "bbox": [
+      510,
+      764,
+      529,
+      775
+    ],
+    "page_idx": 17
+  },
+  {
+    "type": "table",
+    "img_path": "images/9026a6ab67c46932d9bd997152588229a9113e77c3a11635970d8e6ead0042f6.jpg",
+    "table_caption": [
+      "Table 6: Test comparison results and error table."
+    ],
+    "table_footnote": [],
+    "table_body": "<table><tr><td>Acceleration feature</td><td>Layer number</td><td>Test condition</td><td>Numerical simulation</td><td>Model prediction</td><td>Simulation error</td><td>Prediction error</td></tr><tr><td rowspan=\"5\">Acceleration peak/g</td><td>1st layer</td><td>33750</td><td>31734</td><td>30682</td><td>5.97%</td><td>9.09%</td></tr><tr><td>2nd layer</td><td>46875</td><td>43673</td><td>42006</td><td>6.83%</td><td>10.39%</td></tr><tr><td>3rd layer</td><td>55625</td><td>50714</td><td>51178</td><td>8.83%</td><td>7.99%</td></tr><tr><td>4th layer</td><td>62500</td><td>64081</td><td>58102</td><td>2.53%</td><td>7.04%</td></tr><tr><td>5th layer</td><td>56785</td><td>60612</td><td>64707</td><td>6.57%</td><td>13.95%</td></tr><tr><td rowspan=\"5\">Pulse width/ms</td><td>1st layer</td><td>0.77</td><td>0.72</td><td>0.75</td><td>6.49%</td><td>2.60%</td></tr><tr><td>2nd layer</td><td>0.79</td><td>0.73</td><td>0.76</td><td>7.59%</td><td>3.80%</td></tr><tr><td>3rd layer</td><td>0.80</td><td>0.75</td><td>0.78</td><td>6.25%</td><td>2.50%</td></tr><tr><td>4th layer</td><td>0.82</td><td>0.80</td><td>0.81</td><td>2.44%</td><td>1.22%</td></tr><tr><td>5th layer</td><td>0.83</td><td>0.85</td><td>0.84</td><td>2.41%</td><td>1.20%</td></tr></table>",
+    "bbox": [
+      163,
+      109,
+      793,
+      267
+    ],
+    "page_idx": 18
+  },
+  {
+    "type": "text",
+    "text": "problems of gradient vanishing and feature degradation in deep networks by establishing direct connections between low-level and high-level features, making the training process more stable and the convergence speed faster. The peak prediction  $RMSE$  of the complete SE-MLP model further decreases to 3339.22 (reduced by  $12.9\\%$  compared with  $\\mathrm{MLP} + \\mathrm{SE}$ , and reduced by  $19.7\\%$  compared with basic MLP), and  $R^2$  increases to 0.9383; the  $RMSE$  and  $NRMSE$  of pulse width prediction drop to 0.0566 and 0.0276 respectively, exhibiting superior accuracy and robustness. This result indicates that the residual structure plays a key role in improving the generalization ability and training stability of the model, making the learning of high-dimensional input features of the model under complex penetration environments more sufficient.",
+    "bbox": [
+      159,
+      298,
+      793,
+      439
+    ],
+    "page_idx": 18
+  },
+  {
+    "type": "text",
+    "text": "Therefore, the SE channel attention and the residual structure play a synergistic role in penetration acceleration feature prediction, which is the important structural basis for the SE-MLP model performance being significantly superior to the traditional fully connected network. This structural design idea provides new theoretical support and implementation paths for the prediction of penetration acceleration feature values.",
+    "bbox": [
+      161,
+      439,
+      791,
+      512
+    ],
+    "page_idx": 18
+  },
+  {
+    "type": "text",
+    "text": "5 Simulation and Experimental Verification of Prior Feature Values",
+    "text_level": 1,
+    "bbox": [
+      161,
+      527,
+      774,
+      563
+    ],
+    "page_idx": 18
+  },
+  {
+    "type": "text",
+    "text": "To further verify the applicability and prediction accuracy of the SE-MLP model, additional numerical simulations and range recovery test data were used to evaluate the trained model. Specifically, the prediction accuracy was assessed by comparing the predicted acceleration peaks and pulse widths with the measured data from both the simulations and the range tests. To ensure consistency and comparability, the simulation parameters were strictly aligned with the range recovery test conditions, thereby verifying the model's generalization ability in a real penetration environment. The specific test parameters were: a  $94\\mathrm{kg}$ -class warhead penetrating a 5-layer C40 concrete target at an initial velocity of  $926~\\mathrm{m / s}$ . The first target layer had a thickness of  $0.3\\mathrm{m}$ , while the remaining four layers were  $0.18\\mathrm{m}$  each. The comparison results are presented in Fig. 10 and Table 6.",
+    "bbox": [
+      161,
+      574,
+      793,
+      732
+    ],
+    "page_idx": 18
+  },
+  {
+    "type": "page_number",
+    "text": "19",
+    "bbox": [
+      468,
+      764,
+      487,
+      775
+    ],
+    "page_idx": 18
+  },
+  {
+    "type": "image",
+    "img_path": "images/e4a72c79aa48800c513d5d64b928c6d646e80afee668f4defd5d2f1f9bf81f78.jpg",
+    "image_caption": [
+      "(a) Comparison diagram of acceleration peak test."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      206,
+      93,
+      500,
+      235
+    ],
+    "page_idx": 19
+  },
+  {
+    "type": "image",
+    "img_path": "images/1b3dc5f6f9df04578816c996fcdff4ca35c28b439280545039f18c42eb3b8c66.jpg",
+    "image_caption": [
+      "(b) Comparison diagram of pulse width test.",
+      "Fig. 10: Test comparison."
+    ],
+    "image_footnote": [],
+    "bbox": [
+      537,
+      105,
+      826,
+      247
+    ],
+    "page_idx": 19
+  },
+  {
+    "type": "text",
+    "text": "It can be seen from Fig. 10 and Table 6 that the prediction results of the SE-MLP model for acceleration peak and pulse width are highly consistent with the experimental measured values, the peak error is controlled within  $15\\%$ , and the pulse width errors are all less than  $4\\%$ . The model can accurately capture the variation laws between different layers, reflecting good physical consistency and prediction stability. The results show that the constructed SE-MLP model has strong generalization ability and engineering applicability under actual penetration working conditions, and can provide reliable support for the acquisition of penetration prior feature values.",
+    "bbox": [
+      201,
+      319,
+      833,
+      434
+    ],
+    "page_idx": 19
+  },
+  {
+    "type": "text",
+    "text": "6 Conclusion",
+    "text_level": 1,
+    "bbox": [
+      203,
+      449,
+      361,
+      464
+    ],
+    "page_idx": 19
+  },
+  {
+    "type": "text",
+    "text": "To address the challenges of long simulation cycles and high computational costs associated with acquiring penetration prior feature values, this paper proposes a lightweight multi-layer perceptron (SE-MLP) prediction model incorporating channel attention and residual fusion. By synergizing the nonlinear mapping capability of MLPs with the adaptive feature weighting of the SE mechanism, the model achieves an efficient mapping between physical parameters and penetration acceleration features. The main conclusions are as follows:",
+    "bbox": [
+      201,
+      476,
+      835,
+      576
+    ],
+    "page_idx": 19
+  },
+  {
+    "type": "list",
+    "sub_type": "text",
+    "list_items": [
+      "- The proposed SE-MLP integrates SE attention mechanisms with residual structures to facilitate adaptive feature weighting and cross-layer information transfer. This architecture effectively enhances feature extraction capabilities while ensuring training stability.",
+      "- Benchmarking against MLP, Transformer, and XGBoost demonstrates that SEMLP achieves superior performance in predicting penetration overload characteristics. It reduced the average  $RMSE$  by  $15\\% - 30\\%$  and improved  $R^2$  by approximately  $4\\%$ , highlighting its exceptional accuracy and generalization.",
+      "- Ablation studies confirmed the synergistic effect between channel attention and residual structures. Removing either component resulted in an RMSE increase of"
+    ],
+    "bbox": [
+      203,
+      583,
+      833,
+      726
+    ],
+    "page_idx": 19
+  },
+  {
+    "type": "page_number",
+    "text": "20",
+    "bbox": [
+      509,
+      764,
+      529,
+      775
+    ],
+    "page_idx": 19
+  },
+  {
+    "type": "text",
+    "text": "$10\\% - 15\\%$  and an  $R^2$  decrease of  $2\\% - 4\\%$ , indicating their critical role in maintaining predictive precision.",
+    "bbox": [
+      181,
+      86,
+      789,
+      116
+    ],
+    "page_idx": 20
+  },
+  {
+    "type": "text",
+    "text": "- Validation via numerical simulations and field tests confirms that prediction errors remain within  $15\\%$ . The model accurately captures energy transfer dynamics and interlayer feature variations during the penetration process.",
+    "bbox": [
+      166,
+      117,
+      789,
+      159
+    ],
+    "page_idx": 20
+  },
+  {
+    "type": "text",
+    "text": "Despite the promising prediction performance, there is potential for further improvement. Future research will primarily focus on expanding the physical feature space by incorporating multidimensional parameters—such as attitude angle, length-to-diameter ratio, and frequency domain response—to construct a framework with richer physical significance.",
+    "bbox": [
+      166,
+      166,
+      789,
+      237
+    ],
+    "page_idx": 20
+  },
+  {
+    "type": "text",
+    "text": "References",
+    "text_level": 1,
+    "bbox": [
+      166,
+      253,
+      290,
+      269
+    ],
+    "page_idx": 20
+  },
+  {
+    "type": "list",
+    "sub_type": "ref_text",
+    "list_items": [
+      "[1] Bargam B, Boudhar A, Kinnard C, et al (2024) Evaluation of the support vector regression (SVR) and the random forest (RF) models accuracy for streamflow prediction under a data-scarce basin in Morocco. Discover Applied Sciences 6(6):306. https://doi.org/10.1007/s42452-024-05994-z, (Formerly known as SN Applied Sciences)",
+      "[2] Chen L, You Z, Zhang N, et al (2022) UTRAD: Anomaly detection and localization with U-Transformer. Neural Networks 147:53-62",
+      "[3] Chen SA, Li CL, Yoder N, et al (2023) TSMixer: An all-MLP architecture for time series forecasting. Transactions on Machine Learning Research",
+      "[4] Cheng B, Liu Y, Jia Y (2024) Evaluation of students' performance during the academic period using the XG-Boost classifier-enhanced AEO hybrid model. Expert Systems with Applications 238:122136",
+      "[5] Chicco D, Warrens MJ, Jurman G (2021) The coefficient of determination R-squared is more informative than SMAPE, MAE, MAPE, MSE, and RMSE in regression analysis evaluation. PeerJ Computer Science 7:e623",
+      "[6] De ALBV, Cavalcanti GDC, Cruz RMO (2023) The choice of scaling technique matters for classification performance. Applied Soft Computing 133:109923",
+      "[7] Dudek G (2020) Multilayer perceptron for short-term load forecasting: from global to local approach. Neural Computing and Applications 32:3695-3707",
+      "[8] Feng DC, Liu ZT, Wang XD, et al (2020) Machine learning-based compressive strength prediction for concrete: An adaptive boosting approach. Neural Computing and Applications 32(10):6151-6164",
+      "[9] Haykin S (2009) Neural Networks and Learning Machines, 3rd edn. Pearson Education, Upper Saddle River, NJ"
+    ],
+    "bbox": [
+      173,
+      280,
+      791,
+      718
+    ],
+    "page_idx": 20
+  },
+  {
+    "type": "page_number",
+    "text": "21",
+    "bbox": [
+      468,
+      764,
+      485,
+      775
+    ],
+    "page_idx": 20
+  },
+  {
+    "type": "list",
+    "sub_type": "ref_text",
+    "list_items": [
+      "[10] He K, Zhang X, Ren S, et al (2016) Deep residual learning for image recognition. In: Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), pp 770-778",
+      "[11] Hu J, Shen L, Sun G (2020) Squeeze-and-Excitation networks. IEEE Transactions on Pattern Analysis and Machine Intelligence 42(8):2011-2023",
+      "[12] Khan MI, Abbas YM, Fares G, et al (2023) Strength prediction and optimization for ultrahigh-performance concrete with low-carbon cementitious materials – XG boost model and experimental validation. Construction and Building Materials 387:131629",
+      "[13] Li H, Zhang R, Pan Y, et al (2024) Lr-fpn: Enhancing remote sensing object detection with location refined feature pyramid network. In: 2024 International Joint Conference on Neural Networks (IJCNN), IEEE, pp 1-8",
+      "[14] Li R, Fang A (2023) Generation of penetration multi-layer overload signals based on TransUnet. Journal of Test and Measurement Technology 37(1):43-53. (in Chinese)",
+      "[15] Liu W, Li R, Niu L, et al (2023) Research status and prospect of detonation control technology for hard target penetration. Acta Armamentarii 44(6):1602-1619. (in Chinese)",
+      "[16] Ma H, Sun H, Li C (2023) Penetration overload prediction method based on a deep neural network with multiple inputs. Applied Sciences 13(4):2351",
+      "[17] Peng J (2023) Research on buffering and protection performance of rubber gaskets for penetration fuze. PhD thesis, Nanjing University of Science and Technology, Nanjing, China, (in Chinese)",
+      "[18] Shen F, Tang J (2024) Imagpose: A unified conditional framework for pose-guided person generation. Advances in neural information processing systems 37:6246-6266",
+      "[19] Shen F, Jiang X, He X, et al (2025) Imagdressing-v1: Customizable virtual dressing. In: Proceedings of the AAAI Conference on Artificial Intelligence, pp 6795-6804",
+      "[20] Wang Y, Li C, Wang X (2024) A multi-source information fusion layer counting method for penetration fuze based on TCN-LSTM. Defence Technology 33(3):463-474",
+      "[21] Wang YL, Li CS, Zhang H, et al (2025) Research on a rapid prediction method for magnetic anomaly responses in the penetration process based on an improved Pod-RBF neural network. Journal (To be published)"
+    ],
+    "bbox": [
+      206,
+      85,
+      831,
+      717
+    ],
+    "page_idx": 21
+  },
+  {
+    "type": "page_number",
+    "text": "22",
+    "bbox": [
+      509,
+      764,
+      529,
+      775
+    ],
+    "page_idx": 21
+  },
+  {
+    "type": "list",
+    "sub_type": "ref_text",
+    "list_items": [
+      "[22] Weng W, Wei M, Ren J, et al (2024) Enhancing aerial object detection with selective frequency interaction network. IEEE Transactions on Artificial Intelligence 1(01):1-12",
+      "[23] Xin C, Xue Z (2019) Handbook of Common Material Parameters for Finite Element Analysis. China Machine Press, Beijing, China, (in Chinese)",
+      "[24] Xu Y, Liu A, Hao J, et al (2024) PLUTUS: A well pre-trained large unified Transformer can unveil financial time series regularities. arXiv preprint arXiv:240810111",
+      "[25] Zeng A, Chen M, Zhang L, et al (2023) Are Transformers effective for time series forecasting? In: Proceedings of the AAAI Conference on Artificial Intelligence, pp 11121-11128",
+      "[26] Zhang H, Yu H, Dai K, et al (2022) Precise detonation control of smart fuzes in complex wide-area battlefields. Acta Armamentarii 43(10):2527-2533. (in Chinese)"
+    ],
+    "bbox": [
+      163,
+      86,
+      793,
+      335
+    ],
+    "page_idx": 22
+  },
+  {
+    "type": "page_number",
+    "text": "23",
+    "bbox": [
+      468,
+      764,
+      487,
+      776
+    ],
+    "page_idx": 22
+  }
+]

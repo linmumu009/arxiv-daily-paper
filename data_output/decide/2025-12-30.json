@@ -1,0 +1,97 @@
+[
+  {
+    "文件名": "2512.14064v1.json",
+    "机构名": "北京大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.14397v1.json",
+    "机构名": "清华大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2506.06694v6.json",
+    "机构名": "清华大学",
+    "is_large": true,
+    "第一作者机构": "清华大学",
+    "通讯作者机构": "清华大学"
+  },
+  {
+    "文件名": "2512.14064v1.json",
+    "机构名": "北京大学",
+    "is_large": true,
+    "第一作者机构": "北京大学",
+    "通讯作者机构": "北京大学"
+  },
+  {
+    "文件名": "2512.14397v1.json",
+    "机构名": "清华大学",
+    "is_large": true,
+    "第一作者机构": "清华大学",
+    "通讯作者机构": "清华大学"
+  },
+  {
+    "文件名": "2512.20491v4.json",
+    "机构名": "StepFun",
+    "第一作者机构": "StepFun",
+    "通讯作者机构": "StepFun",
+    "is_large": false
+  },
+  {
+    "文件名": "2512.23126v1.json",
+    "机构名": "George Washington University",
+    "第一作者机构": "George Washington University",
+    "通讯作者机构": "George Washington University",
+    "is_large": false
+  },
+  {
+    "文件名": "2512.23128v1.json",
+    "机构名": "牛津大学",
+    "is_large": true,
+    "第一作者机构": "牛津大学",
+    "通讯作者机构": "牛津大学",
+    "备注": "第一作者 Karolina Korgul 隶属于 University of Oxford (1)；通讯作者标记为 * 和 †，其中 * 对应 Karolina Korgul（同属牛津大学），† 对应 Adam Mahdi 和 Adel Bibi，均隶属于牛津大学 (1) 或其合作单位。因此主要机构为牛津大学。"
+  },
+  {
+    "文件名": "2512.23130v1.json",
+    "机构名": "Nanyang Technological University",
+    "is_large": true,
+    "第一作者机构": "Harvard Medical School",
+    "通讯作者机构": "Nanyang Technological University"
+  },
+  {
+    "文件名": "2512.23131v1.json",
+    "机构名": "南京理工大学",
+    "is_large": true,
+    "第一作者机构": "南京理工大学",
+    "通讯作者机构": "南京理工大学"
+  },
+  {
+    "文件名": "2512.23132v1.json",
+    "机构名": "Polytechnique Montréal",
+    "is_large": false,
+    "第一作者机构": "Polytechnique Montréal",
+    "通讯作者机构": "Polytechnique Montréal"
+  },
+  {
+    "文件名": "2512.23135v1.json",
+    "机构名": "耶鲁大学",
+    "is_large": true,
+    "第一作者机构": "耶鲁大学",
+    "通讯作者机构": "耶鲁大学"
+  },
+  {
+    "文件名": "2512.23137v1.json",
+    "第一作者机构": "University of Georgia",
+    "通讯作者机构": "University of Georgia",
+    "机构名": "University of Georgia",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.23145v1.json",
+    "机构名": "九州工业大学",
+    "第一作者机构": "九州工业大学生命科学与系统工程研究生院",
+    "通讯作者机构": "九州工业大学神经形态AI硬件研究中心",
+    "is_large": true
+  }
+]

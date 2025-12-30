@@ -1,0 +1,1918 @@
+[
+  {
+    "type": "text",
+    "text": "SuperWing: a comprehensive transonic wing dataset for data-driven aerodynamic design",
+    "text_level": 1,
+    "bbox": [
+      178,
+      116,
+      818,
+      170
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "Yunjia Yang $^{1,2}$ , Weishao Tang $^{1}$ , Mengxin Liu $^{1}$ , Nils Thuerey $^{2}$ , Yufei Zhang $^{1}$ , and Haixin Chen $^{*1}$",
+    "bbox": [
+      158,
+      185,
+      836,
+      220
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "$^{1}$ School of Aerospace Engineering, Tsinghua University, Beijing, China  \n $^{2}$ School of Computation, Information and Technology, Technical University of Munich, Germany",
+    "bbox": [
+      169,
+      233,
+      826,
+      287
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "December 17, 2025",
+    "bbox": [
+      416,
+      309,
+      578,
+      325
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "Abstract",
+    "text_level": 1,
+    "bbox": [
+      462,
+      368,
+      532,
+      381
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "Machine-learning surrogate models have shown promise in accelerating aerodynamic design, yet progress toward generalizable predictors for three-dimensional wings has been limited by the scarcity and restricted diversity of existing datasets. Here, we present SuperWing, a comprehensive open dataset of transonic swept-wing aerodynamics comprising 4,239 parameterized wing geometries and 28,856 Reynolds-averaged Navier-Stokes flow field solutions. The wing shapes in the dataset are generated using a simplified yet expressive geometry parameterization that incorporates spanwise variations in airfoil shape, twist, and dihedral, allowing for an enhanced diversity without relying on perturbations of a baseline wing. All shapes are simulated under a broad range of Mach numbers and angles of attack covering the typical flight envelope. To demonstrate the dataset's utility, we benchmark two state-of-the-art Transformers that accurately predict surface flow and achieve a 2.5 drag-count error on held-out samples. Models pretrained on SuperWing further exhibit strong zero-shot generalization to complex benchmark wings such as DLR-F6 and NASA CRM, underscoring the dataset's diversity and potential for practical usage.",
+    "bbox": [
+      173,
+      387,
+      821,
+      568
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "1 Introduction",
+    "text_level": 1,
+    "bbox": [
+      135,
+      590,
+      323,
+      608
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "Machine learning (ML) techniques have emerged over the past decade as a powerful tool to reshape aerodynamic design optimization. By learning directly from data to predict flow fields given shape and operating condition, ML models can serve as surrogate models [1, 2] in iterative shape-optimization loops, significantly reducing computational cost and accelerating the design process [3-5]. They can be also used to provide designers with near-instant responses of flow field and performance, enabling interactive optimization and generative design.",
+    "bbox": [
+      130,
+      621,
+      861,
+      710
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "The above applications rely on foundation models that are generalizable across diverse shapes and operating conditions. In recent years, researchers have successfully trained such models for two-dimensional aerodynamic components, leading to notable progress in design optimization [3, 6-9]. However, developing a foundation model capable of predicting flow fields and aerodynamic performance for three-dimensional configurations such as wings remains a significant challenge. The primary limitation is the lack of sufficiently diverse datasets that capture flow fields across a wide range of wing geometries. Existing datasets predominantly focus on turbulent flows around a few fixed configurations [10, 11], and those that include multiple wing shapes still suffer from limited geometric diversity. We summarized existing wing flow field datasets in Table 1, where some studies employ fixed geometries while varying only the flow conditions [12-15], while others perturb a single baseline wing to generate training samples [4, 16-23]. Such approaches restrict the model's general applicability, since a foundation model is expected to operate across a wide variety of wing geometries. In our previous work [24, 25], we attempted to build datasets independent of a baseline wing, sampling shapes from",
+    "bbox": [
+      135,
+      712,
+      861,
+      909
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "aside_text",
+    "text": "arXiv:2512.14397v1 [cs.LG] 16 Dec 2025",
+    "bbox": [
+      22,
+      276,
+      58,
+      724
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "page_footnote",
+    "text": "*Corresponding author: chenhaixin@tsinghua.edu.cn",
+    "bbox": [
+      151,
+      917,
+      477,
+      931
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "page_number",
+    "text": "1",
+    "bbox": [
+      493,
+      955,
+      503,
+      965
+    ],
+    "page_idx": 0
+  },
+  {
+    "type": "text",
+    "text": "a variety of sectional airfoils and planform parameters. While this represented a step forward, the resulting configurations still lacked the complexity of realistic designs.",
+    "bbox": [
+      132,
+      71,
+      862,
+      101
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "Another bottleneck lies in the limitations of conventional ML architectures when applied to large-scale aerodynamic datasets. Recent advances in Transformer-based neural networks have demonstrated strong scalability and the ability to capture complex correlations [26-31]. However, most existing studies focus on relatively simple geometries, and their effectiveness on realistic engineering problems remains underexplored.",
+    "bbox": [
+      132,
+      102,
+      861,
+      176
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "To address these challenges, this study contributes a comprehensive dataset that can serve as the foundation for downstream tasks such as building generalizable surrogate models and a benchmark to test the state-of-the-art models. We propose a simplified yet expressive geometric parameterization scheme for wing shapes to generate the dataset. Unlike baseline-perturbation approaches, our method constructs geometries from scratch using design rules grounded in realistic transonic wing configurations. This ensures that the dataset is both diverse and engineering-practical. Guided by a survey of representative industrial wing designs, including two benchmark and two real-world configurations, we generated the SuperWing dataset, which comprises near 30,000 flow-field samples.",
+    "bbox": [
+      132,
+      178,
+      862,
+      297
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "On this basis, we trained two state-of-the-art Transformer architectures, Vision Transformer (ViT) [32] and Transolver [26]. Their predictive accuracy is tested within the dataset and on out-of-distribution benchmark wing shapes to demonstrate the usability of the proposed dataset. The dataset is released at https://huggingface.co/datasets/yunplus/SuperWing..",
+    "bbox": [
+      133,
+      297,
+      861,
+      359
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "2 SuperWing Dataset",
+    "text_level": 1,
+    "bbox": [
+      133,
+      381,
+      408,
+      401
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "The SuperWing dataset does not have a single baseline wing shape, but instead focuses on a specific wing planform shape: the \"Yehudi break\" [33], or \"kink\" shape. To make the wings in the dataset resemble a realistic wing, they are built by first deciding its sectional airfoil, then sampling the planform shape and the parameters (incl. the dihedral angle, twist angle, thickness, and camber) that vary along spanwise. In this section, we first introduce the method to build a wing, summarize several representative configurations commonly found in the aircraft industry, and finally show the distribution of the dataset.",
+    "bbox": [
+      132,
+      412,
+      861,
+      517
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "2.1 Sampling of wing shapes",
+    "text_level": 1,
+    "bbox": [
+      133,
+      537,
+      426,
+      555
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "2.1.1 Geometric parameters of wings",
+    "text_level": 1,
+    "bbox": [
+      133,
+      561,
+      454,
+      578
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "A wing is constructed by stretching the sectional airfoils along the spanwise direction. In principle, the airfoils at each spanwise station could differ entirely, leading to a highly high-dimensional parameter space. To balance diversity and simplicity, we identify common spanwise variation patterns and incorporate them into the wing geometry description.",
+    "bbox": [
+      132,
+      585,
+      861,
+      645
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "Specifically, each wing is generated from a single baseline airfoil, parameterized using a 9th-order Class-Shape Transformation (CST) method. The upper and lower surfaces are represented independently.",
+    "bbox": [
+      132,
+      646,
+      861,
+      690
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\ny _ {\\mathrm {u}, \\mathrm {b}} (x) = \\sum_ {i = 0} ^ {9} u _ {i} \\cdot \\Phi_ {i} (x), \\quad y _ {\\mathrm {l}, \\mathrm {b}} (x) = \\sum_ {i = 0} ^ {9} l _ {i} \\cdot \\Phi_ {i} (x) \\tag {1}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      326,
+      702,
+      859,
+      742
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "The baseline airfoil can also be described with its normalized thickness and camber line:",
+    "bbox": [
+      158,
+      748,
+      792,
+      762
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\n\\tilde {t} _ {\\mathrm {b}} (x) = \\frac {y _ {\\mathrm {u , b}} (x) - y _ {\\mathrm {l , b}} (x)}{t _ {\\max , \\mathrm {b}}}, \\quad \\tilde {\\delta} _ {\\mathrm {b}} (x) = \\frac {0 . 5 \\left(y _ {\\mathrm {u , b}} (x) + y _ {\\mathrm {l , b}} (x)\\right)}{\\delta_ {\\max , \\mathrm {b}}} \\tag {2}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      290,
+      773,
+      859,
+      806
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "where  $t_{\\mathrm{max,b}} = \\max_x(y_{\\mathrm{u,b}}(x) - y_{\\mathrm{l,b}}(x))$  and  $\\delta_{\\mathrm{max,b}} = 0.5\\max_x(y_{\\mathrm{u,b}}(x) + y_{\\mathrm{l,b}}(x))$",
+    "bbox": [
+      133,
+      811,
+      715,
+      828
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "text",
+    "text": "Since thickness and camber are essential to determining an airfoil's aerodynamic performance, the spanwise distribution of maximum thickness and maximum camber is prescribed as functions of the spanwise station  $\\eta$ , i.e.,  $t_{\\mathrm{max}}(\\eta)$  and  $\\delta_{\\mathrm{max}}(\\eta)$ . This allows the construction of airfoil sections across the span based on the baseline airfoil and these distribution functions:",
+    "bbox": [
+      132,
+      829,
+      861,
+      887
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\nt (x, \\eta) = t _ {\\max } (\\eta) \\cdot \\tilde {t} _ {\\mathrm {b}} (x), \\quad \\delta (x, \\eta) = \\delta_ {\\max } (\\eta) \\cdot \\tilde {\\delta} _ {\\mathrm {b}} (x) \\tag {3}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      318,
+      902,
+      859,
+      920
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "page_number",
+    "text": "2",
+    "bbox": [
+      493,
+      955,
+      504,
+      965
+    ],
+    "page_idx": 1
+  },
+  {
+    "type": "table",
+    "img_path": "images/78748f249049eafb923a4efd050f1e71991749e6c143e2070a788c7c51b0f0c1.jpg",
+    "table_caption": [
+      "Table 1: Summery of existing wing dataset and models"
+    ],
+    "table_footnote": [
+      "a Abbreviations: CST (Class shape transformation), L.E. (Leading edge)  \nb Symbols: Ma (Mach number),  $\\alpha$  (Angle of attack),  $\\delta_{\\mathrm{all}}$  (deflection of ailerons),  $AR$  (Aspect ratio),  $b$  (span),  $t$  (thickness),  $\\Gamma$  (dihedral angle),  $\\Gamma$  (Sweep angle)  \nc the numbers in the parentheses are parameters with more than one dimensions  \nd Abbreviations: MLP (Multilayer perceptrons), CNN (convolutional neural network), INR (Implicit neural representation), LGBM (light gradient boosting machine), GNN (graph neural network), POD (Proper Orthogonal Decomposition), BN (Bayesian network)  \ne Abbreviations: CRM (Common research model), ISW (infinit swept wing), BSCW (Benchmark Super Critical Wing)"
+    ],
+    "table_body": "<table><tr><td>Citation</td><td># of samples</td><td>Input parameters a,b,c</td><td>CFD solver</td><td>Model d</td><td>Baseline wing e</td></tr><tr><td>Li et al. [4]</td><td>183,075</td><td>Ma,α, wing modes (40)</td><td>ADflow</td><td>MLP</td><td>NASA CRM</td></tr><tr><td>Castellanos et al. [12]</td><td>531</td><td>Ma,α</td><td>TAU</td><td>POD, RF, MLP</td><td>Airbus XRF1</td></tr><tr><td>Lyu et al. [13]</td><td>2,000</td><td>Re, V∞, α</td><td>OpenFOAM</td><td>MF-FNO</td><td>falcon</td></tr><tr><td>Immordino et al. [14, 15]</td><td>70 × 3</td><td>Ma,α</td><td>SU2</td><td>POD, CNN, GNN, BN</td><td>BSCW, ONERA M6, NASA CRM</td></tr><tr><td>Hines et al. [16]</td><td>157</td><td>Ma,α, δail(4)</td><td>TAU</td><td>GNN</td><td>NASA CRM</td></tr><tr><td>Hu et al. [17]</td><td>200</td><td>CSTs (36)</td><td>PHengLEI</td><td>CNN</td><td>ONERA M6</td></tr><tr><td>Kim et al. [18]</td><td>735</td><td>α, AR, L.E. wavy para.</td><td>Star CCM+</td><td>CNN</td><td>ISW</td></tr><tr><td>Li et al. [24]</td><td>10,000</td><td>Ma,α, CSTs (14), planform (7)</td><td>BLWF</td><td>MLP</td><td>None</td></tr><tr><td>Catalani et al. [19]</td><td>8,640 (120 shapes)</td><td>Ma,α, b, t, Γ, δail</td><td>BLWF</td><td>INR</td><td>Airbus XRF1</td></tr><tr><td>Lei et al. [20]</td><td>363</td><td>Ma,α, Λ</td><td>/</td><td>RBFN-CAE</td><td>BQM-34</td></tr><tr><td>Yang et al. [21]</td><td>846 + 164</td><td>Ma,α planform (6 or 8)</td><td>CFL3D</td><td>UNet</td><td>AIAA DPW-W1</td></tr><tr><td>Yang et al. [25]</td><td>1,842</td><td>Ma,α CSTs (14), planform (7)</td><td>CFL3D</td><td>UNet</td><td>None</td></tr><tr><td>Zuo et al. [22]</td><td>800</td><td>CSTs</td><td>PHengLEI</td><td>UNet</td><td>ONERA M6</td></tr><tr><td>Hasan et al. [23]</td><td>160</td><td>planform (10)</td><td>Ansys fluent</td><td>LGBM</td><td>NASA CRM</td></tr><tr><td>Present</td><td>28,856 (4,239 shapes)</td><td>Ma,α, CSTs (20), planform (5), spanwise variation (13)</td><td>ADflow</td><td>Transformer</td><td>None</td></tr></table>",
+    "bbox": [
+      200,
+      94,
+      723,
+      898
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "page_number",
+    "text": "3",
+    "bbox": [
+      493,
+      955,
+      503,
+      965
+    ],
+    "page_idx": 2
+  },
+  {
+    "type": "text",
+    "text": "The parameters that define the planform shape are illustrated in the three-view diagram in Fig. 1. From the top view, the wing can be seen as a combination of a trapezoidal part (OAGF, marked by right slash lines) and an extra surface part between the root and the kink ( $\\triangle ABE$ ). The trapezoidal part shape is determined with aspect ratio  $AR = \\frac{2b_{1/2}^2}{S_{\\mathrm{trap}}} = \\frac{4b_{1/2}}{(\\overline{FG} + \\overline{OA})}$ , taper ratio  $TR = \\frac{\\overline{FG}}{\\overline{OA}}$ , and the leading-edge sweep angle  $\\Lambda_{\\mathrm{LE}}$ . The extra surface can be determined with the kink location  $\\eta_{\\mathrm{k}} = \\frac{b_{\\mathrm{k}}}{b_{1/2}}$  and root adjustment ratio  $\\kappa = \\frac{\\overline{AB}}{\\overline{AC}}$ .",
+    "bbox": [
+      132,
+      71,
+      861,
+      181
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "In the present study, the fuselage location is fixed at  $10\\%$  span, and only the exposed part of the wing to the air is simulated. The simulation part corresponds to the light blue area  $(O'B'EGF)$ . The wing's reference area is the simulation part's projection area.",
+    "bbox": [
+      132,
+      181,
+      861,
+      227
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "image",
+    "img_path": "images/14a55c064a4350a09da09dbe7d6b19869291f9437a0625cb30c919e31da8600c.jpg",
+    "image_caption": [
+      "Figure 1: Three-view diagram of a typical kink wing"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      174,
+      238,
+      826,
+      494
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "Dihedral angles  $\\Gamma_{\\mathrm{LE}}(\\eta)$  and twist angles  $\\alpha_{\\mathrm{tw}}(\\eta)$  control the  $y$ -positions and the rotation angles of every section airfoil. Modern wings always vary along the spanwise direction to achieve the best aerodynamic performance.",
+    "bbox": [
+      132,
+      535,
+      861,
+      582
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "2.1.2 Summary of the parameters of several typical wings",
+    "text_level": 1,
+    "bbox": [
+      133,
+      597,
+      622,
+      614
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "Based on the definitions of wing parameters in the last section, four wing benchmarks and real aircraft wings are studied, and their shape parameters are listed in Table 2. The benchmark models include the DLR-F6 model from the German Aerospace Center [34], and NASA's Common Research Model (CRM) [33]. The real-world wings are from the Airbus A320 [35] and Boeing  $787^{1}$ . The DPW-W1 is a one-segment wing, and the others have a kink.",
+    "bbox": [
+      132,
+      621,
+      861,
+      696
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "As mentioned above, the dihedral angle, twist angle, maximum thickness, and camber along the spanwise are varied. Figure 2 summarizes these spanwise distributed parameters for the DLR-F6, CRM, and A320 wing models.",
+    "bbox": [
+      132,
+      696,
+      861,
+      742
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "2.1.3 Sampling of the parameters",
+    "text_level": 1,
+    "bbox": [
+      133,
+      758,
+      423,
+      775
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "By analyzing the typical wing configurations, we determine the parameter ranges and use them as the basis for sampling to establish our dataset.",
+    "bbox": [
+      132,
+      782,
+      861,
+      811
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "text",
+    "text": "Baseline airfoil We utilize an existing database [25] to generate the CST coefficients for the baseline airfoils. They are sampled using the Output Space Sampling (OSS) method [36], which aims to produce geometric variations that exhibit diverse and representative pressure distribution patterns. A total of 1,516 sets of CST coefficients are obtained. Figure 3 presents the corresponding normalized thickness  $\\tilde{t}(x)$  and camber lines  $\\tilde{\\delta}(x)$  of the sampled airfoils.",
+    "bbox": [
+      132,
+      830,
+      861,
+      906
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "page_footnote",
+    "text": "1obtained from the free sample of the software Piano: https://www.lissys.uk/samp1/b787.html",
+    "bbox": [
+      151,
+      914,
+      733,
+      928
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "page_number",
+    "text": "4",
+    "bbox": [
+      493,
+      955,
+      503,
+      965
+    ],
+    "page_idx": 3
+  },
+  {
+    "type": "table",
+    "img_path": "images/e4fc3cb374f531032c1e2ac5621cd01cefbc115637420f9e10ca189d7a669f4e.jpg",
+    "table_caption": [
+      "Table 2: Geometric parameters of typical wings"
+    ],
+    "table_footnote": [
+      "${}^{a}$  based on trapezoidal wing",
+      "b based on total projection area"
+    ],
+    "table_body": "<table><tr><td>Parameter</td><td>DLR-F6</td><td>CRM</td><td>A320</td><td>B787</td></tr><tr><td>Cruise Mach number</td><td>0.75</td><td>0.85</td><td>0.775</td><td>0.85</td></tr><tr><td>max. relative thickness at centerline</td><td>0.1629</td><td>0.1542</td><td>0.1394</td><td>0.1449</td></tr><tr><td>ratio of tmax at kink and centerline</td><td>0.7316</td><td>0.6822</td><td>—</td><td>0.6472</td></tr><tr><td>ratio of tmax at tip and centerline</td><td>0.7306</td><td>0.6161</td><td>0.7166</td><td>0.6056</td></tr><tr><td>taper ratioa</td><td>0.380</td><td>0.275</td><td>0.330</td><td>0.180</td></tr><tr><td>L.E. swept angle (deg)</td><td>25.15</td><td>35.00</td><td>25.00</td><td>32.20</td></tr><tr><td>L.E. dihedral angle at tip (deg)</td><td>5.2</td><td>4.4</td><td>4.4</td><td>6.0</td></tr><tr><td>aspect ratiob</td><td>9.28</td><td>8.38</td><td>8.79</td><td>9.20</td></tr><tr><td>kink location (%)</td><td>40.1</td><td>37.0</td><td>39.2</td><td>37.4</td></tr><tr><td>root adjustment</td><td>1.00</td><td>0.67</td><td>1.00</td><td>0.88</td></tr><tr><td>twist angle at tip</td><td>6.14</td><td>10.47</td><td>3.82</td><td>—</td></tr></table>",
+    "bbox": [
+      222,
+      128,
+      777,
+      407
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "image",
+    "img_path": "images/e565c0632134b91d12b473ee93efed23f26893a04052cb6727ce210b0521e11d.jpg",
+    "image_caption": [
+      "(a) local dihedral ratio"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      153,
+      510,
+      429,
+      667
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "image",
+    "img_path": "images/8c79ab9881e7a73c6ce4d2a9a4d426b93c9eed35b7dde36d0ca65de3b2b6a2c4.jpg",
+    "image_caption": [
+      "(b) local twist angle"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      498,
+      512,
+      851,
+      667
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "image",
+    "img_path": "images/309115dc0fa97a2e16ec6bde7e2489acb1384473d7d3064b75178a5958418c1e.jpg",
+    "image_caption": [
+      "(c) local maximum relative thickness",
+      "Figure 2: Spanwise distribution of parameters for typical kinked wings"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      151,
+      694,
+      429,
+      847
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "image",
+    "img_path": "images/4b542bf0da73c2dd11de5420f215fba1583e64ca5329dc95550d821fdf2d04f3.jpg",
+    "image_caption": [
+      "(d) local maximum relative camber"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      472,
+      691,
+      761,
+      847
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "page_number",
+    "text": "5",
+    "bbox": [
+      493,
+      955,
+      503,
+      965
+    ],
+    "page_idx": 4
+  },
+  {
+    "type": "image",
+    "img_path": "images/01e6aba3026d08287816afd96121e16490b0d05a60d2f39cab32a05e35230df0.jpg",
+    "image_caption": [
+      "Figure 3: Airfoil shapes and their thickness and camber distributions"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      215,
+      73,
+      785,
+      250
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "Planform parameters The planform parameters are randomly sampled from ranges shown in Table 3, which cover the typical wings.",
+    "bbox": [
+      133,
+      306,
+      861,
+      338
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "table",
+    "img_path": "images/02b26570a6ccdf54b1af4f9be17fa81f281a6e4a0b3937f3d78e0c8ee5b90bec.jpg",
+    "table_caption": [
+      "Table 3: Sampling ranges of the wing planform parameters"
+    ],
+    "table_footnote": [],
+    "table_body": "<table><tr><td>Parameter</td><td>Symbol</td><td>Lower range</td><td>Upper range</td></tr><tr><td>sweep angle</td><td>ΛLE</td><td>25°</td><td>40°</td></tr><tr><td>aspect ratio (trap.)</td><td>AR</td><td>8</td><td>11</td></tr><tr><td>taper ratio (trap.)</td><td>TR</td><td>0.15</td><td>0.40</td></tr><tr><td>kink location</td><td>ηk</td><td>36%</td><td>42%</td></tr><tr><td>root adjustment</td><td>κroot</td><td>10%</td><td>110%</td></tr></table>",
+    "bbox": [
+      272,
+      375,
+      720,
+      522
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "Spanwise-variation parameters The spanwise variations of dihedral angle, twist angle, maximum thickness, and maximum camber are determined using cubic spline interpolation based on five spanwise control points (CPs). A similar methodology has been applied to optimizing wing shapes [23].",
+    "bbox": [
+      132,
+      553,
+      859,
+      598
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "As illustrated in Figure 4, the CPs 0 to 4 extend from the centerline to the tip. Specifically, CPs #0, #2, and #4 are at the root, kink, and tip, while CPs #1 and #3 are located in the middle between adjacent points.",
+    "bbox": [
+      132,
+      598,
+      859,
+      643
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "list",
+    "sub_type": "text",
+    "list_items": [
+      "- Dihedral angle: The dihedral angle is defined by CPs  $\\# 2$  and  $\\# 4$ . The leading-edge  $y$ -coordinates are initialized to zero at the centerline and increase linearly toward the kink, with a slope defined by the ratio  $\\frac{y_{\\mathrm{LE}}(\\eta)}{b(\\eta)} = \\tan (\\Gamma_{\\mathrm{LE,kink}})$ . The leading edge  $y$ -coordinate of the tip is determined by  $\\frac{y_{\\mathrm{LE,tip}}}{b_{1/2}} = \\tan (\\Gamma_{\\mathrm{LE,tip}})$ . The intermediate segment between kink and tip is generated using a cubic spline with a slope matched to the linear segment to ensure continuity.",
+      "- Airfoil thickness and camber: The distribution of maximum thickness  $t_{\\mathrm{max}}(\\eta)$  is defined using CPs #0, #2, #3, and #4. The thickness at CP #0, along with the ratios of thickness values at the remaining control points relative to CP #0, denoted  $t_0$ ,  $r_{t,2}$ ,  $r_{t,3}$ , and  $r_{t,4}$ , are used to construct the spline. Similarly, maximum camber distribution  $\\delta_{\\mathrm{max}}(\\eta)$  is defined from CPs #0 to #4, with values fixed at zero for CP #0 and at  $\\delta_0$  for CP #3. The maximum cambers at CPs #1, #2, and #4 are expressed as ratios relative to  $\\delta_0$ , denoted  $r_{\\delta,1}$ ,  $r_{\\delta,2}$ , and  $r_{\\delta,4}$ .",
+      "- Twist angle: Twist angles are also specified at all five CPs, with the twist at CP #0 set to zero. The angles at outer control points are defined as incremental deviations from the root."
+    ],
+    "bbox": [
+      156,
+      652,
+      861,
+      875
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "text",
+    "text": "The above method can describe the spanwise-distributed parameters with several coefficients. They are also randomly sampled from the ranges inferred from the typical wings, which are summarized in Table 4.",
+    "bbox": [
+      132,
+      885,
+      859,
+      931
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "page_number",
+    "text": "6",
+    "bbox": [
+      493,
+      955,
+      503,
+      965
+    ],
+    "page_idx": 5
+  },
+  {
+    "type": "image",
+    "img_path": "images/9b4cb62a942ff86d0d4b7035a0071fd21469910ec368a5485185f2b096d1a14c.jpg",
+    "image_caption": [
+      "Figure 4: Spanwise control points and the variables to generate distributed wing parameters"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      316,
+      103,
+      679,
+      435
+    ],
+    "page_idx": 6
+  },
+  {
+    "type": "table",
+    "img_path": "images/57bde59cbf27d409756905e203273f76baf6de5876e55e6e732046775c79ad21.jpg",
+    "table_caption": [
+      "Table 4: Sampling ranges of spanwise-distributed parameters"
+    ],
+    "table_footnote": [],
+    "table_body": "<table><tr><td colspan=\"2\">Parameter</td><td>Symbol</td><td>Lower range</td><td>Upper range</td></tr><tr><td rowspan=\"2\">dihedral angle</td><td>tip</td><td>ΓLE,tip</td><td>4°</td><td>6°</td></tr><tr><td>kink</td><td>ΓLE,kink</td><td>0.5°</td><td>ΓLE,tip</td></tr><tr><td colspan=\"2\">root max. relative thickness</td><td>(t/c)root</td><td>0.14</td><td>0.17</td></tr><tr><td rowspan=\"3\">thickness ratio</td><td>CP #2</td><td>rt,2</td><td>0.60</td><td>0.70</td></tr><tr><td>CP #3</td><td>rt,3</td><td>0.90</td><td>0.98</td></tr><tr><td>CP #4</td><td>rt,4</td><td>0.92</td><td>1.00</td></tr><tr><td rowspan=\"3\">camber ratio</td><td>CP #1</td><td>rδ,1</td><td>0.3</td><td>0.8</td></tr><tr><td>CP #2</td><td>rδ,2</td><td>0.5</td><td>1.0</td></tr><tr><td>CP #4</td><td>rδ,4</td><td>0.0</td><td>0.8</td></tr><tr><td rowspan=\"4\">twist angle</td><td>CP #1</td><td>αtw,1</td><td>-4°</td><td>-2°</td></tr><tr><td>CP #2</td><td>αtw,2</td><td>-4°</td><td>-2°</td></tr><tr><td>CP #3</td><td>αtw,3</td><td>-3°</td><td>-1°</td></tr><tr><td>CP #4</td><td>αtw,4</td><td>-3°</td><td>-1°</td></tr></table>",
+    "bbox": [
+      238,
+      566,
+      753,
+      893
+    ],
+    "page_idx": 6
+  },
+  {
+    "type": "page_number",
+    "text": "7",
+    "bbox": [
+      493,
+      955,
+      504,
+      965
+    ],
+    "page_idx": 6
+  },
+  {
+    "type": "text",
+    "text": "In conclusion, each wing geometry is uniquely defined by the CST coefficients of the baseline airfoil, and 18 additional parameters. For each set of CST coefficients, three independent sets of spanwise parameters are sampled, resulting in about 4500 distinct wing geometries. Figure 5 shows a collection of several randomly selected wing shapes in the dataset.",
+    "bbox": [
+      132,
+      71,
+      864,
+      133
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "image",
+    "img_path": "images/2780adee9d56b9a251bf988efeed40409ca337c3236a5f0097f04552b101b39b.jpg",
+    "image_caption": [
+      "Figure 5: Visualization of several wing shapes in the dataset"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      135,
+      145,
+      604,
+      262
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "image",
+    "img_path": "images/fb11d0aa1024c5f3082991ce889fc08efd904d776f705b960231441ee078acf2.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      611,
+      148,
+      861,
+      261
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "text",
+    "text": "It's worth mentioning that, although each baseline sectional airfoil in the proposed dataset is associated with only three sets of spanwise and planform parameters, their combinatorial variations provide broad coverage of the overall wing shape design space. As supported by our prior experience [25] and the experimental evidence presented later in this work, machine-learning models are able to learn the underlying physical relationships that generalize these sectional geometries to other global parameter settings.",
+    "bbox": [
+      132,
+      304,
+      864,
+      396
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "text",
+    "text": "2.2 Sampling of wing operating conditions",
+    "text_level": 1,
+    "bbox": [
+      133,
+      412,
+      560,
+      430
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "text",
+    "text": "For each wing geometry, eight operating conditions are randomly sampled. The freestream Mach number ranges from 0.75 to 0.90, and the angle of attack varies between  $2^{\\circ}$  and  $12^{\\circ}$ . The Reynolds number and freestream temperature are fixed at 20 million and  $300\\mathrm{K}$ , respectively, for all simulations.",
+    "bbox": [
+      132,
+      436,
+      864,
+      483
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "text",
+    "text": "2.3 Simulation of the wing flow fields",
+    "text_level": 1,
+    "bbox": [
+      133,
+      501,
+      511,
+      518
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "text",
+    "text": "Reynolds-Averaged Navier-Stokes (RANS) simulations are performed using the open-source CFD solver suite developed by the MDOLab 2.",
+    "bbox": [
+      132,
+      526,
+      862,
+      556
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "text",
+    "text": "2.3.1 CFD setting",
+    "text_level": 1,
+    "bbox": [
+      133,
+      573,
+      300,
+      589
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "text",
+    "text": "The flow field around each wing is computed using ADflow [37]. A \"3w\" multigrid strategy is adopted to accelerate convergence: 500 solver cycles are applied on the coarser multigrid levels, followed by up to 3,000 cycles on the original fine mesh. Initially, the approximate Newton-Krylov (ANK) solver is used to solve the linear systems; once the total residual drops below  $1 \\times 10^{-8}$ , the solver switches to the Newton-Krylov (NK) method. Convergence is declared when the residual falls below  $1 \\times 10^{-10}$ . All other solver settings follow the default configuration.",
+    "bbox": [
+      132,
+      595,
+      864,
+      688
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "text",
+    "text": "2.3.2 Mesh generation",
+    "text_level": 1,
+    "bbox": [
+      133,
+      705,
+      333,
+      720
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "text",
+    "text": "The wing surface mesh is generated using an in-house code. As illustrated in Figure 6, the wing surface is divided into two segments split at the kink, and the tips for all wing shapes are adapted from the CRM geometry [38] and aligned with the tip section airfoil.",
+    "bbox": [
+      132,
+      728,
+      861,
+      773
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "text",
+    "text": "Despite many validations of ADflow code on wing simulations, we also conducted a mesh convergence study for the data generation pipeline. The CRM wing is used, and three mesh resolutions are generated by changing surface mesh resolution, volume mesh marching steps, and surface  $y+$ . The freestream conditions are  $Ma = 0.85$ ,  $C_L = 0.5$ , and  $Re = 5$  million based on the mean aerodynamic chord. Table 5 gives the mesh sizes, drag coefficients, and angle of attacks of three meshes. Fig. 7 illustrates  $C_D$  values with respect to the second-order mesh size factor  $N^{-2/3}$  where  $N$  is the mesh size, and the result from Lyu et al.'s study [38] is also provided.",
+    "bbox": [
+      132,
+      773,
+      861,
+      878
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "text",
+    "text": "Considering the time and memory cost, the M-size mesh is used to generate the dataset. It has 249 cells along the airfoil circumferential direction, including 9 cells on the tail. In the spanwise direction,",
+    "bbox": [
+      132,
+      878,
+      861,
+      910
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "page_footnote",
+    "text": "$^{2}$ https://mdolab.engin.umich.edu/software",
+    "bbox": [
+      151,
+      917,
+      416,
+      931
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "page_number",
+    "text": "8",
+    "bbox": [
+      493,
+      955,
+      503,
+      965
+    ],
+    "page_idx": 7
+  },
+  {
+    "type": "image",
+    "img_path": "images/5eba7ddc2ba21b79566756f3cca548b8635f48fbc3546db392fb5966d017a2b0.jpg",
+    "image_caption": [
+      "Figure 6: Surface computation mesh of the wings"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      282,
+      71,
+      717,
+      218
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "image",
+    "img_path": "images/138be7126ba53c8e8094d1ce60e39e0f671a063203ed86eceaa2427971aa8796.jpg",
+    "image_caption": [
+      "Figure 7: Mesh convergence study of the CRM wing"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      138,
+      258,
+      488,
+      404
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "table",
+    "img_path": "images/d483ca2f3f0ea9afcf7554337b9463818f6ac5b7e7e79df1f11e1bdf180e0500.jpg",
+    "table_caption": [
+      "Table 5: Mesh-convergence study for the CRM wing"
+    ],
+    "table_footnote": [],
+    "table_body": "<table><tr><td>Level</td><td>Mesh size</td><td>CD (Count)</td><td>AOA(°)</td></tr><tr><td>L</td><td>8.92 M</td><td>200.1</td><td>2.2329</td></tr><tr><td>M</td><td>3.60 M</td><td>201.0</td><td>2.2086</td></tr><tr><td>S</td><td>1.31 M</td><td>203.5</td><td>2.1710</td></tr></table>",
+    "bbox": [
+      519,
+      325,
+      854,
+      426
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "text",
+    "text": "it has 41 and 125 cells for the inner and outer segments. The surface mesh is refined near the leading and trailing edges in the circumferential direction and near the wing tip in the spanwise direction. The volume O-shape mesh is then extruded from the surface mesh using pyHyp. It marches 81 layers with the starting layer height to fulfill  $y^{+} \\approx 1$  and ends at 50 times the root chord.",
+    "bbox": [
+      132,
+      474,
+      861,
+      535
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "text",
+    "text": "2.4 Postprocess and available data files",
+    "text_level": 1,
+    "bbox": [
+      133,
+      554,
+      529,
+      571
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "text",
+    "text": "The simulations are conducted on the 160-core high-performance computing cluster at Tsinghua University for over four months. During the simulation, the lift coefficient is monitored to ensure steady-state convergence. Only cases with lift coefficient fluctuations below 0.0005 over the last 10 outer iterations are included in the final dataset. As a result, 28,856 valid wing flow fields are obtained. Fig. 8 demonstrates the  $C_p$  fields on the surface of and around several wings in the dataset, where complex flow structures such as multiple shock waves can be observed.",
+    "bbox": [
+      132,
+      579,
+      861,
+      669
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "image",
+    "img_path": "images/69f2ec97e08c1006d2f95321d01d4bd0562ac2d3b3f9df8d1c9a3b482eed3808.jpg",
+    "image_caption": [
+      "Figure 8: Visualization of flow fields around wings in the dataset"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      138,
+      680,
+      864,
+      878
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "page_number",
+    "text": "9",
+    "bbox": [
+      493,
+      955,
+      504,
+      965
+    ],
+    "page_idx": 8
+  },
+  {
+    "type": "text",
+    "text": "The wing shapes, aerodynamic coefficients, surface flow, and 3D volume fields are available for model training. Besides the raw files output from the solver, the surface mesh and flow quantities are prepared for processing with ML models. The simulation mesh on the wing surface is first interpolated to a reference mesh. In the spanwise  $(j$ -direction), 128 cross-sectional planes are sampled with even spacing, and tips are excluded. For each cross-section  $(i$ -direction), a fixed set of normalized chordwise positions  $\\{(x / c)_i\\}$  s is used for both the upper and lower surfaces, and the tail edge is represented only with one cell. The reference mesh along the wing surface is then unfolded as shown in Fig. 9, resulting in a final surface grid of  $256 \\times 128$  points per wing. It has been validated that omitting the tip and interpolating the grid introduces an error of less than  $0.1\\%$  in global aerodynamic coefficients.",
+    "bbox": [
+      132,
+      71,
+      864,
+      209
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "image",
+    "img_path": "images/15cd189b969e1cdb8f59c2650a29fc0cf6064b7ae614d31aa4d3c6f105a2d621.jpg",
+    "image_caption": [
+      "Figure 9: Transferring surface mesh and quantities from simulation mesh to reference mesh"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      287,
+      220,
+      718,
+      369
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "text",
+    "text": "The surface flow data includes pressure and friction coefficient distributions, where the latter is decomposed into streamwise part  $C_{f,\\tau}$  in the  $x - y$  plane, and the spanwise part  $C_{f,z}$ , in the  $z$ -direction. The values of the coefficients are non-dimensionalized with their maximum and minimum values. Since flow variables are stored in the cell center, they are interpolated to the center of the reference mesh. A cell-center reference mesh is also calculated to have the same size as the surface values.",
+    "bbox": [
+      132,
+      411,
+      864,
+      484
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "text",
+    "text": "Table 6 provides a summary of the data. Considering the data size, direct download via Huggingface is provided for files marked in the table, which are sufficient to predict the surface flow and aerodynamic coefficients crucial to design optimization. The other files are the raw data from the solver, which are planned to be available via university storage upon reasonable request to the authors.",
+    "bbox": [
+      132,
+      486,
+      864,
+      547
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "table",
+    "img_path": "images/3c2cd29b1a96ea9aecfa32972cc6bc6b76dba9da0577285aae46bff2b50561d3.jpg",
+    "table_caption": [
+      "Table 6: Available data for SuperWing dataset"
+    ],
+    "table_footnote": [
+      "a Available at https://huggingface.co/datasets/yunplus/SuperWing."
+    ],
+    "table_body": "<table><tr><td>Type</td><td>File</td><td>Description</td><td>Shape</td><td>On HF a</td></tr><tr><td>Geometric parameters</td><td>Configs.dat</td><td>shape parameters in Tables 3 and 4</td><td>5.0 MB</td><td>✓</td></tr><tr><td>Information</td><td>index.npy</td><td>group information, operating conditions, and aerodynamic coefficients</td><td>2.8 MB</td><td>✓</td></tr><tr><td rowspan=\"3\">Surface mesh</td><td>\\wing.xyz</td><td>surface simulation mesh</td><td>7.8 GB</td><td></td></tr><tr><td>origingeom.npy</td><td>reference surface mesh (grid points)</td><td>3.3 GB</td><td>✓</td></tr><tr><td>geom0.npy</td><td>reference surface mesh (cell center)</td><td>3.3 GB</td><td>✓</td></tr><tr><td rowspan=\"2\">Surface flow</td><td>data.npy</td><td>Cp, Cf at reference mesh (cell center)</td><td>22.7 GB</td><td>✓</td></tr><tr><td>\\surf.cgns</td><td>raw surface flow output</td><td>161.5 GB</td><td></td></tr><tr><td>Volume flow</td><td>\\vol.cgns</td><td>raw flow field output</td><td>5.5 TB</td><td></td></tr></table>",
+    "bbox": [
+      135,
+      584,
+      782,
+      887
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "page_number",
+    "text": "10",
+    "bbox": [
+      490,
+      955,
+      509,
+      967
+    ],
+    "page_idx": 9
+  },
+  {
+    "type": "text",
+    "text": "3 Benchmark tests for Transformer-based models on Super-Wing dataset",
+    "text_level": 1,
+    "bbox": [
+      133,
+      66,
+      864,
+      111
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "This section focuses on predicting wing surface flow from wing shapes and operating conditions to demonstrate that a machine-learning model trained on the provided dataset has the potential to be applied to downstream design optimization tasks. The predicting accuracy and computation cost performance of two Transformer-based models are first compared with the commonly used U-Net. Later, the pretrained model is utilized to predict two typical wings, DLR-F6 and CRM, that are out of the distribution. This demonstrates the potential of a model train on SuperWing to be applied to optimizations of real wings,",
+    "bbox": [
+      130,
+      122,
+      864,
+      229
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "3.1 Experimental setup",
+    "text_level": 1,
+    "bbox": [
+      133,
+      246,
+      380,
+      266
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "3.1.1 Problem definition",
+    "text_level": 1,
+    "bbox": [
+      133,
+      270,
+      349,
+      285
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "Three models are set up with the same prediction task for surface flow of transonic wings. The input is the reference mesh mentioned in Sec 2.4 (geom0.npy) which has a size of  $256 \\times 128 \\times 3$ . The primary output is the surface flow on the same reference mesh (data.npy) that includes the surface pressure and friction coefficient distributions. Since aerodynamic coefficients (especially the lift and drag coefficients) are also crucial for downstream tasks, they are integrated from the primary surface flow output:",
+    "bbox": [
+      130,
+      294,
+      864,
+      386
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\n\\begin{array}{l} \\left[ C _ {L}, C _ {D} \\right] = \\boldsymbol {R} _ {\\alpha} \\cdot \\boldsymbol {C} _ {\\boldsymbol {F}} \\\\ C _ {\\boldsymbol {F}} = \\sum_ {i = 0} ^ {N _ {\\text {c e l l}}} C _ {p, i} \\cdot \\boldsymbol {n} _ {i} \\cdot A _ {i} + \\left(C _ {\\boldsymbol {f}, i} - C _ {\\boldsymbol {f}, i} \\cdot \\boldsymbol {n} _ {i}\\right) \\cdot A _ {i} \\tag {4} \\\\ \\end{array}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      333,
+      412,
+      857,
+      472
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "where  $R_{\\alpha}$  is the rotation matrix for angle of attack  $\\alpha$ .  $n_i$  and  $A_i$  are the normal vector and area of the surface mesh cell, both of which can be calculated from the reference mesh.",
+    "bbox": [
+      132,
+      484,
+      864,
+      513
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "3.1.2 Model details",
+    "text_level": 1,
+    "bbox": [
+      133,
+      531,
+      308,
+      545
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "U-Net U-Net consists of a symmetric encoder-decoder structure, and operating conditions are concatenated with the latent representation between the encoder and decoder groups. Both the encoder and decoder consist of six ResNet groups. Each ResNet group includes a residual block for down- or up-sampling that halves or doubles the  $i$ -direction resolution, followed by a standard residual block. The number of hidden dimensions are (16, 32, 32, 64, 64, 128) for encoder and reversed for decoder. The decoder concludes with a final convolutional layer that reduces the hidden channels.",
+    "bbox": [
+      132,
+      554,
+      862,
+      645
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "Vision Transformer (ViT) The original ViT framework proposed in [32] is used. It slices the input mesh with patching size  $p = 4$ , which leads to 2048 tokens in the sequence. The operating conditions are introduced by expanding them to the mesh size and input to the embedding layer together. A learnable matrix is used as the positional embedding, which is added element-wise to the input token. The Transformer backbone of ViT has 5 layers, each with 8 attention heads, 256 hidden dimensions of tokens, and an MLP ratio of 4. The output surface flow is obtained by combining the Transformer output sequence.",
+    "bbox": [
+      130,
+      662,
+      862,
+      771
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "Transolver Transolver [26] uses a physics-embedded strategy. The input mesh is projected into a low-dimensional embedding space using learnable weights with a shared MLP. Self-attention is conducted in the projected space, and afterwards, the field is reconstructed with the new tokens and the original weights. It also has 5 layers, 8 attention heads, 256 token dimensions, and an MLP ratio 4. The number of tokens is 32 according to the limit in running memory. The operating conditions are processed similarly to those of ViT.",
+    "bbox": [
+      130,
+      786,
+      864,
+      878
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "page_number",
+    "text": "11",
+    "bbox": [
+      490,
+      955,
+      506,
+      965
+    ],
+    "page_idx": 10
+  },
+  {
+    "type": "text",
+    "text": "3.1.3 Training setup",
+    "text_level": 1,
+    "bbox": [
+      133,
+      71,
+      316,
+      87
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "The training loss function is the mean squared error between model predictions and the ground-truth surface flow. The Adam optimizer and a mini-batch size 4 are selected based on the memory limit. A learning rate schedule based on the one-cycle policy is used to update parameters. Specifically, the learning rate increases from  $4 \\times 10^{-5}$  to  $1 \\times 10^{-3}$  in the first half of training and then decreases back to  $1 \\times 10^{-6}$  in the second half. The gradient clipping based on the exponential moving average (EMA) of gradients is adapted to avoid the spikes in the learning curve.",
+    "bbox": [
+      132,
+      94,
+      864,
+      188
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "3.2 Model performance on the SuperWing dataset",
+    "text_level": 1,
+    "bbox": [
+      133,
+      203,
+      640,
+      222
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "The wings in the dataset are divided such that  $90\\%$  are used for training and the remaining  $10\\%$  for testing. The dataset division is the same for all models and the testing data remain unseen for the whole model training phase. To ensure robustness, the training process is repeated three times using different random  $90\\%$  of the training data to cross-validate the results, and the error scores in Table 7 are the averages among the three cross-validation runs. For each sample (a wing shape under one operating condition), the relative mean absolute error (MAE) is computed for the surface pressure and friction coefficients and normalized by the corresponding coefficient range. The final test error is reported as the average of these normalized MAEs across all test samples, as follows:",
+    "bbox": [
+      132,
+      228,
+      864,
+      349
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\n\\delta X = \\frac {1}{N _ {s}} \\sum_ {n = 0} ^ {N _ {s}} \\frac {\\frac {1}{H \\cdot W} \\sum_ {i , j = 0} ^ {H , W} \\left| X ^ {\\mathrm {m o d e l}} - X ^ {\\mathrm {C F D}} \\right|}{\\max  _ {i , j} X ^ {\\mathrm {C F D}} - \\min  _ {i , j} X ^ {\\mathrm {C F D}}}, \\quad X \\in [ C _ {p}, C _ {f, \\tau}, C _ {f, z} ] \\tag {5}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      254,
+      359,
+      862,
+      401
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "In addition, MAEs in the lift, drag, and pitching moment about the leading edge are also evaluated.",
+    "bbox": [
+      156,
+      406,
+      861,
+      422
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "equation",
+    "text": "\n$$\n\\delta X = \\frac {1}{N _ {s}} \\sum_ {n = 0} ^ {N _ {s}} \\left| X ^ {\\mathrm {m o d e l}} - X ^ {\\mathrm {C F D}} \\right|, \\quad X \\in \\left[ C _ {L}, C _ {D} \\right] \\tag {6}\n$$\n",
+    "text_format": "latex",
+    "bbox": [
+      321,
+      433,
+      862,
+      474
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "The table also includes the time and memory cost of the model to demonstrate the scalability.",
+    "bbox": [
+      156,
+      479,
+      836,
+      494
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "table",
+    "img_path": "images/b9a525f72971de2a4392eab706b89137fbbebbf0a26c338ba91410309571dbd1.jpg",
+    "table_caption": [
+      "Table 7: Model performance comparison"
+    ],
+    "table_footnote": [],
+    "table_body": "<table><tr><td rowspan=\"2\">Model</td><td colspan=\"5\">Errors</td><td rowspan=\"2\">Parameter</td><td rowspan=\"2\">Time (hours)</td><td rowspan=\"2\">Memory (GB)</td></tr><tr><td>\\(C_p\\) (%)</td><td>\\(C_{f,\\tau}\\)(%)</td><td>\\(C_{f,z}\\)(%)</td><td>\\(C_L\\)(×10-3)</td><td>\\(C_D\\)(×10-4)</td></tr><tr><td>UNet</td><td>1.101</td><td>0.642</td><td>0.698</td><td>23.41</td><td>14.78</td><td>9.2M</td><td>17.1</td><td>5.55</td></tr><tr><td>ViT</td><td>0.329</td><td>0.245</td><td>0.281</td><td>2.76</td><td>2.48</td><td>4.5M</td><td>12.6</td><td>5.78</td></tr><tr><td>Transolver</td><td>0.359</td><td>0.271</td><td>0.310</td><td>2.71</td><td>2.53</td><td>3.8M</td><td>37.9</td><td>16.42</td></tr></table>",
+    "bbox": [
+      155,
+      532,
+      844,
+      676
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "With the attention mechanism, Transformer-based models significantly improve prediction accuracy despite having fewer trainable parameters. The training time is also reduced for the ViT model, with a little increase in running memory. On the other hand, Transolver more than doubled the training time and memory cost due to its slicing mechanism without much improvement in accuracy. Considering Transolver was initially designed for unstructured shape representation, ViT is recommended as the best backbone for further development of this task.",
+    "bbox": [
+      130,
+      691,
+      861,
+      781
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "Three wings in the testing dataset are used here to intuitively demonstrate the best ViT's prediction. Fig. 10a shows the surface pressure  $C_p$  and friction magnitude  $||C_f||$  contours, while Fig. 10b shows  $C_p$  and  $C_{f,\\tau}$  profiles of cross sections at spanwise stations  $\\eta = 0.2, 0.5$ , and 0.8. The dominating flow structures are well captured.",
+    "bbox": [
+      132,
+      782,
+      864,
+      843
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "3.3 Model performance on out-of-distribution wing shapes",
+    "text_level": 1,
+    "bbox": [
+      133,
+      859,
+      715,
+      878
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "text",
+    "text": "The two more complex wing shapes, DLR-F6 and CRM, are used to demonstrate the representativeness and diversity of SuperWing dataset. They both have several different sectional airfoil shapes, which differ from the dataset where wings are generated from one set of baseline CST coefficients.",
+    "bbox": [
+      132,
+      886,
+      861,
+      931
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "page_number",
+    "text": "12",
+    "bbox": [
+      488,
+      955,
+      509,
+      967
+    ],
+    "page_idx": 11
+  },
+  {
+    "type": "image",
+    "img_path": "images/a855cc3f55670e6d9f1fdf26e8ef2b9683a8dbfb624a4c095162508ba5cae94a.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      150,
+      165,
+      483,
+      265
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "image",
+    "img_path": "images/3b70579e89032c7b3242c18c6b91590bd51360a819bdeb76fefd2b3dd2e3ce14.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      517,
+      166,
+      849,
+      266
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "image",
+    "img_path": "images/564e92400ea8ac1bcdc6973338bba6221802a4cad368d9494abfc56334ab8547.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      151,
+      276,
+      483,
+      351
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "image",
+    "img_path": "images/9bda8a26f7e5900974465f26a939877d06ae320d654b3afdca0ba66a20774c25.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      517,
+      277,
+      849,
+      351
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "image",
+    "img_path": "images/61843a5bf5d10c189154b3ba8f772e0d383b5f69284d556f043b6a7dc151b630.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      156,
+      356,
+      478,
+      465
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "image",
+    "img_path": "images/8e9da3af82b0ed032940a2446704f2eb709ddf2269c674f5ca656064d4bd7595.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      524,
+      356,
+      844,
+      465
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "image",
+    "img_path": "images/64db29466d0e9ec6c219c6913fa03fbdcea2e5745023aed852578fb2de927145.jpg",
+    "image_caption": [
+      "(a) Surface contours"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      202,
+      503,
+      480,
+      589
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "image",
+    "img_path": "images/e902b4d929a70b9c188548cbd1536e62d13aada8ca47b5b4b22b2dcc01a3b28c.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      498,
+      507,
+      790,
+      594
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "image",
+    "img_path": "images/a0583e9a72325581faab3ca3fa373889548a5e017d5acffc6633b2bbbcec893f.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      202,
+      593,
+      480,
+      664
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "image",
+    "img_path": "images/94b8febc11fb6190a0d468ec02996f0d07cbdf971e5acc9508946aabdb3e8315.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      498,
+      595,
+      790,
+      667
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "image",
+    "img_path": "images/029a78d45d60d5ebe18d54446702537d5ca3532cf41164d78a3ce550951af967.jpg",
+    "image_caption": [
+      "(b) Cross-sectional coefficients distribution"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      202,
+      667,
+      483,
+      781
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "image",
+    "img_path": "images/afe18dfc0ab10bfe537c847940ac97d72e7a2d76c65ee8d948fb361fc7253c35.jpg",
+    "image_caption": [
+      "Figure 10: Surface flow prediction of ViT for three wings in the test dataset"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      498,
+      669,
+      792,
+      781
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "page_number",
+    "text": "13",
+    "bbox": [
+      490,
+      955,
+      508,
+      965
+    ],
+    "page_idx": 12
+  },
+  {
+    "type": "text",
+    "text": "However, SuperWing has its wings' max thickness and camber to be varied spanwise, which partially enables the model to learn the effect of differences in sectional airfoils.",
+    "bbox": [
+      132,
+      71,
+      859,
+      99
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "text",
+    "text": "Figure 11 shows the surface flow and aerodynamic coefficients predicted directly by the ViT trained with the SuperWing dataset. It is demonstrated that the key flow structures, such as the shock waves, and the trend of aerodynamic coefficients are well predicted, indicating the potential of the present dataset to be applied in shape optimization. Both wings' large error region is located where the sectional airfoils change (for example, the root-to-kink segment of DLR-F6).",
+    "bbox": [
+      132,
+      102,
+      859,
+      176
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "image",
+    "img_path": "images/4670f3ccbfdc915bdd6feab11ecb69b2464fdb8da3a67bdc0e2e37d3acd3a8cb.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      153,
+      191,
+      480,
+      292
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "image",
+    "img_path": "images/e3a7687f4e94d6900e7c773c86d4ecc7e1daee18274a64cccac937a2b416963a.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      517,
+      191,
+      849,
+      292
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "image",
+    "img_path": "images/7a755c81a585ad194afe7ae5f103c52c45d072587be0129fd0b33382f7385690.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      156,
+      294,
+      478,
+      377
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "image",
+    "img_path": "images/cb045057cdbc8be2ee47c0ebaaceecaec6e4fbe1ae956200e972379c05632e06.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      517,
+      301,
+      846,
+      377
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "image",
+    "img_path": "images/7d2129f5b8928c69864b6246dd839994eb32b415a1f727f3a67cd168e8730fa3.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      156,
+      380,
+      478,
+      492
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "image",
+    "img_path": "images/7b65321ac43e873c959dc580130c6ae64360d809eaf9601cf5da9af5cbd9b444.jpg",
+    "image_caption": [],
+    "image_footnote": [],
+    "bbox": [
+      517,
+      387,
+      846,
+      492
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "image",
+    "img_path": "images/3c056631069ba3864f4dd1ce29ae10c10154d4ba617631ac9ddde8f82235bef9.jpg",
+    "image_caption": [
+      "(a) Surface contours",
+      "(b) Aerodynamic coefficient curves"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      209,
+      531,
+      493,
+      763
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "image",
+    "img_path": "images/e396f0cbce9180178fbc8fbc7c4475f7616ce70f169dd7162405ef93f97ecd20.jpg",
+    "image_caption": [
+      "Figure 11: Surface flow and aerodynamic coefficients prediction of ViT for benchmark wings"
+    ],
+    "image_footnote": [],
+    "bbox": [
+      504,
+      537,
+      787,
+      763
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "text",
+    "text": "4 Conclusion",
+    "text_level": 1,
+    "bbox": [
+      133,
+      854,
+      305,
+      871
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "text",
+    "text": "Accurate and generalizable machine-learning models for flow-field prediction are essential to accelerating aircraft design. However, developing such models for complex three-dimensional wing configurations has remained challenging, primarily due to the lack of sufficiently diverse datasets.",
+    "bbox": [
+      132,
+      885,
+      859,
+      931
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "page_number",
+    "text": "14",
+    "bbox": [
+      488,
+      955,
+      508,
+      965
+    ],
+    "page_idx": 13
+  },
+  {
+    "type": "text",
+    "text": "In this work, we contribute SuperWing, a comprehensive benchmark dataset of transonic swept wings comprising 4,239 wing shapes and near 30,000 flow fields across diverse geometries and operating conditions. Unlike previous efforts that rely on perturbations of a baseline wing, SuperWing is generated using a simplified yet expressive parameterization scheme. By incorporating spanwise-varying dihedral, twist, and airfoil characteristics, the dataset captures realistic design complexity and ensures greater diversity than existing ones. The dataset is fully open-sourced to the community for use in downstream tasks.",
+    "bbox": [
+      130,
+      71,
+      861,
+      176
+    ],
+    "page_idx": 14
+  },
+  {
+    "type": "text",
+    "text": "As a benchmark, we evaluated two Transformer-based architectures, ViT and Transolver, on SuperWing. Both models successfully captured complex flow behaviors and aerodynamic coefficients, achieving an average  $C_D$  prediction error of only 2.5 counts on the test set. For the structured surface mesh studied in this dataset, ViT is more recommended as it offers higher accuracy with reduced time and memory costs compared to Transolver. Moreover, models pretrained on SuperWing demonstrated promising generalization when directly applied to complex benchmark wings such as DLR-F6 and CRM, highlighting the dataset's diversity and practical relevance.",
+    "bbox": [
+      132,
+      178,
+      862,
+      282
+    ],
+    "page_idx": 14
+  },
+  {
+    "type": "text",
+    "text": "Overall, the results establish SuperWing as a robust pretraining dataset capable of supporting a wide range of downstream applications in aerodynamic design. Future work may extend these findings by fine-tuning pretrained models for specific design problems to further advance generalizable ML-based aerodynamic optimization.",
+    "bbox": [
+      132,
+      282,
+      861,
+      345
+    ],
+    "page_idx": 14
+  },
+  {
+    "type": "text",
+    "text": "Acknowledgments",
+    "text_level": 1,
+    "bbox": [
+      135,
+      366,
+      346,
+      386
+    ],
+    "page_idx": 14
+  },
+  {
+    "type": "text",
+    "text": "This work was supported by the National Natural Science Foundation of China (NSFC) Nos. 12202243, 12372288, 12388101, and U23A2069. The authors would like to thank Zizhou He and Runze Li from Tsinghua University for their helpful advices. During writing, AI is used for polish some parts of this work.",
+    "bbox": [
+      132,
+      397,
+      861,
+      458
+    ],
+    "page_idx": 14
+  },
+  {
+    "type": "text",
+    "text": "References",
+    "text_level": 1,
+    "bbox": [
+      133,
+      479,
+      264,
+      500
+    ],
+    "page_idx": 14
+  },
+  {
+    "type": "list",
+    "sub_type": "ref_text",
+    "list_items": [
+      "[1] Jun Tao and Gang Sun. Application of deep learning based multi-fidelity surrogate model to robust aerodynamic design optimization. Aerospace Science and Technology, 92:722-737, 2019.",
+      "[2] Nils Thuerey, Konstantin Weissenow, Lukas Prantl, and Xiangyu Hu. Deep learning methods for reynolds-averaged navier-stokes simulations of airfoil flows. AIAA Journal, 58(1):25-36, 2020.",
+      "[3] Jichao Li, Mohamed Amine Bouhlel, and Joaquim R. R. A. Martins. Data-Based Approach for Fast Airfoil Analysis and Optimization. AIAA Journal, 57(2):581-596, February 2019.",
+      "[4] Jichao Li and Mengqi Zhang. Data-based approach for wing shape design optimization. Aerospace Science and Technology, 112:106639, May 2021.",
+      "[5] Li-Wei Chen, Berkay A Cakal, Xiangyu Hu, and Nils Thuerey. Numerical investigation of minimum drag profiles in laminar flow using deep learning surrogates. Journal of Fluid Mechanics, 919:A34, 2021.",
+      "[6] Yunjia Yang, Runze Li, Yufei Zhang, and Haixin Chen. Fast Buffet-Onset Prediction and Optimization Method Based on Pretrained Flowfield Prediction Model. AIAA Journal, 62(8):2979-95, August 2024.",
+      "[7] Mohamed Amine Bouhlel, Sicheng He, and Joaquim R. R. A. Martins. Scalable gradient-enhanced artificial neural networks for airfoil shape design in the subsonic and transonic regimes. Structural and Multidisciplinary Optimization, 61(4):1363-1376, April 2020.",
+      "[8] S. Ashwin Renganathan, Romit Maulik, and Jai Ahuja. Enhanced data efficiency using deep neural networks and Gaussian processes for aerodynamic design optimization. Aerospace Science and Technology, 111:106522, April 2021.",
+      "[9] Jiehua Tian, Feng Qu, Di Sun, and Qing Wang. Novel Pressure-Based Optimization Method Using Deep Learning Techniques. AIAA Journal, 62(2):708-724, February 2024."
+    ],
+    "bbox": [
+      142,
+      511,
+      861,
+      926
+    ],
+    "page_idx": 14
+  },
+  {
+    "type": "page_number",
+    "text": "15",
+    "bbox": [
+      490,
+      955,
+      506,
+      965
+    ],
+    "page_idx": 14
+  },
+  {
+    "type": "list",
+    "sub_type": "ref_text",
+    "list_items": [
+      "[10] Ryley McConkey, Eugene Yee, and Fue-Sang Lien. A curated dataset for data-driven turbulence modelling. Scientific data, 8(1):255, 2021.",
+      "[11] Weiwei Zhang, Xianglin Shan, Yilang Liu, Xiao Zhang, Zhenhua Wan, Xinliang Li, Xinguo Sha, Junbo Zhao, Hui Xu, Chuangxin He, et al. High-reynolds-number turbulence database: Aeroflow-data. Scientific Data, 12(1):1500, 2025.",
+      "[12] Rodrigo Castellanos, Jaime Bowen Varela, Alejandro Gorgues, and Esther Andres. An Assessment of Reduced-Order and Machine Learning Models for Steady Transonic Flow Prediction on Wings. In 33rd Congress of the International Council of the Aeronautical Science, Stockholm, Sweden, September 2022.",
+      "[13] Yanfang Lyu, Xiaoyu Zhao, Zhiqiang Gong, Xiao Kang, and Wen Yao. Multi-fidelity prediction of fluid flow based on transfer learning using Fourier neural operator. Physics of Fluids, 35(7):077118, July 2023.",
+      "[14] Gabriele Immordino, Andrea Da Ronch, and Marcello Righi. Steady-State Transonic Flowfield Prediction via Deep-Learning Framework. AIAA Journal, 62(5):1915-1931, May 2024.",
+      "[15] Gabriele Immordino, Andrea Vaiuso, Andrea Da Ronch, and Marcello Righi. Predicting Transonic Flowfields in Non-Homogeneous Unstructured Grids Using Autoencoder Graph Convolutional Networks, May 2024.",
+      "[16] Derrick Hines and Philipp Bekemeyer. Graph neural networks for the prediction of aircraft surface pressure distributions. Aerospace Science and Technology, 137:108268, June 2023.",
+      "[17] Jiawei Hu and Weiwei Zhang. Flow field modeling of airfoil based on convolutional neural networks from transform domain perspective. Aerospace Science and Technology, 136:108198, May 2023.",
+      "[18] Min-II Kim, Hyun-Sik Yoon, and Jang-Hoon Seo. Deep Learning Models for the Evaluation of the Aerodynamic and Thermal Performance of Three-Dimensional Symmetric Wavy Wings. Symmetry, 16(1):21, December 2023.",
+      "[19] Giovanni Catalani, Siddhant Agarwal, Xavier Bertrand, Frédéric Tost, Michael Bauerheim, and Joseph Morlier. Neural fields for rapid aircraft aerodynamics simulations. *Scientific Reports*, 14(1):25496, October 2024.",
+      "[20] Yuqi Lei, Xiaomin An, Yihua Pan, Yue Zhou, and Qi Chen. Prediction of pressure distribution and aerodynamic coefficients for a variable-sweep wing. Aerospace Science and Technology, 155:109706, December 2024.",
+      "[21] Yunjia Yang, Runze Li, Yufei Zhang, Lu Lu, and Haixin Chen. Transferable machine learning model for the aerodynamic prediction of swept wings. Physics of Fluids, 36(7):076105, July 2024.",
+      "[22] Kuijun Zuo, Zhengyin Ye, Xianxu Yuan, and Weiwei Zhang. Flow3DNet: A deep learning framework for efficient simulation of three-dimensional wing flow fields. Aerospace Science and Technology, 159:109991, April 2025.",
+      "[23] M. Hasan, S. Redonnet, and D. Zhongmin. Aerodynamic optimization of aircraft wings using machine learning. Advances in Engineering Software, 200:103801, February 2025.",
+      "[24] Runze Li, Yufei Zhang, and Haixin Chen. Transfer learning from two-dimensional supercritical airfoils to three-dimensional transonic swept wings. Chinese Journal of Aeronautics, 36(9):96-110, April 2023.",
+      "[25] Yunjia Yang, Runze Li, Yufei Zhang, Lu Lu, and Haixin Chen. Rapid aerodynamic prediction of swept wings via physics-embedded transfer learning. AIAA Journal, 63(6):2545–2559, 2025. Publisher: American Institute of Aeronautics and Astronautics.",
+      "[26] Haixu Wu, Huakun Luo, Haowen Wang, Jianmin Wang, and Mingsheng Long. Transolver: A Fast Transformer Solver for PDEs on General Geometries, June 2024. arXiv:2402.02366 [cs, math]."
+    ],
+    "bbox": [
+      135,
+      71,
+      861,
+      912
+    ],
+    "page_idx": 15
+  },
+  {
+    "type": "page_number",
+    "text": "16",
+    "bbox": [
+      490,
+      955,
+      508,
+      967
+    ],
+    "page_idx": 15
+  },
+  {
+    "type": "list",
+    "sub_type": "ref_text",
+    "list_items": [
+      "[27] Maximilian Herde, Bogdan Raonic, Tobias Rohner, Roger Käppeli, Roberto Molinaro, Emmanuel de Bézenac, and Siddhartha Mishra. Poseidon: Efficient Foundation Models for PDEs, November 2024. arXiv:2405.19101 [cs].",
+      "[28] Bonan Xu, Yuanye Zhou, and Xin Bian. Self-supervised learning based on Transformer for flow reconstruction and prediction. Physics of Fluids, 36(2):023607, February 2024.",
+      "[29] Benjamin Holzschuh, Qiang Liu, Georg Kohl, and Nils Thuerey. PDE-Transformer: Efficient and Versatile Transformers for Physics Simulations, May 2025.",
+      "[30] Hang Zhou, Yuezhou Ma, Haixu Wu, Haowen Wang, and Mingsheng Long. Unisolver: PDE-Conditional Transformers Are Universal PDE Solvers, July 2025. arXiv:2405.17527 [cs].",
+      "[31] Yichen Luo, Jia Wang, Dapeng Lan, Yu Liu, and Zhibo Pang. MMET: A Multi-Input and Multi-Scale Transformer for Efficient PDEs Solving, May 2025.",
+      "[32] Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, and Neil Houlsby. An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale, June 2021. arXiv:2010.11929 [cs].",
+      "[33] John Vassberg, Mark Dehaan, Melissa Rivers, and Richard Wahls. Development of a Common Research Model for Applied CFD Validation Studies. In 26th AIAA Applied Aerodynamics Conference, Honolulu, Hawaii, August 2008. American Institute of Aeronautics and Astronautics.",
+      "[34] John Vassberg, Anthony Sclafani, and Mark DeHaan. A Wing-Body Fairing Design for the DLR-F6 Model: A DPW-III Case Study. In 23rd AIAA Applied Aerodynamics Conference, Toronto, Ontario, Canada, June 2005. American Institute of Aeronautics and Astronautics.",
+      "[35] Martin Orlita and Roelof Vos. Cruise Performance Optimization of the Airbus A320 through Flap Morphing. In 17th AIAA Aviation Technology, Integration, and Operations Conference, Denver, Colorado, June 2017. American Institute of Aeronautics and Astronautics.",
+      "[36] Runze Li, Yufei Zhang, and Haixin Chen. Pressure distribution feature-oriented sampling for statistical analysis of supercritical airfoil aerodynamics. Chinese Journal of Aeronautics, 35(4):134-147, April 2022.",
+      "[37] Charles A. Mader, Gaetan K. W. Kenway, Anil Yildirim, and Joaquim R. R. A. Martins. ADflow: An Open-Source Computational Fluid Dynamics Solver for Aerodynamic and Multidisciplinary Optimization. Journal of Aerospace Information Systems, 17(9):508-527, September 2020.",
+      "[38] Zhoujie Lyu, Gaetan K. W. Kenway, and Joaquim R. R. A. Martins. Aerodynamic Shape Optimization Investigations of the Common Research Model Wing Benchmark. AIAA Journal, 53(4):968-985, April 2015."
+    ],
+    "bbox": [
+      135,
+      70,
+      864,
+      681
+    ],
+    "page_idx": 16
+  },
+  {
+    "type": "page_number",
+    "text": "17",
+    "bbox": [
+      490,
+      955,
+      506,
+      965
+    ],
+    "page_idx": 16
+  }
+]
