@@ -2,7 +2,10 @@
 from __future__ import annotations
 from typing import List, Dict
 import argparse
-from datetime import timedelta
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from openai import OpenAI
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from config import (
@@ -71,49 +74,60 @@ def build_candidates_with_fallback(baseline_entries: List[Dict], start_utc, end_
     merged = list(baseline_entries)
     seen_ids = { (e.get("id") or "") for e in merged }
 
-    for org in targets:
+    def _job(org: str):
         terms = ORG_SEARCH_TERMS.get(org, [])
         if not terms:
-            continue
-
-        # —— 可调直搜深度：完全由 config 控制
+            return org, []
         raw_list = list(search_by_terms(
             terms,
             limit_pages=PER_ORG_SEARCH_LIMIT_PAGES,
             page_size=PER_ORG_SEARCH_PAGE_SIZE
         ))
-        total_raw = len(raw_list)
+        return org, raw_list
 
-        # 窗口过滤（保留 cs.*）
-        after_window = [e for e in raw_list if is_cs(e) and in_time_window(e, start_utc, end_utc)]
-        total_window = len(after_window)
-
-        # 合并去重
-        before = len(merged)
-        for e in after_window:
-            xid = e.get("id") or ""
-            if xid not in seen_ids:
-                merged.append(e)
-                seen_ids.add(xid)
-        added = len(merged) - before
-
-        if DEBUG:
-            print(f"[FALLBACK-DEBUG] {org}: raw={total_raw}, in_window={total_window}, added={added}, merged total now {len(merged)}")
+    org_search_concurrency = getattr(build_candidates_with_fallback, "_org_search_concurrency", 1)
+    with ThreadPoolExecutor(max_workers=max(1, int(org_search_concurrency))) as ex:
+        futures = { ex.submit(_job, org): org for org in targets }
+        for fut in as_completed(futures):
+            org, raw_list = fut.result()
+            total_raw = len(raw_list)
+            after_window = [e for e in raw_list if is_cs(e) and in_time_window(e, start_utc, end_utc)]
+            total_window = len(after_window)
+            before = len(merged)
+            for e in after_window:
+                xid = e.get("id") or ""
+                if xid not in seen_ids:
+                    merged.append(e)
+                    seen_ids.add(xid)
+            added = len(merged) - before
+            if DEBUG:
+                print(f"[FALLBACK-DEBUG] {org}: raw={total_raw}, in_window={total_window}, added={added}, merged total now {len(merged)}")
 
     return merged
 
 def main():
     pa = argparse.ArgumentParser("app2")
     pa.add_argument("--limit-files", type=int, default=0)
+    pa.add_argument("--decide-concurrency", type=int, default=10)
+    pa.add_argument("--org-search-concurrency", type=int, default=6)
+    pa.add_argument("--window-hours", type=int, default=0)
     args = pa.parse_args()
     limit_files = max(0, int(args.limit_files))
+    decide_concurrency = max(1, int(args.decide_concurrency))
+    org_search_concurrency = max(1, int(args.org_search_concurrency))
+    window_hours = max(0, int(args.window_hours))
     # 1) 时间窗口（昨天：北京时间）
     now = now_local()
-    start_utc, end_utc = beijing_previous_day_window(now)
+    if window_hours > 0:
+        end_utc = datetime.now(timezone.utc)
+        start_utc = end_utc - timedelta(hours=window_hours)
+    else:
+        start_utc, end_utc = beijing_previous_day_window(now)
     _debug_print_window(now, start_utc, end_utc)
 
     # 2) 候选集 = 基线 +（按需）per-org 直搜补齐
     baseline_entries = _collect_baseline_entries(start_utc, end_utc)
+    build_candidates_with_fallback._org_search_concurrency = org_search_concurrency
     candidates = build_candidates_with_fallback(baseline_entries, start_utc, end_utc)
     
 
@@ -152,32 +166,101 @@ def main():
         print(f"MinerU token 文件为空：{token_path}")
         return
 
-    run_local_batch(
-        pdfs=pdfs,
-        out_md_root=Path("data") / "md",
-        out_json_root=Path("data") / "json",
-        base_url="https://mineru.net",
-        token=token,
-        model_version="vlm",
-        timeout_sec=900,
-        poll_sec=3,
-        upload_retries=6,
-        keep_zip=False,
-        is_ocr=False,
-        enable_formula=True,
-        enable_table=True,
-        language="ch",
-        extra_formats=[],
-        page_ranges=None,
-        batch_size=10,
-        upload_concurrency=10,
-        limit_files=limit_files,
-    )
+    out_decide_dir = Path("data_output") / "decide"
+    out_decide_dir.mkdir(parents=True, exist_ok=True)
+    out_decide_path = out_decide_dir / f"{run_date}.json"
+    api_key_path = Path("config") / "qwen_api.txt"
+    api_key = api_key_path.read_text(encoding="utf-8", errors="ignore").strip() if api_key_path.exists() else ""
+    base_url_llm = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    model_llm = "qwen-plus"
+    lock = threading.Lock()
+    sum_lock = threading.Lock()
+    out_summary_dir = Path("dataSelect") / "summary" / run_date
+    out_summary_dir.mkdir(parents=True, exist_ok=True)
+    out_gather_dir = Path("dataSelect") / "summary_gather"
+    out_gather_dir.mkdir(parents=True, exist_ok=True)
+    out_gather_path = out_gather_dir / f"{run_date}.txt"
+    futures = []
+    def on_json(path: Path) -> None:
+        def job(pth: Path) -> None:
+            text = j2d.load_first_pages_text(pth, max_page_idx=2)
+            item = j2d.call_qwen_plus(api_key, base_url_llm, model_llm, text, file_name=pth.name)
+            with lock:
+                j2d.append_result(out_decide_path, item)
+            try:
+                if bool(item.get("is_large", False)):
+                    fn = str(item.get("文件名") or "").strip()
+                    stem = Path(fn).stem
+                    if stem:
+                        src_md = (Path("data") / "md" / run_date / f"{stem}.md")
+                        dst_md_dir = Path("dataSelect") / "md" / run_date
+                        dst_pdf_dir = Path("dataSelect") / "pdf" / run_date
+                        dst_md_dir.mkdir(parents=True, exist_ok=True)
+                        dst_pdf_dir.mkdir(parents=True, exist_ok=True)
+                        src_pdf = (Path(PDF_CACHE_DIR) / run_date / f"{stem}.pdf")
+                        if not src_pdf.exists():
+                            found = list((Path(PDF_CACHE_DIR) / run_date).rglob(f"{stem}.pdf"))
+                            if found:
+                                src_pdf = found[0]
+                        if src_pdf.exists():
+                            dst_pdf = dst_pdf_dir / src_pdf.name
+                            if not dst_pdf.exists():
+                                import shutil
+                                shutil.copy2(src_pdf, dst_pdf)
+                        if src_md.exists():
+                            dst_md = dst_md_dir / src_md.name
+                            if not dst_md.exists():
+                                import shutil
+                                shutil.copy2(src_md, dst_md)
+                            one_out = out_summary_dir / f"{stem}.txt"
+                            if not one_out.exists():
+                                md_text = dst_md.read_text(encoding="utf-8", errors="ignore")
+                                sum_client = psum.make_client()
+                                summary = psum.summarize_md(sum_client, "qwen2.5-72b-instruct", md_text, file_name=dst_md.name)
+                                one_out.write_text(summary, encoding="utf-8")
+                                with sum_lock:
+                                    with out_gather_path.open("a", encoding="utf-8") as f:
+                                        f.write(summary)
+                                        f.write("\n############################################################\n")
+            except Exception:
+                pass
+        futures.append(ex.submit(job, path))
+    ex = ThreadPoolExecutor(max_workers=decide_concurrency)
+    try:
+        run_local_batch(
+            pdfs=pdfs,
+            out_md_root=Path("data") / "md",
+            out_json_root=Path("data") / "json",
+            base_url="https://mineru.net",
+            token=token,
+            model_version="vlm",
+            timeout_sec=900,
+            poll_sec=3,
+            upload_retries=6,
+            keep_zip=False,
+            is_ocr=False,
+            enable_formula=True,
+            enable_table=True,
+            language="ch",
+            extra_formats=[],
+            page_ranges=None,
+            batch_size=10,
+            upload_concurrency=10,
+            limit_files=limit_files,
+            on_json=on_json,
+        )
+    finally:
+        for f in futures:
+            try:
+                f.result()
+            except Exception:
+                pass
+        ex.shutdown(wait=True)
 
     _argv = list(sys.argv)
     try:
         sys.argv = [sys.argv[0]]
-        j2d.main()
+        print(str(out_decide_path))
         sys.argv = [sys.argv[0]]
         psel.main()
         sys.argv = [sys.argv[0]]

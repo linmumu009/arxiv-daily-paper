@@ -1,0 +1,72 @@
+[
+  {
+    "文件名": "2506.06694v6.json",
+    "机构名": "清华大学",
+    "is_large": true,
+    "第一作者机构": "清华大学",
+    "通讯作者机构": "清华大学"
+  },
+  {
+    "文件名": "2512.23310v1.json",
+    "机构名": "University of Innsbruck",
+    "第一作者机构": "University of Innsbruck",
+    "通讯作者机构": "University of Innsbruck",
+    "is_large": false
+  },
+  {
+    "文件名": "2512.23312v1.json",
+    "机构名": "元智大学",
+    "is_large": false,
+    "第一作者机构": "元智大学",
+    "通讯作者机构": "元智大学"
+  },
+  {
+    "文件名": "2512.23324v1.json",
+    "机构名": "CISPA Helmholtz Center for Information Security",
+    "第一作者机构": "CISPA Helmholtz Center for Information Security",
+    "通讯作者机构": "CISPA Helmholtz Center for Information Security",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.23328v1.json",
+    "机构名": "清华大学",
+    "is_large": true,
+    "第一作者机构": "清华大学",
+    "通讯作者机构": "普林斯顿大学"
+  },
+  {
+    "文件名": "2512.23329v1.json",
+    "机构名": "Oracle",
+    "is_large": true,
+    "第一作者机构": "Oracle",
+    "通讯作者机构": "Oracle"
+  },
+  {
+    "文件名": "2512.23335v1.json",
+    "机构名": "未知",
+    "is_large": false,
+    "第一作者机构": "未知",
+    "通讯作者机构": "未知"
+  },
+  {
+    "文件名": "2512.23340v1.json",
+    "机构名": "TeleAI",
+    "is_large": true,
+    "第一作者机构": "Institute of Artificial Intelligence (TeleAI), China Telecom",
+    "通讯作者机构": "Institute of Artificial Intelligence (TeleAI), China Telecom"
+  },
+  {
+    "文件名": "2512.23343v1.json",
+    "机构名": "哈尔滨工业大学",
+    "is_large": true,
+    "第一作者机构": "Harbin Institute of Technology, China",
+    "通讯作者机构": "Harbin Institute of Technology, China"
+  },
+  {
+    "文件名": "2512.23356v1.json",
+    "机构名": "重庆邮电大学",
+    "is_large": false,
+    "第一作者机构": "重庆交通大学",
+    "通讯作者机构": "重庆邮电大学"
+  }
+]

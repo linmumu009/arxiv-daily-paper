@@ -8,7 +8,7 @@ import zipfile
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Callable
 
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -229,12 +229,13 @@ def run_local_batch(
     enable_formula: bool,
     enable_table: bool,
     language: str,
-    extra_formats: list[str],
-    page_ranges: str | None,
-    batch_size: int = 10,
-    upload_concurrency: int = 10,
-    limit_files: int = 0,
-) -> None:
+     extra_formats: list[str],
+     page_ranges: str | None,
+     batch_size: int = 10,
+     upload_concurrency: int = 10,
+     limit_files: int = 0,
+     on_json: Callable[[Path], None] | None = None,
+ ) -> None:
     if limit_files and limit_files > 0:
         pdfs = pdfs[:limit_files]
     date_dir = today_str()
@@ -336,6 +337,11 @@ def run_local_batch(
                 (out_json_dir / f"{p.stem}.json").write_text(obj, encoding="utf-8")
             else:
                 (out_json_dir / f"{p.stem}.json").write_text(json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
+            if on_json:
+                try:
+                    on_json(out_json_dir / f"{p.stem}.json")
+                except Exception:
+                    pass
             wrote += 1
             print(f"\r[write] {wrote}/{total_write}", end="", flush=True)
 
@@ -344,13 +350,13 @@ def run_local_batch(
                     zip_path.unlink(missing_ok=True)
                 except Exception:
                     pass
-        print()
+            print()
 
-    if not keep_zip:
-        try:
-            tmp_zip_dir.rmdir()
-        except Exception:
-            pass
+        if not keep_zip:
+            try:
+                tmp_zip_dir.rmdir()
+            except Exception:
+                pass
 
 
 def main() -> None:

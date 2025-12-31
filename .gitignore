@@ -53,7 +53,10 @@ cache_pdfs/
 downloads/
 cache/
 config/
-
+dataSelect/pdf/
+dataSelect/md/
+data/json/
+data/md/
 # -------------------------
 # Environment Configs / Secrets
 # -------------------------

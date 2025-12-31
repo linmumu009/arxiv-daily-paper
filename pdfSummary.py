@@ -90,9 +90,11 @@ def main() -> None:
     out_gather_path = out_gather_dir / f"{date_str}.txt"
 
     for p in files:
+        one_out = out_summary_dir / f"{p.stem}.txt"
+        if one_out.exists():
+            continue
         md_text = p.read_text(encoding="utf-8", errors="ignore")
         s = summarize_md(client, args.model, md_text, file_name=p.name)
-        one_out = out_summary_dir / f"{p.stem}.txt"
         one_out.write_text(s, encoding="utf-8")
         with out_gather_path.open("a", encoding="utf-8") as f:
             f.write(s)
