@@ -3,6 +3,7 @@ import argparse
 from pathlib import Path
 import shutil
 from datetime import datetime
+from rewriteClean import clean_block_with_key
 
 def ensure_dir(p: str | Path) -> Path:
     p = Path(p)
@@ -82,25 +83,29 @@ def move_pdfs(pdf_dir: Path, dest_dir: Path, stems: list[str]) -> tuple[int, lis
 
 def annotate_copy_file(cp: Path, block_to_stems: dict[str, list[str]]) -> None:
     blocks = split_blocks(read_text(cp))
-    lines: list[str] = []
-    sep = "############################################################"
+    sep = "#" * 80
+    items: list[tuple[tuple[str, str], str, list[str]]] = []
     for b in blocks:
         clean = normalize_block(b)
         stems = block_to_stems.get(clean.strip(), [])
         for s in stems:
-            lines.append(f"{s}.pdf")
-            lines.append("")
-            lines.append("")
-            lines.append(sep)
-            lines.append("")
-            lines.append("")
-        lines.append(clean)
-        lines.append("")
-        lines.append("")
-        lines.append(sep)
-        lines.append("")
-        lines.append("")
-    text = "\n".join(lines) + "\n"
+            block_out, key = clean_block_with_key(clean.splitlines())
+            if block_out:
+                items.append((key, s, block_out))
+    items.sort(key=lambda x: x[0])
+    out_lines: list[str] = []
+    for i, (_, stem, block) in enumerate(items):
+        if i > 0:
+            out_lines.append("")
+            out_lines.append("")
+        out_lines.append(sep)
+        out_lines.append("")
+        out_lines.append(f"{stem}.pdf")
+        out_lines.append("")
+        out_lines.append(sep)
+        out_lines.append("")
+        out_lines.extend(block)
+    text = "\n".join(out_lines)
     cp.write_text(text, encoding="utf-8")
 
 def main():
