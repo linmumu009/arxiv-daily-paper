@@ -177,7 +177,7 @@ def main():
     sum_lock = threading.Lock()
     out_summary_dir = Path("dataSelect") / "summary" / run_date
     out_summary_dir.mkdir(parents=True, exist_ok=True)
-    out_gather_dir = Path("dataSelect") / "summary_gather"
+    out_gather_dir = Path("dataSelect") / "summary_gather" / run_date
     out_gather_dir.mkdir(parents=True, exist_ok=True)
     out_gather_path = out_gather_dir / f"{run_date}.txt"
     futures = []
@@ -221,7 +221,7 @@ def main():
                                 with sum_lock:
                                     with out_gather_path.open("a", encoding="utf-8") as f:
                                         f.write(summary)
-                                        f.write("\n############################################################\n")
+                                        f.write("\n\n\n############################################################\n\n\n")
             except Exception:
                 pass
         futures.append(ex.submit(job, path))

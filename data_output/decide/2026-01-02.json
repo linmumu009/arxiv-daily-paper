@@ -1,0 +1,543 @@
+[
+  {
+    "文件名": "2505.03452v3.json",
+    "机构名": "IBM Research",
+    "is_large": true,
+    "第一作者机构": "IBM Research",
+    "通讯作者机构": "IBM Research"
+  },
+  {
+    "文件名": "2510.10161v2.json",
+    "机构名": "中国科学院计算技术研究所",
+    "第一作者机构": "中国科学院计算技术研究所和中国科学院大学",
+    "通讯作者机构": "中国科学院计算技术研究所和中国科学院大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.24555v1.json",
+    "机构名": "上海人工智能实验室",
+    "is_large": true,
+    "第一作者机构": "上海人工智能实验室",
+    "通讯作者机构": "上海人工智能实验室"
+  },
+  {
+    "文件名": "2512.24556v1.json",
+    "机构名": "African Institute for Mathematical Science",
+    "is_large": false,
+    "第一作者机构": "African Institute for Mathematical Science",
+    "通讯作者机构": "African Institute for Mathematical Science"
+  },
+  {
+    "文件名": "2512.24560v1.json",
+    "机构名": "加州大学戴维斯分校",
+    "is_large": true,
+    "第一作者机构": "加州大学戴维斯分校",
+    "通讯作者机构": "加州大学戴维斯分校"
+  },
+  {
+    "文件名": "2512.24562v1.json",
+    "第一作者机构": "中国科学院信息工程研究所，北京，中国",
+    "通讯作者机构": "中国科学院信息工程研究所，北京，中国",
+    "机构名": "中国科学院信息工程研究所",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.24565v1.json",
+    "机构名": "北京大学",
+    "第一作者机构": "北京大学",
+    "通讯作者机构": "北京大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.24571v1.json",
+    "机构名": "GlassHouse Systems Inc.",
+    "is_large": false,
+    "第一作者机构": "Ontario Tech University",
+    "通讯作者机构": "GlassHouse Systems Inc."
+  },
+  {
+    "文件名": "2512.24572v1.json",
+    "机构名": "University of Seoul",
+    "is_large": false,
+    "第一作者机构": "University of Seoul",
+    "通讯作者机构": "University of Seoul"
+  },
+  {
+    "文件名": "2512.24574v1.json",
+    "机构名": "Together AI",
+    "is_large": false,
+    "第一作者机构": "University of Texas at Austin",
+    "通讯作者机构": "Together AI"
+  },
+  {
+    "文件名": "2512.24587v1.json",
+    "机构名": "University of Pennsylvania",
+    "is_large": true,
+    "第一作者机构": "University of Pennsylvania",
+    "通讯作者机构": "University of Pennsylvania"
+  },
+  {
+    "文件名": "2512.24593v1.json",
+    "机构名": "Lehigh University",
+    "is_large": true,
+    "第一作者机构": "Lehigh University",
+    "通讯作者机构": "Lehigh University"
+  },
+  {
+    "文件名": "2512.24601v1.json",
+    "机构名": "MIT CSAIL",
+    "is_large": true,
+    "第一作者机构": "MIT CSAIL",
+    "通讯作者机构": "MIT CSAIL"
+  },
+  {
+    "文件名": "2512.24609v1.json",
+    "机构名": "New England College",
+    "is_large": false,
+    "第一作者机构": "New England College",
+    "通讯作者机构": "New England College"
+  },
+  {
+    "文件名": "2512.24613v1.json",
+    "机构名": "Brown University",
+    "is_large": true,
+    "第一作者机构": "Brown University",
+    "通讯作者机构": "Brown University"
+  },
+  {
+    "文件名": "2512.24614v1.json",
+    "机构名": "NTT",
+    "is_large": true,
+    "第一作者机构": "Keio University",
+    "通讯作者机构": "NTT"
+  },
+  {
+    "文件名": "2512.24615v1.json",
+    "机构名": "Tencent",
+    "is_large": true,
+    "第一作者机构": "Tencent",
+    "通讯作者机构": "Tencent"
+  },
+  {
+    "文件名": "2512.24617v1.json",
+    "机构名": "ByteDance",
+    "is_large": true,
+    "第一作者机构": "ByteDance Seed",
+    "通讯作者机构": "ByteDance"
+  },
+  {
+    "文件名": "2512.24618v1.json",
+    "机构名": "Tencent",
+    "is_large": true,
+    "第一作者机构": "Tencent",
+    "通讯作者机构": "Tencent"
+  },
+  {
+    "文件名": "2512.24625v1.json",
+    "机构名": "香港科技大学",
+    "is_large": true,
+    "第一作者机构": "香港科技大学土木与环境工程系",
+    "通讯作者机构": "香港科技大学智能交通学域",
+    "备注": "通讯作者Sen Li隶属于香港科技大学（广州）智能交通学域，但主体机构仍为香港科技大学体系"
+  },
+  {
+    "文件名": "2512.24628v1.json",
+    "机构名": "Weill Cornell Medicine",
+    "is_large": true,
+    "第一作者机构": "Dalio Institute of Cardiovascular Imaging, Department of Radiology, Weill Cornell Medicine",
+    "通讯作者机构": "Weill Cornell Medicine"
+  },
+  {
+    "文件名": "2512.24635v1.json",
+    "机构名": "重庆大学",
+    "is_large": true,
+    "第一作者机构": "重庆大学",
+    "通讯作者机构": "重庆大学"
+  },
+  {
+    "文件名": "2512.24651v1.json",
+    "第一作者机构": "莫斯科国立大学计算数学与控制论系",
+    "通讯作者机构": "莫斯科国立大学计算数学与控制论系",
+    "机构名": "莫斯科国立大学计算数学与控制论系",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.24661v1.json",
+    "机构名": "RAND Corporation",
+    "is_large": true,
+    "第一作者机构": "RAND Corporation",
+    "通讯作者机构": "RAND Corporation"
+  },
+  {
+    "文件名": "2512.24680v1.json",
+    "机构名": "北京大学",
+    "第一作者机构": "北京大学",
+    "通讯作者机构": "北京大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.24684v1.json",
+    "机构名": "Wuhan College of Communication",
+    "is_large": false,
+    "第一作者机构": "Wuhan College of Communication",
+    "通讯作者机构": "Wuhan College of Communication"
+  },
+  {
+    "文件名": "2512.24686v1.json",
+    "机构名": "清华大学",
+    "第一作者机构": "清华大学",
+    "通讯作者机构": "清华大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.24693v1.json",
+    "机构名": "Google DeepMind",
+    "is_large": true,
+    "第一作者机构": "Princeton University",
+    "通讯作者机构": "Google DeepMind"
+  },
+  {
+    "文件名": "2512.24698v1.json",
+    "机构名": "韩国科学技术院",
+    "is_large": true,
+    "第一作者机构": "韩国科学技术院",
+    "通讯作者机构": "韩国科学技术院"
+  },
+  {
+    "文件名": "2512.24702v1.json",
+    "机构名": "厦门大学",
+    "第一作者机构": "厦门大学",
+    "通讯作者机构": "厦门大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.24708v1.json",
+    "机构名": "布达佩斯科技经济大学",
+    "is_large": true,
+    "第一作者机构": "布达佩斯科技经济大学",
+    "通讯作者机构": "布达佩斯科技经济大学"
+  },
+  {
+    "文件名": "2512.24711v1.json",
+    "机构名": "清华大学",
+    "is_large": true,
+    "第一作者机构": "清华大学计算机科学与技术系，清华大学人工智能研究院",
+    "通讯作者机构": "清华大学计算机科学与技术系，清华大学人工智能研究院"
+  },
+  {
+    "文件名": "2512.24713v1.json",
+    "机构名": "Academia Sinica",
+    "第一作者机构": "Institute of Information Science, Academia Sinica",
+    "通讯作者机构": "Institute of Information Science, Academia Sinica",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.24733v1.json",
+    "机构名": "中国科学院自动化研究所",
+    "is_large": true,
+    "第一作者机构": "北京文阁科技有限公司",
+    "通讯作者机构": "中国科学院自动化研究所"
+  },
+  {
+    "文件名": "2512.24740v1.json",
+    "机构名": "加州大学伯克利分校",
+    "is_large": true,
+    "第一作者机构": "加州大学伯克利分校",
+    "通讯作者机构": "加州大学伯克利分校"
+  },
+  {
+    "文件名": "2512.24762v1.json",
+    "机构名": "Kuaishou-OneRec",
+    "is_large": true,
+    "第一作者机构": "Kuaishou-OneRec",
+    "通讯作者机构": "Kuaishou-OneRec"
+  },
+  {
+    "文件名": "2512.24776v1.json",
+    "机构名": "E-Group Research",
+    "is_large": false,
+    "第一作者机构": "E-Group Research",
+    "通讯作者机构": "E-Group Research"
+  },
+  {
+    "文件名": "2512.24780v1.json",
+    "机构名": "University of Texas at Austin",
+    "is_large": true,
+    "第一作者机构": "University of Texas at Austin",
+    "通讯作者机构": "University of Texas at Austin"
+  },
+  {
+    "文件名": "2512.24787v1.json",
+    "机构名": "Tencent",
+    "is_large": true,
+    "第一作者机构": "Platform and Content Group, Tencent Shenzhen, China",
+    "通讯作者机构": "Platform and Content Group, Tencent Shenzhen, China"
+  },
+  {
+    "文件名": "2512.24793v1.json",
+    "机构名": "University of Tokyo",
+    "is_large": true,
+    "第一作者机构": "University of Tokyo",
+    "通讯作者机构": "University of Tokyo"
+  },
+  {
+    "文件名": "2512.24796v1.json",
+    "机构名": "清华大学",
+    "is_large": true,
+    "第一作者机构": "清华大学",
+    "通讯作者机构": "清华大学"
+  },
+  {
+    "文件名": "2512.24810v1.json",
+    "机构名": "布达佩斯技术与经济大学",
+    "第一作者机构": "布达佩斯技术与经济大学",
+    "通讯作者机构": "布达佩斯技术与经济大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.24818v1.json",
+    "机构名": "University of Washington",
+    "is_large": true,
+    "第一作者机构": "Tsinghua University",
+    "通讯作者机构": "University of Washington"
+  },
+  {
+    "文件名": "2512.248266v1.json",
+    "机构名": "苏黎世大学",
+    "is_large": true,
+    "第一作者机构": "苏黎世大学",
+    "通讯作者机构": "苏黎世大学"
+  },
+  {
+    "文件名": "2512.24827v1.json",
+    "第一作者机构": "University of Edinburgh",
+    "通讯作者机构": "Google DeepMind",
+    "机构名": "Google DeepMind",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.24829v1.json",
+    "机构名": "Monash University",
+    "is_large": true,
+    "第一作者机构": "Monash University, CSIRO Robotics",
+    "通讯作者机构": "Monash University"
+  },
+  {
+    "文件名": "2512.24834v1.json",
+    "机构名": "Microsoft Research",
+    "第一作者机构": "Arizona State University",
+    "通讯作者机构": "Microsoft Research",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.24842v1.json",
+    "机构名": "StickFlux Labs",
+    "is_large": false,
+    "第一作者机构": "StickFlux Labs",
+    "通讯作者机构": "StickFlux Labs"
+  },
+  {
+    "文件名": "2512.24845v1.json",
+    "机构名": "清华大学",
+    "第一作者机构": "清华大学",
+    "通讯作者机构": "清华大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.248488v1.json",
+    "机构名": "International Institute of Information Technology Hyderabad",
+    "第一作者机构": "International Institute of Information Technology Hyderabad",
+    "通讯作者机构": "International Institute of Information Technology Hyderabad",
+    "is_large": false
+  },
+  {
+    "文件名": "2512.24851v1.json",
+    "机构名": "阿德莱德大学",
+    "is_large": true,
+    "第一作者机构": "阿德莱德大学",
+    "通讯作者机构": "阿德莱德大学",
+    "备注": "所有作者均来自Adelaide University，即阿德莱德大学，为澳大利亚知名研究型大学，属大型学术机构。"
+  },
+  {
+    "文件名": "2512.24866v1.json",
+    "机构名": "布达佩斯科技经济大学",
+    "is_large": false,
+    "第一作者机构": "布达佩斯科技经济大学",
+    "通讯作者机构": "布达佩斯科技经济大学"
+  },
+  {
+    "文件名": "2512.24867v1.json",
+    "机构名": "Bytedance",
+    "is_large": true,
+    "第一作者机构": "University of Chinese Academy of Sciences, Institute of Automation, Chinese Academy of Sciences",
+    "通讯作者机构": "Bytedance Seed China"
+  },
+  {
+    "文件名": "2512.24873v1.json",
+    "机构名": "ROCK & ROLL & IFLOW & DT Joint Team",
+    "第一作者机构": "ROCK & ROLL & IFLOW & DT Joint Team",
+    "通讯作者机构": "ROCK & ROLL & IFLOW & DT Joint Team",
+    "is_large": false
+  },
+  {
+    "文件名": "2512.24885v1.json",
+    "机构名": "北京大学",
+    "is_large": true,
+    "第一作者机构": "北京大学人工智能研究院, PKU NLCo, BIGAI",
+    "通讯作者机构": "NLCo, BIGAI, 北京大学人工智能研究院, 清华大学自动化系"
+  },
+  {
+    "文件名": "2512.24933v1.json",
+    "机构名": "华为",
+    "第一作者机构": "华为 Poisson Lab",
+    "通讯作者机构": "华为 Poisson Lab",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.24939v1.json",
+    "机构名": "University of Amsterdam",
+    "第一作者机构": "University of Amsterdam",
+    "通讯作者机构": null,
+    "is_large": false
+  },
+  {
+    "文件名": "2512.24940v1.json",
+    "机构名": "University of Oxford",
+    "is_large": true,
+    "第一作者机构": "University of Oxford",
+    "通讯作者机构": "University of Oxford"
+  },
+  {
+    "文件名": "2512.24943v1.json",
+    "机构名": "Alibaba",
+    "is_large": true,
+    "第一作者机构": "Taobao & Tmall Group of Alibaba",
+    "通讯作者机构": "Taobao & Tmall Group of Alibaba"
+  },
+  {
+    "文件名": "2512.24947v1.json",
+    "机构名": "山东理工大学商学院",
+    "is_large": false,
+    "第一作者机构": "山东理工大学商学院",
+    "通讯作者机构": "澳门 millennium college 国际语言服务研究所"
+  },
+  {
+    "文件名": "2512.24957v1.json",
+    "机构名": "AMAP",
+    "is_large": true,
+    "第一作者机构": "AMAP AI Agent LLM Team",
+    "通讯作者机构": "AMAP AI Agent LLM Team"
+  },
+  {
+    "文件名": "2512.24959v1.json",
+    "机构名": "布达佩斯科技经济大学",
+    "is_large": true,
+    "第一作者机构": "布达佩斯科技经济大学",
+    "通讯作者机构": "布达佩斯科技经济大学"
+  },
+  {
+    "文件名": "2512.24965v1.json",
+    "机构名": "新加坡国立大学",
+    "is_large": true,
+    "第一作者机构": "新加坡国立大学",
+    "通讯作者机构": "新加坡国立大学"
+  },
+  {
+    "文件名": "2512.24971v1.json",
+    "机构名": "Federal University of Alagoas",
+    "第一作者机构": "Federal University of Alagoas",
+    "通讯作者机构": "Federal University of Alagoas",
+    "is_large": false
+  },
+  {
+    "文件名": "2512.24974v1.json",
+    "机构名": "The Chinese University of Hong Kong",
+    "第一作者机构": "The Chinese University of Hong Kong",
+    "通讯作者机构": "The Chinese University of Hong Kong",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.24975v1.json",
+    "机构名": "约翰斯·霍普金斯大学",
+    "is_large": true,
+    "第一作者机构": "约翰斯·霍普金斯大学",
+    "通讯作者机构": "约翰斯·霍普金斯大学"
+  },
+  {
+    "文件名": "2512.24985v1.json",
+    "机构名": "韩国科学技术院",
+    "is_large": true,
+    "第一作者机构": "韩国科学技术院 (KAIST)",
+    "通讯作者机构": "韩国科学技术院 (KAIST)"
+  },
+  {
+    "文件名": "2512.24991v1.json",
+    "第一作者机构": "多伦多大学",
+    "通讯作者机构": "多伦多大学",
+    "机构名": "多伦多大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.24997v1.json",
+    "机构名": "Jus Mundi",
+    "is_large": false,
+    "第一作者机构": "Jus Mundi",
+    "通讯作者机构": "Jus Mundi"
+  },
+  {
+    "文件名": "2512.25015v1.json",
+    "机构名": "University of Illinois at Chicago",
+    "is_large": true,
+    "第一作者机构": "University of Illinois at Chicago",
+    "通讯作者机构": "University of Illinois at Chicago"
+  },
+  {
+    "文件名": "2512.25023v1.json",
+    "机构名": "LMU Munich",
+    "is_large": true,
+    "第一作者机构": "LMU Munich, MCML",
+    "通讯作者机构": "LMU Munich, MCML, DFKI"
+  },
+  {
+    "文件名": "2512.25026v1.json",
+    "机构名": "Stanford University",
+    "is_large": true,
+    "第一作者机构": "Independent Researcher",
+    "通讯作者机构": "Stanford University"
+  },
+  {
+    "文件名": "2512.25052v1.json",
+    "机构名": "Central South University",
+    "第一作者机构": "Central South University",
+    "通讯作者机构": "Yizhi Intelligent (YZInt)",
+    "is_large": false
+  },
+  {
+    "文件名": "2512.25055v1.json",
+    "机构名": "Virginia Polytechnic Institute and State University",
+    "is_large": true,
+    "第一作者机构": "The University of Texas at San Antonio",
+    "通讯作者机构": "Virginia Polytechnic Institute and State University"
+  },
+  {
+    "文件名": "2512.25059v1.json",
+    "机构名": "马里兰大学帕克分校",
+    "第一作者机构": "马里兰大学帕克分校",
+    "通讯作者机构": "马里兰大学帕克分校",
+    "is_large": true
+  },
+  {
+    "文件名": "2512.25063v1.json",
+    "机构名": "加州大学圣克鲁兹分校",
+    "is_large": true,
+    "第一作者机构": "加州大学圣克鲁兹分校",
+    "通讯作者机构": "加州大学圣克鲁兹分校"
+  },
+  {
+    "文件名": "2512.25065v1.json",
+    "机构名": "The University of Texas at Austin",
+    "is_large": true,
+    "第一作者机构": "The University of Texas at Austin",
+    "通讯作者机构": "The University of Texas at Austin"
+  }
+]

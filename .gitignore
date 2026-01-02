@@ -57,6 +57,10 @@ dataSelect/pdf/
 dataSelect/md/
 data/json/
 data/md/
+dataSelect/
+selectPapers/
+SelectPaperRewrite/summary/
+
 # -------------------------
 # Environment Configs / Secrets
 # -------------------------

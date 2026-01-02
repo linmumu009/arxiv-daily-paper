@@ -352,12 +352,11 @@ def run_local_batch(
                     pass
             print()
 
-        if not keep_zip:
-            try:
-                tmp_zip_dir.rmdir()
-            except Exception:
-                pass
-
+    if not keep_zip:
+        try:
+            tmp_zip_dir.rmdir()
+        except Exception:
+            pass
 
 def main() -> None:
     pa = argparse.ArgumentParser("pdf2md (MinerU local batch)")
