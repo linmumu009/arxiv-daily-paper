@@ -26,7 +26,15 @@ except Exception:
 #     "cs.MM", "cs.IT", "cs.CY", "cs.SY", "cs.LO", "cs.LI", "cs.SI",
 # ]
 
-CS_SHARDS = ["cs.AI", "cs.CL", "cs.LG", "cs.IR", "cs.RO", "cs.DC"]
+# CS_SHARDS = ["cs.AI", "cs.CL", "cs.LG", "cs.IR", "cs.RO", "cs.DC"]
+
+CS_SHARDS = [
+    "cs.AI", "cs.CL", "cs.LG", "cs.IR",
+    "cs.CV", "cs.MM", "cs.SD",   # 多模态/视觉/语音（很多大模型在这）
+    "cs.DC",                    # 分布式/训练系统（LLM 训练常见）
+    "stat.ML",                  # ✅ 直接加进分片，避免 baseline 漏掉
+]
+
 
 
 # ---- HTTP session ----
