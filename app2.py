@@ -267,6 +267,13 @@ def main():
         psum.main()
     finally:
         sys.argv = _argv
+    try:
+        import shutil
+        copy_path = out_gather_dir / f"{run_date} copy.txt"
+        shutil.copy2(out_gather_path, copy_path)
+        print(str(copy_path))
+    except Exception:
+        pass
 
 if __name__ == "__main__":
     main()
