@@ -4,6 +4,7 @@ from pathlib import Path
 import shutil
 from datetime import datetime
 from rewriteClean import clean_block_with_key
+from types import SimpleNamespace
 
 def ensure_dir(p: str | Path) -> Path:
     p = Path(p)
@@ -108,6 +109,32 @@ def annotate_copy_file(cp: Path, block_to_stems: dict[str, list[str]]) -> None:
     text = "\n".join(out_lines)
     cp.write_text(text, encoding="utf-8")
 
+def run_zotero_push(date_str: str) -> None:
+    from zotero_push import run_mode_a
+    args = SimpleNamespace(
+        mode="A",
+        date=date_str,
+        pdf_root=str(Path("selectPapers") / "PDF"),
+        md_root=str(Path("selectPapers") / "md"),
+        summary_root=str(Path("SelectPaperRewrite") / "summary"),
+        summary_attach_root=str(Path("dataSelect") / "summary"),
+        connector_url="http://127.0.0.1:23119/connector/saveItems",
+        timeout=60,
+        attach_timeout=300,
+        a_title_mode="drag",
+        arxiv_timeout=20,
+        title_map_file="",
+        title_map_format="auto",
+        title_map_id_field="stem",
+        title_map_title_field="title",
+        title_map_fallback=False,
+        title_template="",
+        debug=False,
+        summary_mime="application/octet-stream",
+    )
+    code = run_mode_a(args)
+    print(f"Zotero 导入完成，状态码={code}")
+
 def main():
     pa = argparse.ArgumentParser("app2_post")
     pa.add_argument("--date", default="")
@@ -117,6 +144,8 @@ def main():
     pa.add_argument("--md-root", default=str(Path("dataSelect") / "md"))
     pa.add_argument("--out-root", default=str(Path("selectPapers") / "PDF"))
     pa.add_argument("--out-md-root", default=str(Path("selectPapers") / "md"))
+    pa.add_argument("--push-zotero", action="store_true", default=True)
+    pa.add_argument("--configdepositary", choices=["A", "B"], default="B")
     args = pa.parse_args()
 
     date_str = args.date.strip() or datetime.now().date().isoformat()
@@ -179,6 +208,8 @@ def main():
         annotate_copy_file(cp, block_to_stems)
     print(f"选中 {len(stems)} 篇，移动 PDF {moved_count} 个 -> {dest_dir}")
     print(f"移动 MD {moved_md} 个 -> {dest_md_dir}")
+    if args.push_zotero:
+        run_zotero_push(date_str)
 
 if __name__ == "__main__":
     main()

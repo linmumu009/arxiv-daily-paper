@@ -31,11 +31,10 @@ def load_api_key() -> str:
     return text
 
 
-def make_client() -> OpenAI:
-    return OpenAI(
-        api_key=load_api_key(),
-        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
-    )
+def make_client(api_key: str | None = None, base_url: str | None = None) -> OpenAI:
+    k = api_key or load_api_key()
+    u = base_url or "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    return OpenAI(api_key=k, base_url=u)
 
 def load_summary_example() -> str:
     p = Path("config") / "summary_prompt.py"
@@ -49,14 +48,17 @@ def load_summary_example() -> str:
     return getattr(mod, "summary_example", "")
 
 
-def summarize_md(client: OpenAI, model: str, md_text: str, file_name: str) -> str:
+def summarize_md(client: OpenAI, model: str, md_text: str, file_name: str, system_prompt: str | None = None, user_prompt_prefix: str | None = None) -> str:
     example = load_summary_example()
-    sys_prompt = (
-        "你是一个论文总结助手。参考示例的风格与结构，对给定的 Markdown 论文进行中文总结。"
-        "仅输出纯文本，总结包含：机构、标题、来源、文章简介、重点思路、分析总结或个人观点。"
-        f"\n示例：\n{example}"
-    )
-    user_content = md_text
+    if system_prompt:
+        sys_prompt = system_prompt
+    else:
+        sys_prompt = (
+            "你是一个论文总结助手。参考示例的风格与结构，对给定的 Markdown 论文进行中文总结。"
+            "仅输出纯文本，总结包含：机构、标题、来源、文章简介、重点思路、分析总结或个人观点。"
+            f"\n示例：\n{example}"
+        )
+    user_content = md_text if not user_prompt_prefix else f"{user_prompt_prefix}\n{md_text}"
     resp = client.chat.completions.create(
         model=model,
         messages=[

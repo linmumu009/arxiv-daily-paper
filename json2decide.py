@@ -43,16 +43,17 @@ def load_first_pages_text(json_path: Path, max_page_idx: int = 2) -> str:
     return "\n".join(lines).strip()
 
 
-def call_qwen_plus(api_key: str, base_url: str, model: str, content: str, file_name: str) -> Dict[str, Any]:
+def call_qwen_plus(api_key: str, base_url: str, model: str, content: str, file_name: str, sys_prompt: str | None = None) -> Dict[str, Any]:
     client = OpenAI(api_key=api_key, base_url=base_url)
-    sys_prompt = (
-        "你是一个严谨的机构识别助手。仅根据给出的论文前两页文本，识别第一作者与通讯作者各自所属的机构名称（如大学或公司），并从两者中挑选一个最主要的机构作为最终机构。"
-        "判断规则：若能识别到通讯作者（例如 *、† 或脚注“Corresponding author”），优先选择通讯作者机构；否则选择第一作者机构。"
-        "输出只返回一个 JSON 对象，至少包含键：文件名、机构名、is_large；且建议同时包含第一作者机构与通讯作者机构两个字段以便审阅。"
-        "机构名尽量使用中文名称；若无法确定中文名称则保留原文。对于 Google、Meta、Kimi 等全球知名品牌，请保留英文原文，不要翻译。"
-        "is_large 为布尔值，true 表示该机构为全球范围内广泛认可的大型或行业可信机构。"
-        "只返回 JSON，不要输出其他文本。"
-    )
+    if not sys_prompt:
+        sys_prompt = (
+            "你是一个严谨的机构识别助手。仅根据给出的论文前两页文本，识别第一作者与通讯作者各自所属的机构名称（如大学或公司），并从两者中挑选一个最主要的机构作为最终机构。"
+            "判断规则：若能识别到通讯作者（例如 *、† 或脚注“Corresponding author”），优先选择通讯作者机构；否则选择第一作者机构。"
+            "输出只返回一个 JSON 对象，至少包含键：文件名、机构名、is_large；且建议同时包含第一作者机构与通讯作者机构两个字段以便审阅。"
+            "机构名尽量使用中文名称；若无法确定中文名称则保留原文。对于 Google、Meta、Kimi 等全球知名品牌，请保留英文原文，不要翻译。"
+            "is_large 为布尔值，true 表示该机构为全球范围内广泛认可的大型或行业可信机构。"
+            "只返回 JSON，不要输出其他文本。"
+        )
     user_content = f"文件名：{file_name}\n文本：\n{content}"
     resp = client.chat.completions.create(
         model=model,

@@ -111,6 +111,7 @@ def main():
     pa.add_argument("--decide-concurrency", type=int, default=10)
     pa.add_argument("--org-search-concurrency", type=int, default=6)
     pa.add_argument("--window-hours", type=int, default=0)
+    pa.add_argument("--configdepositary", choices=["A", "B"], default="B")
     args = pa.parse_args()
     limit_files = max(0, int(args.limit_files))
     decide_concurrency = max(1, int(args.decide_concurrency))
@@ -157,20 +158,48 @@ def main():
         print(f"未发现缓存 PDF：{cache_root}")
         return
 
-    token_path = Path("config") / "mineru.txt"
-    if not token_path.exists():
-        print(f"缺少 MinerU token 文件：{token_path}")
-        return
-    token = token_path.read_text(encoding="utf-8", errors="ignore").strip()
-    if not token:
-        print(f"MinerU token 文件为空：{token_path}")
-        return
+    if args.configdepositary == "B":
+        import importlib.util
+        dep_path = Path("config") / "configDepositary.py"
+        if not dep_path.exists():
+            print(f"缺少配置文件：{dep_path}")
+            return
+        spec = importlib.util.spec_from_file_location("configDepositary", str(dep_path))
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        token = getattr(mod, "minerU_Token", "")
+        if not token:
+            print("配置文件中的 MinerU_Token 为空")
+            return
+    else:
+        token_path = Path("config") / "mineru.txt"
+        if not token_path.exists():
+            print(f"缺少 MinerU token 文件：{token_path}")
+            return
+        token = token_path.read_text(encoding="utf-8", errors="ignore").strip()
+        if not token:
+            print(f"MinerU token 文件为空：{token_path}")
+            return
 
     out_decide_dir = Path("data_output") / "decide"
     out_decide_dir.mkdir(parents=True, exist_ok=True)
     out_decide_path = out_decide_dir / f"{run_date}.json"
-    api_key_path = Path("config") / "qwen_api.txt"
-    api_key = api_key_path.read_text(encoding="utf-8", errors="ignore").strip() if api_key_path.exists() else ""
+    if args.configdepositary == "B":
+        import importlib.util
+        dep_path2 = Path("config") / "configDepositary.py"
+        spec2 = importlib.util.spec_from_file_location("configDepositary", str(dep_path2))
+        mod2 = importlib.util.module_from_spec(spec2)
+        spec2.loader.exec_module(mod2)
+        api_key = getattr(mod2, "qwen_api_key", "")
+        sum_system_prompt = getattr(mod2, "system_prompt", "")
+        sum_user_prompt = getattr(mod2, "user_prompt", "")
+        org_sys_prompt = getattr(mod2, "org_system_prompt", "")
+    else:
+        api_key_path = Path("config") / "qwen_api.txt"
+        api_key = api_key_path.read_text(encoding="utf-8", errors="ignore").strip() if api_key_path.exists() else ""
+        sum_system_prompt = ""
+        sum_user_prompt = ""
+        org_sys_prompt = ""
     base_url_llm = "https://dashscope.aliyuncs.com/compatible-mode/v1"
     model_llm = "qwen-plus"
     lock = threading.Lock()
@@ -184,7 +213,7 @@ def main():
     def on_json(path: Path) -> None:
         def job(pth: Path) -> None:
             text = j2d.load_first_pages_text(pth, max_page_idx=2)
-            item = j2d.call_qwen_plus(api_key, base_url_llm, model_llm, text, file_name=pth.name)
+            item = j2d.call_qwen_plus(api_key, base_url_llm, model_llm, text, file_name=pth.name, sys_prompt=org_sys_prompt or None)
             with lock:
                 j2d.append_result(out_decide_path, item)
             try:
@@ -215,8 +244,8 @@ def main():
                             one_out = out_summary_dir / f"{stem}.txt"
                             if not one_out.exists():
                                 md_text = dst_md.read_text(encoding="utf-8", errors="ignore")
-                                sum_client = psum.make_client()
-                                summary = psum.summarize_md(sum_client, "qwen2.5-72b-instruct", md_text, file_name=dst_md.name)
+                                sum_client = psum.make_client(api_key=api_key, base_url=base_url_llm)
+                                summary = psum.summarize_md(sum_client, "qwen2.5-72b-instruct", md_text, file_name=dst_md.name, system_prompt=sum_system_prompt or None, user_prompt_prefix=sum_user_prompt or None)
                                 one_out.write_text(summary, encoding="utf-8")
                                 with sum_lock:
                                     with out_gather_path.open("a", encoding="utf-8") as f:
