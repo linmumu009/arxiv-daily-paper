@@ -9,6 +9,7 @@
 - qwen_api_key可以去 https://bailian.console.aliyun.com/?spm=a2c4g.11186623.0.0.519511fceUTPZn&tab=model#/api-key 中创建
 
 > python app2.py
+
 会在 dataSelect/summary_gather/YYYY-MM-DD/ 生成摘要文件,请在文件名中带copy的txt文件中删掉自己不想看的论文摘要，保留自己想看的，然后运行下一步
 
 保持Zotero客户端处于打开状态，并点击到你想要导入的目录下，然后运行下面的指令
