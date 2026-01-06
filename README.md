@@ -127,7 +127,7 @@ app2_post_later.py
 ├─ pdfSummary.py                      # 第 9 步：基于 md 调用大模型生成摘要（summarize_md），写单篇与汇总摘要
 └─ pdfSelect.py                       # 第 10 步：在交互模式下再次筛选、再次摘要（app2 尾部通过 sys.argv 调用）
 ```
-![alt text](carbon（1）.png)
+![alt text](carbon(2).png)
 1. 参数解析与入口：主入口 main 负责解析参数，并驱动后续所有流程
 
     ```text
