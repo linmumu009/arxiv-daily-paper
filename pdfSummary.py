@@ -33,7 +33,21 @@ def load_api_key() -> str:
 
 def make_client(api_key: str | None = None, base_url: str | None = None) -> OpenAI:
     k = api_key or load_api_key()
-    u = base_url or "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    if base_url:
+        u = base_url
+    else:
+        u = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        try:
+            dep = Path("config") / "configDepositary.py"
+            if dep.exists():
+                import importlib.util
+                spec = importlib.util.spec_from_file_location("configDepositary", str(dep))
+                if spec and spec.loader:
+                    mod = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(mod)
+                    u = getattr(mod, "summary_base_url", u)
+        except Exception:
+            pass
     return OpenAI(api_key=k, base_url=u)
 
 def load_summary_example() -> str:
@@ -74,7 +88,19 @@ def main() -> None:
     pa = argparse.ArgumentParser("pdfSummary")
     pa.add_argument("--input-dir", default="")
     pa.add_argument("--out-root", default=str(Path("dataSelect")))
-    pa.add_argument("--model", default="qwen2.5-72b-instruct")
+    default_model = "qwen2.5-72b-instruct"
+    try:
+        dep = Path("config") / "configDepositary.py"
+        if dep.exists():
+            import importlib.util
+            spec = importlib.util.spec_from_file_location("configDepositary", str(dep))
+            if spec and spec.loader:
+                mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(mod)
+                default_model = getattr(mod, "summary_model", default_model)
+    except Exception:
+        pass
+    pa.add_argument("--model", default=default_model)
     args = pa.parse_args()
 
     date_str = today_str()

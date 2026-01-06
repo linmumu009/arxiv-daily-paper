@@ -101,6 +101,15 @@ def main() -> None:
 
     model = "qwen-plus"
     base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    dep_path = Path("config") / "configDepositary.py"
+    if dep_path.exists():
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("configDepositary", str(dep_path))
+        if spec and spec.loader:
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            base_url = getattr(mod, "org_base_url", base_url)
+            model = getattr(mod, "org_model", model)
     api_key_path = Path("config") / "qwen_api.txt"
     if not api_key_path.exists():
         raise SystemExit(f"缺少 API Key 文件：{api_key_path}")

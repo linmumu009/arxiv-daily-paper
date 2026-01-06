@@ -184,6 +184,11 @@ def main():
     out_decide_dir = Path("data_output") / "decide"
     out_decide_dir.mkdir(parents=True, exist_ok=True)
     out_decide_path = out_decide_dir / f"{run_date}.json"
+    # 通用默认模型配置（当未启用集中配置时使用）
+    base_url_llm = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    model_llm = "qwen-plus"
+    summary_base_url = base_url_llm
+    summary_model = "qwen2.5-72b-instruct"
     if args.configdepositary == "B":
         import importlib.util
         dep_path2 = Path("config") / "configDepositary.py"
@@ -194,14 +199,17 @@ def main():
         sum_system_prompt = getattr(mod2, "system_prompt", "")
         sum_user_prompt = getattr(mod2, "user_prompt", "")
         org_sys_prompt = getattr(mod2, "org_system_prompt", "")
+        # 机构识别模型与摘要生成模型从集中配置读取
+        base_url_llm = getattr(mod2, "org_base_url", base_url_llm)
+        model_llm = getattr(mod2, "org_model", model_llm)
+        summary_base_url = getattr(mod2, "summary_base_url", summary_base_url)
+        summary_model = getattr(mod2, "summary_model", summary_model)
     else:
         api_key_path = Path("config") / "qwen_api.txt"
         api_key = api_key_path.read_text(encoding="utf-8", errors="ignore").strip() if api_key_path.exists() else ""
         sum_system_prompt = ""
         sum_user_prompt = ""
         org_sys_prompt = ""
-    base_url_llm = "https://dashscope.aliyuncs.com/compatible-mode/v1"
-    model_llm = "qwen-plus"
     lock = threading.Lock()
     sum_lock = threading.Lock()
     out_summary_dir = Path("dataSelect") / "summary" / run_date
@@ -244,8 +252,15 @@ def main():
                             one_out = out_summary_dir / f"{stem}.txt"
                             if not one_out.exists():
                                 md_text = dst_md.read_text(encoding="utf-8", errors="ignore")
-                                sum_client = psum.make_client(api_key=api_key, base_url=base_url_llm)
-                                summary = psum.summarize_md(sum_client, "qwen2.5-72b-instruct", md_text, file_name=dst_md.name, system_prompt=sum_system_prompt or None, user_prompt_prefix=sum_user_prompt or None)
+                                sum_client = psum.make_client(api_key=api_key, base_url=summary_base_url)
+                                summary = psum.summarize_md(
+                                    sum_client,
+                                    summary_model,
+                                    md_text,
+                                    file_name=dst_md.name,
+                                    system_prompt=sum_system_prompt or None,
+                                    user_prompt_prefix=sum_user_prompt or None,
+                                )
                                 one_out.write_text(summary, encoding="utf-8")
                                 with sum_lock:
                                     with out_gather_path.open("a", encoding="utf-8") as f:
