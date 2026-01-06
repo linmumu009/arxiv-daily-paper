@@ -12,7 +12,7 @@ from config import (
     DRY_RUN, DEBUG, CLASSIFY_FROM_PDF, ENABLE_TOPIC_FILTER,
     ORG_SEARCH_TERMS,
     PER_ORG_SEARCH_LIMIT_PAGES, PER_ORG_SEARCH_PAGE_SIZE,
-    PDF_CACHE_DIR,
+    PDF_CACHE_DIR, WINDOW_FIELD,
 )
 from fetch_arxiv import iter_recent_cs, search_by_terms, get_arxiv_id
 from filters import beijing_previous_day_window, in_time_window, is_cs, is_target_topic
@@ -35,23 +35,19 @@ def _debug_print_window(now, start_utc, end_utc):
     print(f"[DEBUG] now local = {now.isoformat()}")
     print(f"[DEBUG] window (UTC) = {start_utc.isoformat()}  ->  {end_utc.isoformat()}")
 
-def _collect_baseline_entries(start_utc, end_utc) -> List[Dict]:
-    """
-    基线：遍历 cs.* 多页（由 fetch_arxiv 按 config 控制分页），再按时间窗口过滤。
-    新增：传入 start_utc，让 iter_recent_cs 能在遇到旧论文时提前中断。
-    """
+def _collect_baseline_entries(start_utc, end_utc, time_field_mode: str) -> List[Dict]:
     entries: List[Dict] = []
     total_scanned = 0
-    for e in iter_recent_cs(start_utc=start_utc):   # ✅ 这里传入 start_utc
+    for e in iter_recent_cs(start_utc=start_utc):
         total_scanned += 1
-        if is_cs(e) and in_time_window(e, start_utc, end_utc):
+        if is_cs(e) and in_time_window(e, start_utc, end_utc, time_field_mode):
             entries.append(e)
     if DEBUG:
         print(f"[DEBUG] scanned={total_scanned}  baseline_matches={len(entries)}")
     return entries
 
 
-def build_candidates_with_fallback(baseline_entries: List[Dict], start_utc, end_utc) -> List[Dict]:
+def build_candidates_with_fallback(baseline_entries: List[Dict], start_utc, end_utc, time_field_mode: str) -> List[Dict]:
     """
     1) 用摘要/标题对 baseline 做粗分（只为确定需要直搜的机构，不用于最终分类）。
     2) 对选定机构逐个执行 per-org 直搜（可配置深度），合并去重，返回候选列表。
@@ -91,7 +87,7 @@ def build_candidates_with_fallback(baseline_entries: List[Dict], start_utc, end_
         for fut in as_completed(futures):
             org, raw_list = fut.result()
             total_raw = len(raw_list)
-            after_window = [e for e in raw_list if is_cs(e) and in_time_window(e, start_utc, end_utc)]
+            after_window = [e for e in raw_list if is_cs(e) and in_time_window(e, start_utc, end_utc, time_field_mode)]
             total_window = len(after_window)
             before = len(merged)
             for e in after_window:
@@ -111,12 +107,14 @@ def main():
     pa.add_argument("--decide-concurrency", type=int, default=10)
     pa.add_argument("--org-search-concurrency", type=int, default=6)
     pa.add_argument("--window-hours", type=int, default=0)
+    pa.add_argument("--published", choices=["both", "updated"], default=None)
     pa.add_argument("--configdepositary", choices=["A", "B"], default="B")
     args = pa.parse_args()
     limit_files = max(0, int(args.limit_files))
     decide_concurrency = max(1, int(args.decide_concurrency))
     org_search_concurrency = max(1, int(args.org_search_concurrency))
     window_hours = max(0, int(args.window_hours))
+    time_field_mode = args.published or WINDOW_FIELD or "both"
     # 1) 时间窗口（昨天：北京时间）
     now = now_local()
     if window_hours > 0:
@@ -127,9 +125,9 @@ def main():
     _debug_print_window(now, start_utc, end_utc)
 
     # 2) 候选集 = 基线 +（按需）per-org 直搜补齐
-    baseline_entries = _collect_baseline_entries(start_utc, end_utc)
+    baseline_entries = _collect_baseline_entries(start_utc, end_utc, time_field_mode)
     build_candidates_with_fallback._org_search_concurrency = org_search_concurrency
-    candidates = build_candidates_with_fallback(baseline_entries, start_utc, end_utc)
+    candidates = build_candidates_with_fallback(baseline_entries, start_utc, end_utc, time_field_mode)
     
 
     if ENABLE_TOPIC_FILTER:

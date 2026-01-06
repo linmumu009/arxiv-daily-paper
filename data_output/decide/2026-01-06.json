@@ -1,0 +1,646 @@
+[
+  {
+    "文件名": "2601.01868v1.json",
+    "机构名": "Monash University",
+    "第一作者机构": "Peking University",
+    "通讯作者机构": "Monash University",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.01874v1.json",
+    "机构名": "浙江大学",
+    "is_large": true,
+    "第一作者机构": "浙江大学",
+    "通讯作者机构": "浙江大学"
+  },
+  {
+    "文件名": "2601.01875v1.json",
+    "机构名": "哈尔滨工业大学（深圳）",
+    "is_large": true,
+    "第一作者机构": "首都师范大学",
+    "通讯作者机构": "哈尔滨工业大学（深圳）"
+  },
+  {
+    "文件名": "2601.01878v1.json",
+    "机构名": "南加州大学",
+    "第一作者机构": "南加州大学",
+    "通讯作者机构": "南加州大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.01885v1.json",
+    "机构名": "Alibaba Group",
+    "is_large": true,
+    "第一作者机构": "Alibaba Group",
+    "通讯作者机构": "Alibaba Group"
+  },
+  {
+    "文件名": "2601.01887v1.json",
+    "机构名": "浙江大学",
+    "is_large": true,
+    "第一作者机构": "浙江大学",
+    "通讯作者机构": "浙江大学"
+  },
+  {
+    "文件名": "2601.01891v1.json",
+    "机构名": "Clemson University",
+    "is_large": true,
+    "第一作者机构": "Clemson University",
+    "通讯作者机构": "Clemson University"
+  },
+  {
+    "文件名": "2601.01892v1.json",
+    "机构名": "University at Buffalo-SUNY",
+    "is_large": false,
+    "第一作者机构": "University at Buffalo-SUNY",
+    "通讯作者机构": "University at Buffalo-SUNY"
+  },
+  {
+    "文件名": "2601.01896v1.json",
+    "机构名": "中国人民大学",
+    "第一作者机构": "中国人民大学高瓴人工智能学院",
+    "通讯作者机构": "中国人民大学高瓴人工智能学院",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.01897v1.json",
+    "机构名": "Fullerton Health",
+    "is_large": false,
+    "第一作者机构": "Fullerton Health",
+    "通讯作者机构": "Fullerton Health"
+  },
+  {
+    "文件名": "2601.01901v1.json",
+    "机构名": "西北工业大学",
+    "is_large": true,
+    "第一作者机构": "西北工业大学",
+    "通讯作者机构": "西北工业大学"
+  },
+  {
+    "文件名": "2601.01908v1.json",
+    "机构名": "北京航空航天大学",
+    "is_large": true,
+    "第一作者机构": "北京航空航天大学",
+    "通讯作者机构": "北京航空航天大学"
+  },
+  {
+    "文件名": "2601.01914v1.json",
+    "机构名": "University at Buffalo, SUNY",
+    "is_large": false,
+    "第一作者机构": "University at Buffalo, SUNY",
+    "通讯作者机构": "University at Buffalo, SUNY"
+  },
+  {
+    "文件名": "2601.01925v1.json",
+    "机构名": "大连理工大学",
+    "is_large": true,
+    "第一作者机构": "大连理工大学",
+    "通讯作者机构": "大连理工大学"
+  },
+  {
+    "文件名": "2601.01930v1.json",
+    "机构名": "University of Washington",
+    "is_large": true,
+    "第一作者机构": "University of Washington",
+    "通讯作者机构": "University of Washington"
+  },
+  {
+    "文件名": "2601.01931v1.json",
+    "机构名": "牛津大学",
+    "is_large": true,
+    "第一作者机构": "Vrije Universiteit Brussel",
+    "通讯作者机构": "University of Oxford"
+  },
+  {
+    "文件名": "2601.01943v1.json",
+    "机构名": "莱比锡大学",
+    "is_large": true,
+    "第一作者机构": "莱比锡大学",
+    "通讯作者机构": "莱比锡大学"
+  },
+  {
+    "文件名": "2601.01950v1.json",
+    "机构名": "天津大学",
+    "is_large": true,
+    "第一作者机构": "天津工业大学计算机科学与技术学院",
+    "通讯作者机构": "天津大学智能与计算学部"
+  },
+  {
+    "文件名": "2601.01955v1.json",
+    "机构名": "哈尔滨工业大学（深圳）",
+    "is_large": true,
+    "第一作者机构": "杭州电子科技大学",
+    "通讯作者机构": "哈尔滨工业大学（深圳）"
+  },
+  {
+    "文件名": "2601.01963v1.json",
+    "机构名": "University at Buffalo, SUNY",
+    "第一作者机构": "University at Buffalo, SUNY",
+    "通讯作者机构": "University at Buffalo, SUNY",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.01964v1.json",
+    "机构名": "Independent Researcher, HCMC, Vietnam",
+    "is_large": false,
+    "第一作者机构": "Independent Researcher, HCMC, Vietnam",
+    "通讯作者机构": "Independent Researcher, HCMC, Vietnam"
+  },
+  {
+    "文件名": "2601.01966v1.json",
+    "机构名": "Tsinghua University",
+    "is_large": true,
+    "第一作者机构": "Tsinghua University",
+    "通讯作者机构": "Tsinghua University"
+  },
+  {
+    "文件名": "2601.01972v1.json",
+    "机构名": "根特大学",
+    "is_large": true,
+    "第一作者机构": "IDLab-T2K, Ghent University-imec",
+    "通讯作者机构": "IDLab-T2K, Ghent University-imec"
+  },
+  {
+    "文件名": "2601.01979v1.json",
+    "机构名": "INRIA Paris",
+    "is_large": true,
+    "第一作者机构": "INRIA Paris",
+    "通讯作者机构": "INRIA Paris"
+  },
+  {
+    "文件名": "2601.01982v1.json",
+    "机构名": "Mohamed bin Zayed University of Artificial Intelligence",
+    "第一作者机构": "Mohamed bin Zayed University of Artificial Intelligence (MBZUAI)",
+    "通讯作者机构": "Mohamed bin Zayed University of Artificial Intelligence (MBZUAI)",
+    "is_large": false
+  },
+  {
+    "文件名": "2601.01984v1.json",
+    "机构名": "National University of Singapore",
+    "is_large": true,
+    "第一作者机构": "National University of Singapore",
+    "通讯作者机构": "National University of Singapore"
+  },
+  {
+    "文件名": "2601.01989v1.json",
+    "机构名": "德国开罗大学",
+    "is_large": false,
+    "第一作者机构": "德国开罗大学",
+    "通讯作者机构": "德国开罗大学"
+  },
+  {
+    "文件名": "2601.01993v1.json",
+    "机构名": "华东理工大学",
+    "is_large": true,
+    "第一作者机构": "华东理工大学",
+    "通讯作者机构": "华东理工大学"
+  },
+  {
+    "文件名": "2601.01997v1.json",
+    "机构名": "巴里理工大学",
+    "is_large": false,
+    "第一作者机构": "Politecnico di Bari, Italy",
+    "通讯作者机构": "Politecnico di Bari, Italy"
+  },
+  {
+    "文件名": "2601.02002v1.json",
+    "机构名": "巴里理工大学",
+    "is_large": false,
+    "第一作者机构": "Politecnico di Bari, Bari, Italy",
+    "通讯作者机构": "Politecnico di Bari, Bari, Italy"
+  },
+  {
+    "文件名": "2601.02018v1.json",
+    "机构名": "西北工业大学",
+    "is_large": true,
+    "第一作者机构": "西北工业大学",
+    "通讯作者机构": "西北工业大学"
+  },
+  {
+    "文件名": "2601.02020v1.json",
+    "机构名": "华中科技大学",
+    "is_large": true,
+    "第一作者机构": "华中科技大学",
+    "通讯作者机构": "华中科技大学"
+  },
+  {
+    "文件名": "2601.02022v1.json",
+    "机构名": "Stanford University",
+    "is_large": true,
+    "第一作者机构": "Stanford University",
+    "通讯作者机构": "Stanford University"
+  },
+  {
+    "文件名": "2601.02023v1.json",
+    "机构名": "University of Michigan",
+    "is_large": true,
+    "第一作者机构": "University of Michigan",
+    "通讯作者机构": "Independent Researcher"
+  },
+  {
+    "文件名": "2601.02031v1.json",
+    "机构名": "AI Sweden",
+    "is_large": false,
+    "第一作者机构": "AI Sweden",
+    "通讯作者机构": "AI Sweden"
+  },
+  {
+    "文件名": "2601.02036v1.json",
+    "机构名": "The University of Hong Kong",
+    "is_large": true,
+    "第一作者机构": "The University of Hong Kong",
+    "通讯作者机构": "The University of Hong Kong"
+  },
+  {
+    "文件名": "2601.02037v1.json",
+    "机构名": "南京航空航天大学",
+    "第一作者机构": "南京航空航天大学",
+    "通讯作者机构": "南京航空航天大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.02038v1.json",
+    "机构名": "上海大学",
+    "is_large": false,
+    "第一作者机构": "上海大学中欧工程技术学院",
+    "通讯作者机构": "上海大学国家级工程训练实验教学示范中心"
+  },
+  {
+    "文件名": "2601.02045v1.json",
+    "机构名": "中国科学院计算技术研究所",
+    "is_large": true,
+    "第一作者机构": "中国科学院计算技术研究所",
+    "通讯作者机构": "中国科学院计算技术研究所"
+  },
+  {
+    "文件名": "2601.02046v1.json",
+    "机构名": "上海交通大学",
+    "is_large": true,
+    "第一作者机构": "上海交通大学",
+    "通讯作者机构": "上海交通大学"
+  },
+  {
+    "文件名": "2601.02050v1.json",
+    "机构名": "中国海洋大学",
+    "is_large": true,
+    "第一作者机构": "中国海洋大学",
+    "通讯作者机构": "中国海洋大学"
+  },
+  {
+    "文件名": "2601.02060v1.json",
+    "机构名": "The University of Melbourne",
+    "第一作者机构": "Hanoi University of Science and Technology",
+    "通讯作者机构": "The University of Melbourne",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.02065v1.json",
+    "机构名": "East West University",
+    "第一作者机构": "East West University",
+    "通讯作者机构": "East West University",
+    "is_large": false
+  },
+  {
+    "文件名": "2601.02071v1.json",
+    "机构名": "Queen Mary University of London",
+    "is_large": false,
+    "第一作者机构": "School of Biological and Behavioural Sciences, Queen Mary University of London",
+    "通讯作者机构": "School of Biological and Behavioural Sciences, Queen Mary University of London"
+  },
+  {
+    "文件名": "2601.02075v1.json",
+    "机构名": "北京大学",
+    "is_large": true,
+    "第一作者机构": "北京大学",
+    "通讯作者机构": "北京大学"
+  },
+  {
+    "文件名": "2601.02076v1.json",
+    "机构名": "华为技术有限公司",
+    "is_large": true,
+    "第一作者机构": "北京大学",
+    "通讯作者机构": "华为技术有限公司"
+  },
+  {
+    "文件名": "2601.02080v1.json",
+    "机构名": "Stony Brook University",
+    "第一作者机构": "Stony Brook University",
+    "通讯作者机构": null,
+    "is_large": false
+  },
+  {
+    "文件名": "2601.02088v1.json",
+    "机构名": "上海交通大学医学院附属第九人民医院",
+    "is_large": true,
+    "第一作者机构": "上海交通大学医学院附属第九人民医院，上海交通大学口腔医学院，国家口腔医学中心，国家口腔疾病临床医学研究中心，上海市口腔医学重点实验室，上海口腔医学研究所",
+    "通讯作者机构": "上海交通大学医学院附属第九人民医院，上海交通大学口腔医学院"
+  },
+  {
+    "文件名": "2601.02091v1.json",
+    "机构名": "诺丁汉大学宁波分校",
+    "is_large": true,
+    "第一作者机构": "诺丁汉大学宁波分校计算机科学学院",
+    "通讯作者机构": "诺丁汉大学宁波分校计算机科学学院及卓越研究与创新研究院"
+  },
+  {
+    "文件名": "2601.02094v1.json",
+    "机构名": "Shiv Nadar University Chennai",
+    "is_large": false,
+    "第一作者机构": "Shiv Nadar University Chennai",
+    "通讯作者机构": "Shiv Nadar University Chennai"
+  },
+  {
+    "文件名": "2601.02096v1.json",
+    "机构名": "Meta Reality Labs",
+    "is_large": true,
+    "第一作者机构": "ETH Zurich",
+    "通讯作者机构": "Meta Reality Labs"
+  },
+  {
+    "文件名": "2601.02103v1.json",
+    "机构名": "上海交通大学",
+    "第一作者机构": "上海交通大学",
+    "通讯作者机构": "上海交通大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.02112v1.json",
+    "机构名": "Delhi Technological University",
+    "第一作者机构": "Delhi Technological University",
+    "通讯作者机构": "Delhi Technological University",
+    "is_large": false
+  },
+  {
+    "文件名": "2601.02123v1.json",
+    "机构名": "HTC DeepQ",
+    "is_large": true,
+    "第一作者机构": "National Taiwan University",
+    "通讯作者机构": "HTC DeepQ"
+  },
+  {
+    "文件名": "2601.02128v1.json",
+    "机构名": "Technische Hochschule Nürnberg",
+    "第一作者机构": "Technische Hochschule Nürnberg",
+    "通讯作者机构": "Technische Hochschule Nürnberg",
+    "is_large": false
+  },
+  {
+    "文件名": "2601.02138v1.json",
+    "机构名": "景德镇陶瓷大学",
+    "is_large": false,
+    "第一作者机构": "景德镇陶瓷大学",
+    "通讯作者机构": "景德镇陶瓷大学"
+  },
+  {
+    "文件名": "2601.02144v1.json",
+    "机构名": "CyberAgent",
+    "is_large": false,
+    "第一作者机构": "Institute of Science Tokyo",
+    "通讯作者机构": "CyberAgent"
+  },
+  {
+    "文件名": "2601.02147v1.json",
+    "机构名": "IIT Bombay",
+    "第一作者机构": "Koita Centre for Digital Health, IIT Bombay, Mumbai",
+    "通讯作者机构": "Department of Electrical Engineering, IIT Bombay, Mumbai",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.02151v1.json",
+    "机构名": "北京邮电大学",
+    "is_large": true,
+    "第一作者机构": "北京邮电大学",
+    "通讯作者机构": "北京邮电大学"
+  },
+  {
+    "文件名": "2601.02170v1.json",
+    "机构名": "北京邮电大学",
+    "is_large": true,
+    "第一作者机构": "北京邮电大学",
+    "通讯作者机构": "南洋理工大学"
+  },
+  {
+    "文件名": "2601.02179v1.json",
+    "机构名": "University of Cambridge",
+    "is_large": true,
+    "第一作者机构": "University of Cambridge",
+    "通讯作者机构": "University of Cambridge"
+  },
+  {
+    "文件名": "2601.02186v1.json",
+    "机构名": "杜克-国大医学院",
+    "第一作者机构": "杜克-国大医学院",
+    "通讯作者机构": "东京大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.02189v1.json",
+    "机构名": "中原大學",
+    "第一作者机构": "中原大學",
+    "通讯作者机构": "中原大學",
+    "is_large": false
+  },
+  {
+    "文件名": "2601.02196v1.json",
+    "机构名": "George Washington University",
+    "is_large": true,
+    "第一作者机构": "George Washington University",
+    "通讯作者机构": "George Washington University"
+  },
+  {
+    "文件名": "2601.02198v1.json",
+    "机构名": "柏林洪堡大学",
+    "is_large": true,
+    "第一作者机构": "Berlin Institute for the Foundations of Learning and Data (BIFOLD); Machine Learning Group, Technische Universität Berlin",
+    "通讯作者机构": "Machine Learning Group, Technische Universität Berlin"
+  },
+  {
+    "文件名": "2601.02200v1.json",
+    "机构名": "CodeScene",
+    "is_large": false,
+    "第一作者机构": "CodeScene and Lund University",
+    "通讯作者机构": "CodeScene"
+  },
+  {
+    "文件名": "2601.02201v1.json",
+    "机构名": "浙江大学",
+    "第一作者机构": "浙江大学",
+    "通讯作者机构": "浙江大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.02204v1.json",
+    "机构名": "字节跳动",
+    "is_large": true,
+    "第一作者机构": "字节跳动",
+    "通讯作者机构": "字节跳动"
+  },
+  {
+    "文件名": "2601.02211v1.json",
+    "机构名": "复旦大学",
+    "第一作者机构": "复旦大学",
+    "通讯作者机构": "复旦大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.02212v1.json",
+    "机构名": "北京航空航天大学",
+    "is_large": true,
+    "第一作者机构": "北京航空航天大学",
+    "通讯作者机构": "北京航空航天大学"
+  },
+  {
+    "文件名": "2601.02213v1.json",
+    "机构名": "Google",
+    "is_large": true,
+    "第一作者机构": "Google",
+    "通讯作者机构": "Google"
+  },
+  {
+    "文件名": "2601.02215v1.json",
+    "机构名": "Technical University of Munich",
+    "第一作者机构": "Technical University of Munich",
+    "通讯作者机构": "Technical University of Munich",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.02224v1.json",
+    "机构名": "University of Göttingen",
+    "第一作者机构": "University of Göttingen",
+    "通讯作者机构": "University of Göttingen",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.02228v1.json",
+    "机构名": "清华大学",
+    "is_large": true,
+    "第一作者机构": "清华大学",
+    "通讯作者机构": "清华大学"
+  },
+  {
+    "文件名": "2601.02232v1.json",
+    "机构名": "AWS",
+    "is_large": true,
+    "第一作者机构": "Purdue University",
+    "通讯作者机构": "AWS"
+  },
+  {
+    "文件名": "2601.02236v1.json",
+    "第一作者机构": "Princeton University",
+    "通讯作者机构": "Advanced Micro Devices, Inc.",
+    "机构名": "Advanced Micro Devices, Inc.",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.02242v1.json",
+    "机构名": "SALUTEDEV",
+    "is_large": false,
+    "第一作者机构": "SALUTEDEV",
+    "通讯作者机构": "SALUTEDEV"
+  },
+  {
+    "文件名": "2601.02249v1.json",
+    "机构名": "Huawei Technologies Co., Ltd.",
+    "is_large": true,
+    "第一作者机构": "Huawei Technologies Co., Ltd.",
+    "通讯作者机构": "Huawei Technologies Co., Ltd."
+  },
+  {
+    "文件名": "2601.02256v1.json",
+    "机构名": "ByteDance",
+    "is_large": true,
+    "第一作者机构": "Tsinghua University",
+    "通讯作者机构": "ByteDance"
+  },
+  {
+    "文件名": "2601.02281v1.json",
+    "机构名": "上海交通大学",
+    "第一作者机构": "上海交通大学",
+    "通讯作者机构": "上海交通大学",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.02285v1.json",
+    "机构名": "ETH Zurich",
+    "is_large": true,
+    "第一作者机构": "University of Zurich",
+    "通讯作者机构": "ETH Zurich"
+  },
+  {
+    "文件名": "2601.02298v1.json",
+    "机构名": "斯坦福大学",
+    "is_large": true,
+    "第一作者机构": "斯坦福大学",
+    "通讯作者机构": "斯坦福大学"
+  },
+  {
+    "文件名": "2601.02307v1.json",
+    "机构名": "Idiap Research Institute",
+    "is_large": false,
+    "第一作者机构": "Idiap Research Institute, Martigny, Switzerland",
+    "通讯作者机构": "Idiap Research Institute, Martigny, Switzerland"
+  },
+  {
+    "文件名": "2601.02311v1.json",
+    "机构名": "Adobe Inc.",
+    "is_large": true,
+    "第一作者机构": "Adobe Inc.",
+    "通讯作者机构": "Adobe Inc."
+  },
+  {
+    "文件名": "2601.02314v1.json",
+    "机构名": "None",
+    "第一作者机构": "None",
+    "通讯作者机构": "None",
+    "is_large": false
+  },
+  {
+    "文件名": "2601.02315v1.json",
+    "机构名": "威斯康星大学麦迪逊分校",
+    "is_large": true,
+    "第一作者机构": "威斯康星大学麦迪逊分校",
+    "通讯作者机构": "威斯康星大学麦迪逊分校"
+  },
+  {
+    "文件名": "2601.02316v1.json",
+    "机构名": "DatologyAI",
+    "第一作者机构": "DatologyAI",
+    "通讯作者机构": "DatologyAI",
+    "is_large": false
+  },
+  {
+    "文件名": "2601.02318v1.json",
+    "机构名": "IIIT-Hyderabad",
+    "第一作者机构": "IIIT-Hyderabad",
+    "通讯作者机构": "IIIT-Hyderabad",
+    "is_large": false
+  },
+  {
+    "文件名": "2601.02337v1.json",
+    "机构名": "Pennsylvania State University",
+    "第一作者机构": "Pennsylvania State University",
+    "通讯作者机构": "Pennsylvania State University",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.02346v1.json",
+    "机构名": "Technology Innovation Institute (TII)",
+    "is_large": true,
+    "第一作者机构": "Technology Innovation Institute (TII)",
+    "通讯作者机构": "Technology Innovation Institute (TII)"
+  },
+  {
+    "文件名": "2601.02358v1.json",
+    "机构名": "Kuaishou Technology",
+    "第一作者机构": "Shanghai Jiao Tong University",
+    "通讯作者机构": "Kuaishou Technology",
+    "is_large": true
+  },
+  {
+    "文件名": "2601.02360v1.json",
+    "机构名": "Covenant AI",
+    "第一作者机构": "Covenant AI",
+    "通讯作者机构": "Covenant AI",
+    "is_large": false
+  }
+]

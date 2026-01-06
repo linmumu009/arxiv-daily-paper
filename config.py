@@ -26,7 +26,7 @@ CONNECT_TIMEOUT_SEC = 30
 READ_TIMEOUT_SEC = 120
 
 # 时间窗口依据： 'updated'（昨天有任何更新就算）| 'published'（昨天首次投稿）| 'both'
-WINDOW_FIELD = "published"       # ← 新增：用来解决“跨月编号”带来的困惑
+WINDOW_FIELD = "both"
 
 # -------------------------------
 # PDF 分类相关

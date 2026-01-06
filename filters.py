@@ -19,8 +19,13 @@ def beijing_previous_day_window(now_local):
     end_utc = end_beijing - timedelta(hours=8)
     return start_utc.replace(tzinfo=timezone.utc), end_utc.replace(tzinfo=timezone.utc)
 
-def in_time_window(entry: Dict[str, Any], start_utc: datetime, end_utc: datetime) -> bool:
-    dt = entry.get("updated") or entry.get("published")
+def in_time_window(entry: Dict[str, Any], start_utc: datetime, end_utc: datetime, mode: str = "both") -> bool:
+    pub = entry.get("published")
+    upd = entry.get("updated")
+    if mode == "updated":
+        dt = upd or pub
+    else:
+        dt = pub or upd
     return bool(dt and start_utc <= dt <= end_utc)
 
 def is_cs(entry: Dict[str, Any]) -> bool:

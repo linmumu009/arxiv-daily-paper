@@ -48,6 +48,7 @@ app2.py
 |--decide-concurrency|int|10|机构判断与摘要生成的并发线程数|
 |--org-search-concurrency|int|6|机构直搜并发数（per-org 搜索）|
 |--window-hours|int|0|时间窗口小时数；0 表示使用北京时间“昨天”窗口|
+|--published|str|both|时间字段来源；both 表示按首投时间 published 过滤，updated 表示按最后更新时间 updated 过滤|
 |--configdepositary|A/B|B|配置来源：A=文本文件（mineru.txt/qwen_api.txt/summary_prompt.py），B=集中配置（config/configDepositary.py）|
 
 app2_post.py
@@ -72,6 +73,57 @@ app2_post_later.py
 |--model|str|claude-sonnet-4-5-all|改写模型名称|
 |--concurrency|int|8|改写并发数|
 |--overwrite|flag|False|是否覆盖已存在改写输出|
+
+## 整体项目结构示意图
+
+```markdown
+. 📂 arxiv-daily-paper                     # 项目根目录
+├── 📄 README.md                           # 当前说明文档（中文为主）
+├── 📄 README0.md                          # 旧版 README（英文版/历史说明）
+└── 📂 SelectPaperRewrite/                 # 精选论文二次改写相关脚本及输出
+│  └── 📂 summary/                         # 改写后的单篇摘要输出目录
+│  └── 📂 summary_gather/                  # 改写后的汇总摘要输出目录
+│    ├── 📄 2026-01-02.txt                 # 某一天的汇总改写结果示例
+└── 📂 __pycache__/                        # Python 字节码缓存目录
+├── 📄 app2.py                             # 主流程：抓取 + 分类 + MinerU 解析 + 机构判别 + 摘要
+├── 📄 app2_post.py                        # app2 之后的后处理：拷贝精选论文并导入 Zotero
+├── 📄 app2_post_later.py                  # 备用后处理脚本（按日期重新生成精选输出）
+└── 📂 cache_pdfs/                         # PDF 缓存目录（按日期存放下载的原始 PDF）
+├── 📄 classify.py                         # 基于正则的机构匹配与分组逻辑
+└── 📂 config/                             # 集中配置目录（推荐使用的配置位置）
+└── 📂 config copy/                        # 早期配置备份目录（保留历史用）
+│  └── 📂 __pycache__/                     # config copy 目录下的缓存
+│  ├── 📄 configDepositary.py              # 早期版本的集中配置文件（已被 config/ 下同名文件替代）
+├── 📄 config.py                           # 全局配置：时间窗口、机构列表、主题过滤规则等
+└── 📂 data/                               # MinerU 解析输出目录
+│  └── 📂 json/                            # MinerU 输出的结构化 json（供机构判别使用）
+│  └── 📂 md/                              # MinerU 输出的 markdown 原文
+└── 📂 dataSelect/                         # 为“大机构 + 目标主题”论文准备的中间工作区
+└── 📂 data_output/                        # 早期版本的输出目录（保留兼容用）
+│  └── 📂 decide/                          # 机构判别结果（早期格式）的输出目录
+│    ├── 📄 2026-01-02.json                # 某天的机构判别结果示例
+│    ├── 📄 2026-01-06.json                # 某天的机构判别结果示例
+├── 📄 fetch_arxiv.py                      # 封装 arXiv API：基线抓取与 per-org 搜索
+├── 📄 filters.py                          # 时间窗口、学科筛选与主题过滤逻辑
+├── 📄 json2decide.py                      # 从 json 文本调用大模型做机构判别
+├── 📄 pdf2md.py                           # 调用 MinerU 将 PDF 批量解析为 md/json
+├── 📄 pdfSelect.py                        # 交互式再次筛选/再次摘要脚本
+├── 📄 pdfSummary.py                       # 基于 md 调用大模型生成单篇与汇总摘要
+├── 📄 prefetch.py                         # 根据 arXiv ID 批量下载并缓存 PDF
+├── 📄 ray-so-export.png                   # 项目结构示意图截图（用于 README 展示）
+├── 📄 readmePrinciple.md                  # 本仓库撰写 README 的约定与原则记录
+└── 📂 reference/                          # 参考示例代码（如 Qwen API 调用示例）
+│  ├── 📄 gptgod_example.py                # GPT 系列调用示例
+│  ├── 📄 qwen_2-5_7b_example.py           # Qwen 2.5 7B 模型调用示例
+│  ├── 📄 qwen_long_example.py             # Qwen 长文本处理示例
+│  ├── 📄 qwen_long_example2.py            # Qwen 长文本处理示例（变体）
+├── 📄 requirements.txt                    # Python 依赖列表
+├── 📄 rewriteClean.py                     # 改写/清理辅助脚本
+└── 📂 selectPapers/                       # 最终“精选论文”导出目录及相关脚本
+├── 📄 selectPapers_rewrite.py             # 对精选论文做二次改写的脚本
+├── 📄 utils.py                            # 公共工具函数（时间、路径等）
+└── 📄 zotero_push.py                      # 通过 Zotero Connector 导入精选论文的脚本
+```
 
 
 ## app2.py 代码流程解析
@@ -163,6 +215,20 @@ app2_post_later.py
 3. 构建候选论文列表（基线 + 直搜补齐）：先按 cs./stat.ML 拉取近期论文作为基线，再对缺失机构做 per-org 直搜补齐并合并去重（内部有多线程并发执行）
 
     ```text
+    构建步骤：
+        - 先按 cs./stat.ML 拉取
+        - 时间窗口筛选
+        - 对结果做正则过滤，目的是筛选出想要的机构
+            - 筛选的方式是查找【标题、摘要、comment、journal_ref、作者字段】里有没有INSTITUTIONS_PATTERNS 的机构
+        - 找出结果里“一个论文都没有”的目标机构
+        - 对于一个结果都没有的机构，用 ORG_SEARCH_TERMS 作为关键词，再次搜索
+        - 在【标题、摘要、comment、journal_ref、作者字段】里正则过滤主题
+            - TOPIC_INCLUDE_PATTERNS 需要包含的关键词
+            - TOPIC_EXCLUDE_PATTERNS 不需要包含的关键词
+        - 开始下载
+
+        注：其中【标题、摘要、comment、journal_ref、作者字段】在filters.py文件的41行is_target_topic
+
     对应代码文件：
         - app2.py 负责在给定时间窗口内先收集一批“最近论文”的基础列表，作为后续筛选与补充搜索的起点，并根据配置决定是否对部分或全部机构再执行一次按机构关键字的补充搜索（FILL_MISSING_BY_ORG、ALWAYS_PER_ORG_SEARCH）
         - fetch_arxiv.py 负责封装 arXiv API：先按分类拉取近期论文列表（iter_recent_cs），再按机构关键词做 per-org 搜索以补齐特定机构的论文（search_by_terms），最终返回可用于后续下载的论文元数据

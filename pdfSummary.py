@@ -122,6 +122,9 @@ def main() -> None:
         if one_out.exists():
             continue
         md_text = p.read_text(encoding="utf-8", errors="ignore")
+        if not md_text.strip():
+            print(f"跳过空 md 文件：{p}")
+            continue
         s = summarize_md(client, args.model, md_text, file_name=p.name)
         one_out.write_text(s, encoding="utf-8")
         with out_gather_path.open("a", encoding="utf-8") as f:
