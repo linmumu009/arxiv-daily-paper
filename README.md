@@ -130,6 +130,8 @@ app2_post_later.py
 
 ![app2.py 目录结构示意图](<carbon (2).png>)
 
+![项目主目录结构示意图](<ray-so-export.png>)
+
 1. 参数解析与入口：主入口 main 负责解析参数，并驱动后续所有流程
 
     ```text
