@@ -7,6 +7,7 @@ from typing import List
 
 from openai import OpenAI
 import importlib.util
+import re
 
 
 def ensure_dir(p: str | Path) -> Path:
@@ -17,6 +18,22 @@ def ensure_dir(p: str | Path) -> Path:
 
 def today_str() -> str:
     return datetime.now().date().isoformat()
+
+
+def approx_input_tokens(text: str) -> int:
+    if not text:
+        return 0
+    return len(text.encode("utf-8", errors="ignore"))
+
+
+def crop_to_input_tokens(text: str, limit_tokens: int) -> str:
+    budget = int(limit_tokens)
+    if budget <= 0:
+        return ""
+    b = text.encode("utf-8", errors="ignore")
+    if len(b) <= budget:
+        return text
+    return b[:budget].decode("utf-8", errors="ignore")
 
 
 def list_md_files(root: Path) -> List[Path]:
@@ -63,7 +80,25 @@ def load_summary_example() -> str:
 
 
 def summarize_md(client: OpenAI, model: str, md_text: str, file_name: str, system_prompt: str | None = None, user_prompt_prefix: str | None = None) -> str:
+    def strip_references(text: str) -> str:
+        lines = text.splitlines()
+        for i, line in enumerate(lines):
+            s = line.strip()
+            low = s.lower()
+            if low.startswith("#") and ("references" in low or "bibliography" in low or "参考文献" in low):
+                return "\n".join(lines[:i]).strip()
+            if low in ("references", "bibliography", "参考文献"):
+                return "\n".join(lines[:i]).strip()
+            if i > 0:
+                prev = lines[i - 1].strip().lower()
+                if s and all(c in "-=_~*" for c in s) and len(s) >= 3:
+                    if prev in ("references", "bibliography", "参考文献"):
+                        return "\n".join(lines[: i - 1]).strip()
+        return text
+    md_text = strip_references(md_text)
     example = load_summary_example()
+    if example and len(example) > 4000:
+        example = example[:4000]
     if system_prompt:
         sys_prompt = system_prompt
     else:
@@ -73,6 +108,12 @@ def summarize_md(client: OpenAI, model: str, md_text: str, file_name: str, syste
             f"\n示例：\n{example}"
         )
     user_content = md_text if not user_prompt_prefix else f"{user_prompt_prefix}\n{md_text}"
+    hard_limit = 129024
+    safety_margin = 4096
+    limit_total = hard_limit - safety_margin
+    sys_tokens = approx_input_tokens(sys_prompt)
+    user_budget = max(1, limit_total - sys_tokens)
+    user_content = crop_to_input_tokens(user_content, user_budget)
     resp = client.chat.completions.create(
         model=model,
         messages=[
@@ -88,6 +129,7 @@ def main() -> None:
     pa = argparse.ArgumentParser("pdfSummary")
     pa.add_argument("--input-dir", default="")
     pa.add_argument("--out-root", default=str(Path("dataSelect")))
+    pa.add_argument("--runModel", choices=["A","B"], default="A")
     default_model = "qwen2.5-72b-instruct"
     try:
         dep = Path("config") / "configDepositary.py"
@@ -119,7 +161,7 @@ def main() -> None:
 
     for p in files:
         one_out = out_summary_dir / f"{p.stem}.txt"
-        if one_out.exists():
+        if args.runModel == "B" and one_out.exists():
             continue
         md_text = p.read_text(encoding="utf-8", errors="ignore")
         if not md_text.strip():

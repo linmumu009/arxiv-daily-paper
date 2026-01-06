@@ -235,7 +235,8 @@ def run_local_batch(
      upload_concurrency: int = 10,
      limit_files: int = 0,
      on_json: Callable[[Path], None] | None = None,
- ) -> None:
+     skip_existing: bool = False,
+) -> None:
     if limit_files and limit_files > 0:
         pdfs = pdfs[:limit_files]
     date_dir = today_str()
@@ -268,6 +269,15 @@ def run_local_batch(
     if extra_formats:
         extra["extra_formats"] = extra_formats  # docx/html/latex（markdown/json 默认） :contentReference[oaicite:9]{index=9}
 
+    if skip_existing:
+        _filtered = []
+        for p in pdfs:
+            _md = out_md_dir / f"{p.stem}.md"
+            _js = out_json_dir / f"{p.stem}.json"
+            if _md.exists() and _js.exists():
+                continue
+            _filtered.append(p)
+        pdfs = _filtered
     for pdf_chunk in chunks(pdfs, max(1, batch_size)):
         # 对齐 chunk 的 files payload
         chunk_payload = []

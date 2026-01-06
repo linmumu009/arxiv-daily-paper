@@ -24,6 +24,7 @@ import json2decide as j2d
 import pdfSelect as psel
 import pdfSummary as psum
 import sys
+import json
 
 # 行为开关
 FILL_MISSING_BY_ORG = True       # 仅对“基线为空”的机构直搜补齐（更快）
@@ -108,6 +109,7 @@ def main():
     pa.add_argument("--org-search-concurrency", type=int, default=6)
     pa.add_argument("--window-hours", type=int, default=0)
     pa.add_argument("--published", choices=["both", "updated"], default=None)
+    pa.add_argument("--runModel", choices=["A", "B"], default="A")
     pa.add_argument("--configdepositary", choices=["A", "B"], default="B")
     args = pa.parse_args()
     limit_files = max(0, int(args.limit_files))
@@ -182,6 +184,31 @@ def main():
     out_decide_dir = Path("data_output") / "decide"
     out_decide_dir.mkdir(parents=True, exist_ok=True)
     out_decide_path = out_decide_dir / f"{run_date}.json"
+    decided_stems = set()
+    if out_decide_path.exists():
+        try:
+            _t = out_decide_path.read_text(encoding="utf-8", errors="ignore")
+            try:
+                _obj = json.loads(_t)
+                _arr = _obj if isinstance(_obj, list) else [_obj]
+                for _it in _arr:
+                    try:
+                        _fn = str((_it or {}).get("文件名") or "")
+                        if _fn:
+                            decided_stems.add(Path(_fn).stem)
+                    except Exception:
+                        pass
+            except Exception:
+                for _line in _t.splitlines():
+                    try:
+                        _it = json.loads(_line)
+                        _fn = str((_it or {}).get("文件名") or "")
+                        if _fn:
+                            decided_stems.add(Path(_fn).stem)
+                    except Exception:
+                        continue
+        except Exception:
+            pass
     # 通用默认模型配置（当未启用集中配置时使用）
     base_url_llm = "https://dashscope.aliyuncs.com/compatible-mode/v1"
     model_llm = "qwen-plus"
@@ -218,10 +245,24 @@ def main():
     futures = []
     def on_json(path: Path) -> None:
         def job(pth: Path) -> None:
+            if args.runModel == "B":
+                try:
+                    _stem = pth.stem
+                    with lock:
+                        if _stem in decided_stems:
+                            return
+                except Exception:
+                    pass
             text = j2d.load_first_pages_text(pth, max_page_idx=2)
             item = j2d.call_qwen_plus(api_key, base_url_llm, model_llm, text, file_name=pth.name, sys_prompt=org_sys_prompt or None)
             with lock:
                 j2d.append_result(out_decide_path, item)
+                try:
+                    _fn = str(item.get("文件名") or "").strip()
+                    if _fn:
+                        decided_stems.add(Path(_fn).stem)
+                except Exception:
+                    pass
             try:
                 if bool(item.get("is_large", False)):
                     fn = str(item.get("文件名") or "").strip()
@@ -268,6 +309,21 @@ def main():
                 pass
         futures.append(ex.submit(job, path))
     ex = ThreadPoolExecutor(max_workers=decide_concurrency)
+    if args.runModel == "B":
+        try:
+            _json_dir = Path("data") / "json" / run_date
+            if _json_dir.exists():
+                for _p in sorted(_json_dir.glob("*.json")):
+                    try:
+                        _st = _p.stem
+                        with lock:
+                            if _st in decided_stems:
+                                continue
+                        on_json(_p)
+                    except Exception:
+                        continue
+        except Exception:
+            pass
     try:
         run_local_batch(
             pdfs=pdfs,
@@ -290,6 +346,7 @@ def main():
             upload_concurrency=10,
             limit_files=limit_files,
             on_json=on_json,
+            skip_existing=(args.runModel == "B"),
         )
     finally:
         for f in futures:
@@ -305,7 +362,7 @@ def main():
         print(str(out_decide_path))
         sys.argv = [sys.argv[0]]
         psel.main()
-        sys.argv = [sys.argv[0]]
+        sys.argv = [sys.argv[0], "--runModel", args.runModel]
         psum.main()
     finally:
         sys.argv = _argv
